@@ -5,7 +5,7 @@ class LabyrinthMain {
     // Create a simple world
     World world = new World("../lib/world1.wld");
     System.out.println(world);
-    String block = world.getBlockAt(3, 1); // Get block at X:3 Y:1
+    Block block = world.getBlockAt(3, 1); // Get block at X:3 Y:1
     System.out.println("\n"+block+"\n");
 
     // Create a player on start position

@@ -23,14 +23,14 @@ public class Player{
 
   public void moveOn(String direction, int m){
     if (direction == X){
-      int[] xrow = this.world.getXRow(getY());
-      while (this.world.getBlockAt(getX() + m, getY()) != this.world.WALL){
+      Block[] xrow = this.world.getXRow(getY());
+      while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL){
         setX(getX() + m);
       }
 
     } else if (direction == Y){
-      int[] yrow = this.world.getYRow(getX());
-      while (this.world.getBlockAt(getX(), getY() + m) != this.world.WALL){
+      Block[] yrow = this.world.getYRow(getX());
+      while (this.world.getBlockAt(getX(), getY() + m).getType() != this.world.WALL){
         setY(getY() + m);
       }
     } else {
