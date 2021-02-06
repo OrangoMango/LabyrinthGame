@@ -34,6 +34,6 @@ public class Block{
 
   @Override
   public String toString(){
-    return "BT:"+this.type+"X:"+this.x+" Y:"+this.y;
+    return "BT:"+this.type+" X:"+this.x+" Y:"+this.y;
   }
 }
