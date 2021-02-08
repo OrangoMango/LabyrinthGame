@@ -30,7 +30,7 @@ public class World{
       // Get world width and height from file
       String data = reader.readLine();
       this.width = Integer.parseInt(data.split("x")[0]);
-      this.height = Integer.parseInt(data.split("x")[0]);
+      this.height = Integer.parseInt(data.split("x")[1]);
 
       // Get world layout
       String wData = reader.readLine();
