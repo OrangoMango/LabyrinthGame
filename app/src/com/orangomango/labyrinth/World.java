@@ -8,17 +8,21 @@ package com.orangomango.labyrinth;
 import java.io.*;
 import java.util.Arrays;
 
+import javafx.scene.canvas.*;
+
 public class World{
   private Block[][] world;
   private String filePath;
-  private int height, width;
+  public int height, width;
   public int[] start, end;
+  public GraphicsContext pen;
 
   public final static String WALL = "wall";
   public final static String AIR = "none";
 
-  public World(String path){
+  public World(String path, GraphicsContext pen){
     filePath = path;
+    this.pen = pen;
     world = readWorld(filePath);
   }
 
@@ -30,7 +34,7 @@ public class World{
       // Get world width and height from file
       String data = reader.readLine();
       this.width = Integer.parseInt(data.split("x")[0]);
-      this.height = Integer.parseInt(data.split("x")[1]);
+      this.height = Integer.parseInt(data.split("x")[0]);
 
       // Get world layout
       String wData = reader.readLine();
@@ -85,7 +89,7 @@ public class World{
       }
 
       for (String v : Arrays.copyOfRange(current, iterator, iterator+w)){  // Parse every array range in "width" length parts
-        x[it2] = Block.fromInt(Integer.parseInt(v));
+        x[it2] = Block.fromInt(Integer.parseInt(v), it2, counter);
         it2++;
       }
       output[counter] = x;
@@ -93,6 +97,14 @@ public class World{
       counter++;
     }
     return output;
+  }
+  
+  public void draw(){
+  	for (Block[] blocks : world){
+  		for (Block block : blocks){
+  			block.draw(this.pen);
+  		}
+  	}
   }
 
   public Block getBlockAt(int x, int y){
