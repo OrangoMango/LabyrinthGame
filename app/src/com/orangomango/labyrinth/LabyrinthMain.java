@@ -17,17 +17,17 @@ public class LabyrinthMain extends Application{
   public void start(Stage stage){
      stage.setTitle("com.orangomango.labyrinth");
      
-   
+      // Create a simple world
+    World world = new World("../lib/world1.wld");
     
-     Canvas canvas = new Canvas(50*7, 50*7);   // TBD
+     Canvas canvas = new Canvas(50*world.width, 50*world.height);
      GridPane layout = new GridPane();
      layout.setPadding(new Insets(10, 10, 10, 10));
      layout.add(canvas, 0, 0);
      
      GraphicsContext pen = canvas.getGraphicsContext2D();
+     world.setPen(pen);
      
-      // Create a simple world
-    World world = new World("../lib/world1.wld", pen);
     System.out.println(world);
     Block block = world.getBlockAt(3, 1); // Get block at X:3 Y:1
     //block.draw(world.pen);

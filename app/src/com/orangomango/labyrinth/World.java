@@ -20,10 +20,13 @@ public class World{
   public final static String WALL = "wall";
   public final static String AIR = "none";
 
-  public World(String path, GraphicsContext pen){
+  public World(String path){
     filePath = path;
-    this.pen = pen;
     world = readWorld(filePath);
+  }
+
+  public void setPen(GraphicsContext pen){
+    this.pen = pen;
   }
 
   private Block[][] readWorld(String path){
@@ -34,7 +37,7 @@ public class World{
       // Get world width and height from file
       String data = reader.readLine();
       this.width = Integer.parseInt(data.split("x")[0]);
-      this.height = Integer.parseInt(data.split("x")[0]);
+      this.height = Integer.parseInt(data.split("x")[1]);
 
       // Get world layout
       String wData = reader.readLine();
