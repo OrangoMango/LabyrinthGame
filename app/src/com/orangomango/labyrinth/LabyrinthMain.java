@@ -21,7 +21,7 @@ public class LabyrinthMain extends Application{
      stage.setTitle("com.orangomango.labyrinth");
      
       // Create a simple world
-    World world = new World("../lib/world2.wld");
+    World world = new World("../lib/world1.wld");
     
      Canvas canvas = new Canvas(50*world.width, 50*world.height);
 
@@ -63,7 +63,6 @@ public class LabyrinthMain extends Application{
             public void handle(KeyEvent event){
                   if (event.getCode() == KeyCode.UP){
                           player.moveOn(player.Y, player.NEGATIVE);
-                          System.out.println("UP");
                   } else if (event.getCode() == KeyCode.DOWN){
                           player.moveOn(player.Y, player.POSITIVE);
                   } else if (event.getCode() == KeyCode.RIGHT){
@@ -73,6 +72,7 @@ public class LabyrinthMain extends Application{
                   } else {
 	          System.out.println(event.getCode());
                   }
+                  System.out.println(player);
             }
       });
 
