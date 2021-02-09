@@ -1,5 +1,8 @@
 package com.orangomango.labyrinth;
 
+import javafx.scene.canvas.*;
+import javafx.scene.paint.Color;
+
 public class Player{
   private World world;
   private int x, y;
@@ -21,12 +24,19 @@ public class Player{
   public void setX(int x){this.x = x;}
   public void setY(int y){this.y = y;}
 
+  public void draw(GraphicsContext pen){
+    pen.setFill(Color.RED);
+    pen.setLineWidth(1);
+    pen.fillRect(getX()*50+5, getY()*50+5, 40, 40);
+  }
+
   public void moveOn(String direction, int m){
     if (direction == X){
       Block[] xrow = this.world.getXRow(getY());
       while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL){
         setX(getX() + m);
       }
+    this.world.update();
 
     } else if (direction == Y){
       Block[] yrow = this.world.getYRow(getX());

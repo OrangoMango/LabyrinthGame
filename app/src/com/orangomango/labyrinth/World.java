@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.Arrays;
 
 import javafx.scene.canvas.*;
+import javafx.scene.paint.Color;
 
 public class World{
   private Block[][] world;
@@ -16,6 +17,7 @@ public class World{
   public int height, width;
   public int[] start, end;
   public GraphicsContext pen;
+  private Player player;
 
   public final static String WALL = "wall";
   public final static String AIR = "none";
@@ -27,6 +29,17 @@ public class World{
 
   public void setPen(GraphicsContext pen){
     this.pen = pen;
+  }
+  
+  public void setPlayer(Player pl){
+    this.player = pl;
+ }
+
+  public void update(){
+     this.pen.setFill(Color.WHITE);
+     this.pen.fillRect(0, 0, this.width*50, this.height*50);
+     // try { Thread.sleep(2); } catch (InterruptedException e){e.printStackTrace();}
+     draw();
   }
 
   private Block[][] readWorld(String path){
@@ -108,6 +121,7 @@ public class World{
   			block.draw(this.pen);
   		}
   	}
+               this.player.draw(this.pen);
   }
 
   public Block getBlockAt(int x, int y){

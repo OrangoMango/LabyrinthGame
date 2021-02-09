@@ -7,6 +7,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 
 public class LabyrinthMain extends Application{
    public static void main(String[] args) {
@@ -18,9 +21,15 @@ public class LabyrinthMain extends Application{
      stage.setTitle("com.orangomango.labyrinth");
      
       // Create a simple world
-    World world = new World("../lib/world1.wld");
+    World world = new World("../lib/world2.wld");
     
      Canvas canvas = new Canvas(50*world.width, 50*world.height);
+
+     
+
+      canvas.setFocusTraversable(true);
+
+
      GridPane layout = new GridPane();
      layout.setPadding(new Insets(10, 10, 10, 10));
      layout.add(canvas, 0, 0);
@@ -33,8 +42,6 @@ public class LabyrinthMain extends Application{
     //block.draw(world.pen);
     System.out.println("\n"+block+"\n");
     
-    world.draw();
-     
      // Make border
      pen.setStroke(Color.BLACK);
      pen.setLineWidth(4);
@@ -45,9 +52,32 @@ public class LabyrinthMain extends Application{
      stage.setScene(scene);
 
     // Create a player on start position
-    Player player = new Player(world.start[0], world.start[1], world);
+    final Player player = new Player(world.start[0], world.start[1], world);
+    player.draw(pen);
+    world.setPlayer(player);
     System.out.println(player);
 
+    world.draw();
+    canvas.setOnKeyPressed(new EventHandler<KeyEvent>(){
+            @Override
+            public void handle(KeyEvent event){
+                  if (event.getCode() == KeyCode.UP){
+                          player.moveOn(player.Y, player.NEGATIVE);
+                          System.out.println("UP");
+                  } else if (event.getCode() == KeyCode.DOWN){
+                          player.moveOn(player.Y, player.POSITIVE);
+                  } else if (event.getCode() == KeyCode.RIGHT){
+                          player.moveOn(player.X, player.NEGATIVE);
+                  } else if (event.getCode() == KeyCode.LEFT){
+                          player.moveOn(player.X, player.POSITIVE);
+                  } else {
+	          System.out.println(event.getCode());
+                  }
+            }
+      });
+
+
+    /* 
     // Move player example from start to end
     player.moveOn(player.Y, player.NEGATIVE);
     player.moveOn(player.X, player.NEGATIVE);
@@ -57,6 +87,7 @@ public class LabyrinthMain extends Application{
     player.moveOn(player.X, player.POSITIVE);
     player.moveOn(player.Y, player.NEGATIVE);
     player.moveOn(player.X, player.POSITIVE);
+   */
 
     System.out.println(player); // Show current player state
     
