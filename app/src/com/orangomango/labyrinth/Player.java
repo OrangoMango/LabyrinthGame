@@ -36,7 +36,7 @@ public class Player{
       while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL){
         setX(getX() + m);
       }
-    this.world.update();
+    
 
     } else if (direction == Y){
       Block[] yrow = this.world.getYRow(getX());
@@ -46,6 +46,7 @@ public class Player{
     } else {
       System.err.println("Unknown direction");
     }
+    this.world.update();
   }
 
   public boolean isOnEnd(){

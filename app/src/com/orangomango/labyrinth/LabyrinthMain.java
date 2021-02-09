@@ -67,9 +67,9 @@ public class LabyrinthMain extends Application{
                   } else if (event.getCode() == KeyCode.DOWN){
                           player.moveOn(player.Y, player.POSITIVE);
                   } else if (event.getCode() == KeyCode.RIGHT){
-                          player.moveOn(player.X, player.NEGATIVE);
-                  } else if (event.getCode() == KeyCode.LEFT){
                           player.moveOn(player.X, player.POSITIVE);
+                  } else if (event.getCode() == KeyCode.LEFT){
+                          player.moveOn(player.X, player.NEGATIVE);
                   } else {
 	          System.out.println(event.getCode());
                   }
