@@ -27,7 +27,7 @@ public class Player{
   public void draw(GraphicsContext pen){
     pen.setFill(Color.RED);
     pen.setLineWidth(1);
-    pen.fillRect(getX()*50+5, getY()*50+5, 40, 40);
+    pen.fillRect(getX()*World.BLOCK_WIDTH+5, getY()*World.BLOCK_WIDTH+5, 40, 40);
   }
 
   public void moveOn(String direction, int m){

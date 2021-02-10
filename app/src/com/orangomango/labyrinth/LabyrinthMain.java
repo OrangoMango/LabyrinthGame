@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.canvas.*;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.event.EventHandler;
@@ -12,7 +13,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 
 public class LabyrinthMain extends Application{
-   public static void main(String[] args) {
+
+  public final static String FILE_PATH = "../lib/world1.wld";
+  public final static String FILE_PATH_2 = "../lib/world2.wld";
+
+  public static void main(String[] args) {
    	launch(args);
    }
 
@@ -20,25 +25,27 @@ public class LabyrinthMain extends Application{
   public void start(Stage stage){
      stage.setTitle("com.orangomango.labyrinth");
      
-      // Create a simple world
-    World world = new World("../lib/world1.wld");
+    // Create a simple world
+    final World world = new World(FILE_PATH);
+    world.setStage(stage);
     
-     Canvas canvas = new Canvas(50*world.width, 50*world.height);
-
-     
-
-      canvas.setFocusTraversable(true);
-
+    Canvas canvas = new Canvas(World.BLOCK_WIDTH*world.width, World.BLOCK_WIDTH*world.height);
+    Label label = new Label(FILE_PATH);
+    world.setAttributes(label, canvas);
+ 
+    canvas.setFocusTraversable(true);
 
      GridPane layout = new GridPane();
      layout.setPadding(new Insets(10, 10, 10, 10));
-     layout.add(canvas, 0, 0);
+     layout.add(label, 0, 0);
+     layout.add(canvas, 0, 1);
      
      GraphicsContext pen = canvas.getGraphicsContext2D();
      world.setPen(pen);
      
     System.out.println(world);
     Block block = world.getBlockAt(3, 1); // Get block at X:3 Y:1
+
     //block.draw(world.pen);
     System.out.println("\n"+block+"\n");
     
@@ -48,7 +55,7 @@ public class LabyrinthMain extends Application{
      pen.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
      
      
-     Scene scene = new Scene(layout, 50*world.width+20, 50*world.height+20);
+     Scene scene = new Scene(layout, World.BLOCK_WIDTH*world.width+20, World.BLOCK_WIDTH*world.height+20);
      stage.setScene(scene);
 
     // Create a player on start position
@@ -70,23 +77,32 @@ public class LabyrinthMain extends Application{
                   } else if (event.getCode() == KeyCode.LEFT){
                           player.moveOn(player.X, player.NEGATIVE);
                   } else {
-	          System.out.println(event.getCode());
+	                        System.out.println(event.getCode());
                   }
                   System.out.println(player);
+                  if (player.isOnEnd()){
+                    try{
+                      Thread.sleep(500);
+                    } catch (InterruptedException ex){
+                      ex.printStackTrace();
+                    }
+                    world.changeToWorld(FILE_PATH_2);
+                  }
             }
       });
 
 
     /* 
-    // Move player example from start to end
-    player.moveOn(player.Y, player.NEGATIVE);
-    player.moveOn(player.X, player.NEGATIVE);
-    player.moveOn(player.Y, player.POSITIVE);
-    player.moveOn(player.X, player.NEGATIVE);
-    player.moveOn(player.Y, player.NEGATIVE);
-    player.moveOn(player.X, player.POSITIVE);
-    player.moveOn(player.Y, player.NEGATIVE);
-    player.moveOn(player.X, player.POSITIVE);
+      Move player example from start to end (WORLD1)
+
+      player.moveOn(player.Y, player.NEGATIVE);
+      player.moveOn(player.X, player.NEGATIVE);
+      player.moveOn(player.Y, player.POSITIVE);
+      player.moveOn(player.X, player.NEGATIVE);
+      player.moveOn(player.Y, player.NEGATIVE);
+      player.moveOn(player.X, player.POSITIVE);
+      player.moveOn(player.Y, player.NEGATIVE);
+      player.moveOn(player.X, player.POSITIVE);
    */
 
     System.out.println(player); // Show current player state

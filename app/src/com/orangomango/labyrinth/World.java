@@ -9,37 +9,66 @@ import java.io.*;
 import java.util.Arrays;
 
 import javafx.scene.canvas.*;
+import javafx.stage.Stage;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class World{
   private Block[][] world;
   private String filePath;
   public int height, width;
   public int[] start, end;
-  public GraphicsContext pen;
+  private GraphicsContext pen;
   private Player player;
+  private Stage stage;
+  private Label label;
+  private Canvas canvas;
 
   public final static String WALL = "wall";
   public final static String AIR = "none";
+  public final static int BLOCK_WIDTH = 50;
 
   public World(String path){
     filePath = path;
     world = readWorld(filePath);
   }
 
-  public void setPen(GraphicsContext pen){
-    this.pen = pen;
-  }
+  public void setPen(GraphicsContext pen){this.pen = pen; }
   
-  public void setPlayer(Player pl){
-    this.player = pl;
- }
+  public void setPlayer(Player pl){this.player = pl; }
+
+  public void setStage(Stage st){this.stage = st; }
+
+  public void setAttributes(Label label, Canvas canvas){
+    this.label = label;
+    this.canvas = canvas;
+  }
+
+  public void changeToWorld(String path){
+    filePath = path;
+    world = readWorld(filePath);
+    this.canvas.setHeight(height*BLOCK_WIDTH);
+    this.canvas.setWidth(width*BLOCK_WIDTH);
+    this.stage.setHeight(height*BLOCK_WIDTH+40);
+    this.stage.setWidth(width*BLOCK_WIDTH+20);
+    this.player.setX(start[0]);
+    this.player.setY(start[1]);
+    this.label.setText(filePath);
+    update();
+  }
 
   public void update(){
-     this.pen.setFill(Color.WHITE);
-     this.pen.fillRect(0, 0, this.width*50, this.height*50);
-     // try { Thread.sleep(2); } catch (InterruptedException e){e.printStackTrace();}
-     draw();
+    this.pen.setFill(Color.WHITE);
+    this.pen.fillRect(0, 0, this.width*BLOCK_WIDTH, this.height*BLOCK_WIDTH);
+    draw();
+  }
+
+  private void drawPoints(){
+    this.pen.setStroke(Color.GREEN);
+    this.pen.setFont(new Font("Arial", 35));
+    this.pen.strokeText("S", start[0]*BLOCK_WIDTH+5, start[1]*BLOCK_WIDTH+35);
+    this.pen.strokeText("E", end[0]*BLOCK_WIDTH+5, end[1]*BLOCK_WIDTH+35);
   }
 
   private Block[][] readWorld(String path){
@@ -86,9 +115,9 @@ public class World{
 
   /**
     Parse give string from file and return an array
-    @param String data - string with all file data
-    @param int h - world height
-    @param int w - world width
+    @param data - string with all file data
+    @param h - world height
+    @param w - world width
   */
   private Block[][] parseWorldData(String data, int h, int w){
     String[] current = data.split(",");
@@ -121,7 +150,8 @@ public class World{
   			block.draw(this.pen);
   		}
   	}
-               this.player.draw(this.pen);
+    this.player.draw(this.pen);
+    drawPoints();
   }
 
   public Block getBlockAt(int x, int y){
