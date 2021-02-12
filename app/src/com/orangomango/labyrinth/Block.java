@@ -4,7 +4,7 @@ import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 
 public class Block{
-  private String type;
+  protected String type;
   private int x, y;
 
   /**
@@ -26,6 +26,9 @@ public class Block{
   public String getType(){
     return this.type;
   }
+
+  public int getX(){ return x; }
+  public int getY(){ return y; }
 
   /**
     Create a block instance from a given int (0 or 1)

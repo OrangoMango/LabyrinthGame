@@ -23,7 +23,7 @@ public class World{
   private Player player;
   private Stage stage;
   private Label label;
-  private Canvas canvas;
+  protected Canvas canvas;
 
   public final static String WALL = "wall";
   public final static String AIR = "none";
@@ -50,11 +50,15 @@ public class World{
     world = readWorld(filePath);
     this.canvas.setHeight(height*BLOCK_WIDTH);
     this.canvas.setWidth(width*BLOCK_WIDTH);
-    this.stage.setHeight(height*BLOCK_WIDTH+40);
-    this.stage.setWidth(width*BLOCK_WIDTH+20);
+    try {
+      this.stage.setHeight(height*BLOCK_WIDTH+40);
+      this.stage.setWidth(width*BLOCK_WIDTH+20);
+      this.label.setText(filePath);
+    } catch (NullPointerException e){
+      System.out.println("There are some null values!");
+    }
     this.player.setX(start[0]);
     this.player.setY(start[1]);
-    this.label.setText(filePath);
     update();
   }
 

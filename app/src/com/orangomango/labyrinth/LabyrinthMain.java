@@ -12,6 +12,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 
+import com.orangomango.labyrinth.menu.Menu;
+
 public class LabyrinthMain extends Application{
 
   public final static String FILE_PATH = "../lib/world1.wld";
@@ -23,7 +25,12 @@ public class LabyrinthMain extends Application{
 
   @Override
   public void start(Stage stage){
-     stage.setTitle("com.orangomango.labyrinth");
+
+    // Start Menu
+    Menu menu = new Menu();
+    menu.start();
+    menu.setStageExt(stage);
+    stage.setTitle("com.orangomango.labyrinth");
      
     // Create a simple world
     final World world = new World(FILE_PATH);
@@ -90,6 +97,7 @@ public class LabyrinthMain extends Application{
                   }
             }
       });
+    //stage.setResizable(false);
 
 
     /* 
@@ -106,7 +114,5 @@ public class LabyrinthMain extends Application{
    */
 
     System.out.println(player); // Show current player state
-    
-    stage.show();
   }
 }
