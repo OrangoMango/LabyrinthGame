@@ -12,16 +12,23 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.util.Random;
 
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
 
 public class Editor{
   private Stage stage;
-  private final static String PATH = "/home/runner/";
+  private final EditableWorld edworld;
+  private final static String PATH = "/home/paul/";
+  private static String WORKING_FILE_PATH = "";
+  private static String CURRENT_FILE_PATH = "";
+  private boolean saved = true;
 
   public Editor(){
     setupDirectory();
@@ -35,25 +42,51 @@ public class Editor{
     toolbar.setOrientation(Orientation.HORIZONTAL);
 
     createNewWorld("test");
-    final EditableWorld edworld = new EditableWorld(PATH+".labyrinthgame/Editor/Levels/test.wld");
+    edworld = new EditableWorld(PATH+".labyrinthgame/Editor/Levels/test.wld");
 
     Button newBtn = new Button("New");
+    newBtn.setOnAction(event -> {
+      NewWidget wid = new NewWidget();
+    });
     Button saveBtn = new Button("Save");
     saveBtn.setOnAction(event -> {
-      FileChooser chooser = new FileChooser();
-      chooser.setInitialDirectory(new File(PATH));
-      chooser.setTitle("Save world");
-      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
-      chooser.showSaveDialog(this.stage);
+      try {
+        if (CURRENT_FILE_PATH.equals("")){
+          FileChooser chooser = new FileChooser();
+          chooser.setInitialDirectory(new File(PATH));
+          chooser.setTitle("Save world");
+          chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
+          File f = chooser.showSaveDialog(this.stage);
+          open(f);
+        } else {
+          this.saved = true;
+          copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
+        }
+      } catch (Exception e){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("Error while parsing file");
+        alert.setTitle("Error");
+        alert.setContentText("Could not save world file!");
+        alert.showAndWait();
+      }
+      
     });
     Button openBtn = new Button("Open");
     openBtn.setOnAction(event -> {
-      FileChooser chooser = new FileChooser();
-      chooser.setInitialDirectory(new File(PATH));
-      chooser.setTitle("Open world");
-      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
-      File f = chooser.showOpenDialog(this.stage);
-      edworld.changeToWorld(f.getAbsolutePath());
+      try {
+	      FileChooser chooser = new FileChooser();
+	      chooser.setInitialDirectory(new File(PATH));
+	      chooser.setTitle("Open world");
+	      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
+	      File f = chooser.showOpenDialog(this.stage);
+             open(f);
+      } catch (Exception e){
+             Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Error while parsing file");
+            alert.setTitle("Error");
+            alert.setContentText("Could not open world file!");
+            alert.showAndWait();
+      }
     });
 
     Button addCBtn = new Button("AC");
@@ -68,7 +101,7 @@ public class Editor{
 
     toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), runBtn, stopBtn, new Separator(), delBtn);
 
-    //Setup world editor
+    // Setup world editor
     ScrollPane scrollpane = new ScrollPane();
     scrollpane.setMaxWidth(515);
     scrollpane.setMaxHeight(400);
@@ -91,9 +124,10 @@ public class Editor{
       @Override
       public void handle(MouseEvent event){
         EditableBlock edblock = EditableBlock.fromBlock(edworld.getBlockAtCoord((int)event.getX(), (int)event.getY()));
-        // edblock.toggleType();
-        // edworld.update();
-        System.out.println(edblock);
+        edblock.toggleType();
+        edworld.setBlockOn(edblock);
+        edworld.updateOnFile();
+        unsaved();
       }
     });
 
@@ -105,6 +139,30 @@ public class Editor{
 
   public void start(){
     this.stage.show();
+  }
+
+  private void open(File f){
+    try {
+      Random r = new Random();
+      int number = r.nextInt();
+
+      WORKING_FILE_PATH = PATH +".labyrinthgame/Editor/Cache/cache"+number+".wld.ns"; // ns = not saved
+      CURRENT_FILE_PATH = f.getAbsolutePath();
+      copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
+        
+      edworld.changeToWorld(WORKING_FILE_PATH);
+      this.saved = true;
+    } catch (Exception e){
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setHeaderText("Error while parsing file");
+      alert.setTitle("Error");
+      alert.setContentText("Could not load world file!");
+      alert.showAndWait();
+    }
+  }
+
+  private void unsaved(){
+    this.saved = false;
   }
 
   private void createNewWorld(String name){
@@ -132,7 +190,19 @@ public class Editor{
   private void setupDirectory(){
     checkAndCreateDir(PATH+".labyrinthgame");
     checkAndCreateDir(PATH+".labyrinthgame/Editor");
+    checkAndCreateDir(PATH+".labyrinthgame/Editor/Cache");
     checkAndCreateDir(PATH+".labyrinthgame/Editor/Levels");
+  }
 
+  private void copyWorld(String path1, String path2){
+    try {
+      File second = new File(path2);  // Delete second file if exists for replacement
+      if (second.exists()) {
+        second.delete();
+      }
+      Files.copy(new File(path1).toPath(), new File(path2).toPath());
+    } catch (IOException e){
+      e.printStackTrace();
+    }
   }
 }

@@ -15,8 +15,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class World{
-  private Block[][] world;
-  private String filePath;
+  protected Block[][] world;
+  protected String filePath;
   public int height, width;
   public int[] start, end;
   private GraphicsContext pen;
