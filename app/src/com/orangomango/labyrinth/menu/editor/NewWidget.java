@@ -1,5 +1,6 @@
 package com.orangomango.labyrinth.menu.editor;
 
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.scene.Scene;
@@ -18,6 +19,8 @@ import javafx.geometry.Insets;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
+import com.orangomango.labyrinth.menu.editor.Editor;
+
 import java.io.*;
 
 public class NewWidget{
@@ -29,6 +32,8 @@ public class NewWidget{
 
   private Spinner spinner1, spinner2, spinner3, spinner4;
   private Label pathL;
+  private EditableWorld ed;
+  private Editor editor;
 
   private int pWidth, pHeight = 2;
   private int sX, sY, eX, eY;
@@ -41,12 +46,14 @@ public class NewWidget{
     stage.focusedProperty().addListener(new ChangeListener<Boolean>(){
       @Override
       public void changed(ObservableValue<? extends Boolean> o, Boolean v, Boolean v1){
-        System.out.println(v1.booleanValue() == false);
+        //System.out.println(v1.booleanValue() == false);
         if (v1.booleanValue() == false){
           stage.requestFocus();
         }
       }
     });
+    
+    stage.setOnCloseRequest(event -> Platform.exit());
 
     GridPane layout = new GridPane();
     
@@ -81,11 +88,12 @@ public class NewWidget{
     l1.setPadding(new Insets(10, 10, 10, 10));
     l1.setHgap(10);
     l1.setVgap(10);
-    Label sel = new Label("Select file path: null");
+    Label sel = new Label("Select file path: \n\nnull");
     Button browse = new Button("Browse");
     browse.setOnAction(event -> {
       FileChooser chooser = new FileChooser();
-      chooser.setTitle("Select new level file path");
+      chooser.setTitle("Select new level file path   >> ENDING WITH .wld <<");
+      chooser.setInitialDirectory(new File(Editor.PATH+".labyrinthgame/Editor/Levels/"));
       chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
       try {
            this.file = chooser.showSaveDialog(this.stage);
@@ -227,6 +235,14 @@ public class NewWidget{
     pen.setStroke(Color.RED);
     pen.strokeRect(10, 10, this.pWidth*80/30, this.pHeight*80/30);    // x : 80 = width : 30
   }
+  
+  public String getPath(){
+  	return this.file.getAbsolutePath();
+  }
+  
+  public void setEDW(EditableWorld ed){
+  	this.ed = ed;
+  }
 
   public void finishWidget(){
     try {
@@ -283,8 +299,17 @@ public class NewWidget{
 	writer.write(String.format("%s,%s\n", this.sX, this.sY));
 	writer.write(String.format("%s,%s", this.eX, this.eY));
 	writer.close();
+	if (!this.ed.equals(null)){
+		System.out.println("If null");
+		this.editor.open(new File(getPath()));
+		Editor.updateCurrentWorldFile(getPath());
+	}
     } catch (IOException ex){}
     this.stage.hide();
+}
+
+public void setEditor(Editor editor){
+	this.editor = editor;
 }
 
   public void switchScene(int move){

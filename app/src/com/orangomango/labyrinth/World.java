@@ -48,24 +48,36 @@ public class World{
   public void changeToWorld(String path){
     filePath = path;
     world = readWorld(filePath);
-    this.canvas.setHeight(height*BLOCK_WIDTH);
-    this.canvas.setWidth(width*BLOCK_WIDTH);
+    try {
+    	this.canvas.setHeight(this.height*BLOCK_WIDTH);
+    	this.canvas.setWidth(this.width*BLOCK_WIDTH);
+    } catch (NullPointerException e){
+    	System.out.println("There are some null values! (1)");
+    }
     try {
       this.stage.setHeight(height*BLOCK_WIDTH+40);
       this.stage.setWidth(width*BLOCK_WIDTH+20);
       this.label.setText(filePath);
     } catch (NullPointerException e){
-      System.out.println("There are some null values!");
+      System.out.println("There are some null values! (2)");
     }
-    this.player.setX(start[0]);
-    this.player.setY(start[1]);
+    try {
+    	this.player.setX(start[0]);
+    	this.player.setY(start[1]);
+    } catch (NullPointerException e){
+    	System.out.println("There are some null values! (3)");
+    }
     update();
   }
 
   public void update(){
-    this.pen.setFill(Color.WHITE);
-    this.pen.fillRect(0, 0, this.width*BLOCK_WIDTH, this.height*BLOCK_WIDTH);
-    draw();
+    try{
+    	this.pen.setFill(Color.WHITE);
+    	this.pen.fillRect(0, 0, this.width*BLOCK_WIDTH, this.height*BLOCK_WIDTH);
+    	draw();
+    } catch (NullPointerException e){
+    	System.out.println("There are some null values! (4)");
+    }
   }
 
   private void drawPoints(){

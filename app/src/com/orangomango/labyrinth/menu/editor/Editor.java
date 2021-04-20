@@ -1,5 +1,6 @@
 package com.orangomango.labyrinth.menu.editor;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
@@ -12,7 +13,11 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 
 import java.io.*;
@@ -25,7 +30,7 @@ import com.orangomango.labyrinth.Block;
 public class Editor{
   private Stage stage;
   private final EditableWorld edworld;
-  private final static String PATH = "/home/paul/";
+  public final static String PATH = "/home/paul/";
   private static String WORKING_FILE_PATH = "";
   private static String CURRENT_FILE_PATH = "";
   private boolean saved = true;
@@ -34,6 +39,7 @@ public class Editor{
     setupDirectory();
     this.stage = new Stage();
     this.stage.setTitle("LabyrinthGame - Editor");
+    this.stage.setOnCloseRequest(event -> Platform.exit());
 
     GridPane layout = new GridPane();
 
@@ -47,21 +53,19 @@ public class Editor{
     Button newBtn = new Button("New");
     newBtn.setOnAction(event -> {
       NewWidget wid = new NewWidget();
+      wid.setEDW(edworld);
+      wid.setEditor(this);
     });
     Button saveBtn = new Button("Save");
     saveBtn.setOnAction(event -> {
       try {
-        if (CURRENT_FILE_PATH.equals("")){
-          FileChooser chooser = new FileChooser();
-          chooser.setInitialDirectory(new File(PATH));
-          chooser.setTitle("Save world");
-          chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
-          File f = chooser.showSaveDialog(this.stage);
-          open(f);
-        } else {
-          this.saved = true;
-          copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
-        }
+       this.saved = true;
+       copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("File saved successfully");
+        alert.setTitle("File saved");
+        alert.setContentText("File saved successfully.");
+        alert.showAndWait();
       } catch (Exception e){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText("Error while parsing file");
@@ -73,9 +77,9 @@ public class Editor{
     });
     Button openBtn = new Button("Open");
     openBtn.setOnAction(event -> {
-      try {
+    try {
 	      FileChooser chooser = new FileChooser();
-	      chooser.setInitialDirectory(new File(PATH));
+	      chooser.setInitialDirectory(new File(PATH+".labyrinthgame/Editor/Levels/"));
 	      chooser.setTitle("Open world");
 	      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 	      File f = chooser.showOpenDialog(this.stage);
@@ -90,23 +94,32 @@ public class Editor{
     });
 
     Button addCBtn = new Button("AC");
+    addCBtn.setOnAction(event -> edworld.addColumn());
     Button addRBtn = new Button("AR");
+    addRBtn.setOnAction(event -> edworld.addRow());
     Button rmCBtn = new Button("RC");
+    rmCBtn.setOnAction(event -> checkValidity(edworld.removeColumn()));
     Button rmRBtn = new Button("RR");
+    rmRBtn.setOnAction(event -> checkValidity(edworld.removeRow()));
 
     Button runBtn = new Button("Run");
-    Button stopBtn = new Button("Stop");
 
-    Button delBtn = new Button("Del");
+    Button sseBtn = new Button("SSE");
 
-    toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), runBtn, stopBtn, new Separator(), delBtn);
+    toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn);
 
     // Setup world editor
     ScrollPane scrollpane = new ScrollPane();
-    scrollpane.setMaxWidth(515);
-    scrollpane.setMaxHeight(400);
+    scrollpane.setPrefSize(700, 460);
 
-    
+    if (getCurrentFilePath() == null){
+    	NewWidget wid = new NewWidget();
+    	wid.setEDW(edworld);
+    	wid.setEditor(this);
+    } else {
+    	System.out.println("Last file: "+getCurrentFilePath());
+    	open(new File(getCurrentFilePath()));
+   }
 
     BorderPane pane = new BorderPane();
     Canvas canvas = new Canvas(edworld.width*EditableWorld.BLOCK_WIDTH, edworld.height*EditableWorld.BLOCK_WIDTH);
@@ -133,15 +146,43 @@ public class Editor{
 
     layout.add(toolbar, 0, 0);
     layout.add(scrollpane, 0, 1);
-    this.stage.setScene(new Scene(layout, 515, 420));
-    //this.stage.setResizable(false);
+    this.stage.setScene(new Scene(layout, 705, 500));
+    //this.stage.setResizable(false)
   }
 
   public void start(){
     this.stage.show();
   }
+  
+  public static void updateCurrentWorldFile(String currentPath){
+  	File f = new File(PATH+".labyrinthgame/Editor/Cache/currentFile.data");
+  	try {
+	  	if (!f.exists()){
+	  		f.createNewFile();
+	  	}
+  		BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+  		writer.write(currentPath);
+  		writer.close();
+  	} catch (IOException e){
+  	}
+  }
+  
+  public String getCurrentFilePath(){
+  	 File f = new File(PATH+".labyrinthgame/Editor/Cache/currentFile.data");
+  	 if (!f.exists()){
+  	 	return null;
+  	 }
+	  try {
+	  	BufferedReader reader = new BufferedReader(new FileReader(f));
+	  	String p = reader.readLine();
+	  	reader.close();
+	  	return p;
+	  } catch (IOException e){
+	  }
+	  return null;
+  }
 
-  private void open(File f){
+  public void open(File f){
     try {
       Random r = new Random();
       int number = r.nextInt();
@@ -149,7 +190,6 @@ public class Editor{
       WORKING_FILE_PATH = PATH +".labyrinthgame/Editor/Cache/cache"+number+".wld.ns"; // ns = not saved
       CURRENT_FILE_PATH = f.getAbsolutePath();
       copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
-        
       edworld.changeToWorld(WORKING_FILE_PATH);
       this.saved = true;
     } catch (Exception e){
@@ -158,7 +198,20 @@ public class Editor{
       alert.setTitle("Error");
       alert.setContentText("Could not load world file!");
       alert.showAndWait();
+      e.printStackTrace();
     }
+  }
+  
+ private void checkValidity(boolean value){
+  	if (!value){
+  		Alert alert = new Alert(Alert.AlertType.ERROR);
+	      alert.setHeaderText("Could not delete row/column");
+	      alert.setTitle("Error");
+	      Label label = new Label("You can not delete the last row/column if start\nor end position is contained in it!");
+	      label.setWrapText(true);
+	      alert.getDialogPane().setContent(label);
+	      alert.showAndWait();
+  	}
   }
 
   private void unsaved(){

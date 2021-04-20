@@ -17,7 +17,7 @@ import com.orangomango.labyrinth.menu.Menu;
 public class LabyrinthMain extends Application{
 
   public final static String FILE_PATH = "../lib/world1.wld";
-  public final static String FILE_PATH_2 = "../lib/world2.wld";
+  public final static String FILE_PATH_2 = "/home/paul/Desktop/test.wld";  //../lib/world2.wld";
 
   public static void main(String[] args) {
    	launch(args);
@@ -50,11 +50,11 @@ public class LabyrinthMain extends Application{
      GraphicsContext pen = canvas.getGraphicsContext2D();
      world.setPen(pen);
      
-    System.out.println(world);
+    //System.out.println(world);
     Block block = world.getBlockAt(3, 1); // Get block at X:3 Y:1
 
     //block.draw(world.pen);
-    System.out.println("\n"+block+"\n");
+    //System.out.println("\n"+block+"\n");
     
      // Make border
      pen.setStroke(Color.BLACK);
@@ -69,7 +69,7 @@ public class LabyrinthMain extends Application{
     final Player player = new Player(world.start[0], world.start[1], world);
     player.draw(pen);
     world.setPlayer(player);
-    System.out.println(player);
+    //System.out.println(player);
 
     world.draw();
     canvas.setOnKeyPressed(new EventHandler<KeyEvent>(){
@@ -113,6 +113,6 @@ public class LabyrinthMain extends Application{
       player.moveOn(player.X, player.POSITIVE);
    */
 
-    System.out.println(player); // Show current player state
+    //System.out.println(player); // Show current player state
   }
 }
