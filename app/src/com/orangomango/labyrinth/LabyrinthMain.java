@@ -17,7 +17,7 @@ import com.orangomango.labyrinth.menu.Menu;
 public class LabyrinthMain extends Application{
 
   public final static String FILE_PATH = "../lib/world1.wld";
-  public final static String FILE_PATH_2 = "/home/paul/Desktop/test.wld";  //../lib/world2.wld";
+  public final static String FILE_PATH_2 = "../lib/world2.wld";
 
   public static void main(String[] args) {
    	launch(args);
