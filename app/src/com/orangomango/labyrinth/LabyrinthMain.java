@@ -26,6 +26,8 @@ public class LabyrinthMain extends Application{
   @Override
   public void start(Stage stage){
 
+    System.out.println(System.getProperty("user.home")); // Know user's home
+
     // Start Menu
     Menu menu = new Menu();
     menu.start();

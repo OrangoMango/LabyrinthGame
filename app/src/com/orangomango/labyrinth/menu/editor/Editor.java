@@ -30,7 +30,7 @@ import com.orangomango.labyrinth.Block;
 public class Editor{
   private Stage stage;
   private final EditableWorld edworld;
-  public final static String PATH = "/home/paul/";
+  public final static String PATH = System.getProperty("user.home")+File.separator;
   private static String WORKING_FILE_PATH = "";
   private static String CURRENT_FILE_PATH = "";
   private boolean saved = true;
@@ -48,7 +48,7 @@ public class Editor{
     toolbar.setOrientation(Orientation.HORIZONTAL);
 
     createNewWorld("test");
-    edworld = new EditableWorld(PATH+".labyrinthgame/Editor/Levels/test.wld");
+    edworld = new EditableWorld(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+"test.wld");
 
     Button newBtn = new Button("New");
     newBtn.setOnAction(event -> {
@@ -79,7 +79,7 @@ public class Editor{
     openBtn.setOnAction(event -> {
     try {
 	      FileChooser chooser = new FileChooser();
-	      chooser.setInitialDirectory(new File(PATH+".labyrinthgame/Editor/Levels/"));
+	      chooser.setInitialDirectory(new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+""));
 	      chooser.setTitle("Open world");
 	      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 	      File f = chooser.showOpenDialog(this.stage);
@@ -155,7 +155,7 @@ public class Editor{
   }
   
   public static void updateCurrentWorldFile(String currentPath){
-  	File f = new File(PATH+".labyrinthgame/Editor/Cache/currentFile.data");
+  	File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"currentFile.data");
   	try {
 	  	if (!f.exists()){
 	  		f.createNewFile();
@@ -168,7 +168,7 @@ public class Editor{
   }
   
   public String getCurrentFilePath(){
-  	 File f = new File(PATH+".labyrinthgame/Editor/Cache/currentFile.data");
+  	 File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"currentFile.data");
   	 if (!f.exists()){
   	 	return null;
   	 }
@@ -187,7 +187,7 @@ public class Editor{
       Random r = new Random();
       int number = r.nextInt();
 
-      WORKING_FILE_PATH = PATH +".labyrinthgame/Editor/Cache/cache"+number+".wld.ns"; // ns = not saved
+      WORKING_FILE_PATH = PATH +".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"cache"+number+".wld.ns"; // ns = not saved
       CURRENT_FILE_PATH = f.getAbsolutePath();
       copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
       edworld.changeToWorld(WORKING_FILE_PATH);
@@ -219,7 +219,7 @@ public class Editor{
   }
 
   private void createNewWorld(String name){
-    File f = new File(PATH+".labyrinthgame/Editor/Levels/"+name+".wld");
+    File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+""+name+".wld");
     try {
       f.createNewFile();
       BufferedWriter writer = new BufferedWriter(new FileWriter(f));
@@ -242,9 +242,9 @@ public class Editor{
 
   private void setupDirectory(){
     checkAndCreateDir(PATH+".labyrinthgame");
-    checkAndCreateDir(PATH+".labyrinthgame/Editor");
-    checkAndCreateDir(PATH+".labyrinthgame/Editor/Cache");
-    checkAndCreateDir(PATH+".labyrinthgame/Editor/Levels");
+    checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor");
+    checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache");
+    checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels");
   }
 
   private void copyWorld(String path1, String path2){

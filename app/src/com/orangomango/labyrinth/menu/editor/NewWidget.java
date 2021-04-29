@@ -93,7 +93,7 @@ public class NewWidget{
     browse.setOnAction(event -> {
       FileChooser chooser = new FileChooser();
       chooser.setTitle("Select new level file path   >> ENDING WITH .wld <<");
-      chooser.setInitialDirectory(new File(Editor.PATH+".labyrinthgame/Editor/Levels/"));
+      chooser.setInitialDirectory(new File(Editor.PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+""));
       chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
       try {
            this.file = chooser.showSaveDialog(this.stage);
