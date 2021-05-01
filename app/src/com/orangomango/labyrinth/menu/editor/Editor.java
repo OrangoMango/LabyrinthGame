@@ -47,8 +47,8 @@ public class Editor{
     ToolBar toolbar = new ToolBar();
     toolbar.setOrientation(Orientation.HORIZONTAL);
 
-    createNewWorld("test");
-    edworld = new EditableWorld(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+"test.wld");
+    createNewWorld("testSystemWorld-DefaultName_NoCopy");
+    edworld = new EditableWorld(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+"testSystemWorld-DefaultName_NoCopy.wld.sys");
 
     Button newBtn = new Button("New");
     newBtn.setOnAction(event -> {
@@ -219,7 +219,7 @@ public class Editor{
   }
 
   private void createNewWorld(String name){
-    File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+""+name+".wld");
+    File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+""+name+".wld"+ ((name == "testSystemWorld-DefaultName_NoCopy") ? ".sys" : ""));
     try {
       f.createNewFile();
       BufferedWriter writer = new BufferedWriter(new FileWriter(f));

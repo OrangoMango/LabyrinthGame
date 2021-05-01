@@ -106,8 +106,8 @@ public class NewWidget{
      }
     });
     l1.add(sel, 0, 0);
-    l1.add(browse, 1, 0);
-    l1.add(boxes[0], 0, 1, 2, 1);
+    l1.add(browse, 0, 1);
+    l1.add(boxes[0], 0, 2, 2, 1);
     
     // Scene 2
     GridPane l2 = new GridPane();
@@ -229,7 +229,7 @@ public class NewWidget{
   }
 
   public void updateCanvas(GraphicsContext pen, Label preview){
-    preview.setText(String.format("%sx%s", this.pWidth, this.pHeight));
+    preview.setText(String.format("preview (%sx%s)", this.pWidth, this.pHeight));
     pen.setFill(Color.WHITE);
     pen.fillRect(0,0,100,100);
     pen.setStroke(Color.RED);
