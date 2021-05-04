@@ -28,11 +28,15 @@ public class Menu{
 
       Button editorBtn = new Button("Editor");
       editorBtn.setOnAction(event -> {
-        startEditor();
+        startEditor(null);
         stop();
       });
 
       Button levelsBtn = new Button("My levels");
+      levelsBtn.setOnAction(event -> {
+        startEditor(null);
+        stop();
+      });
 
       Label sign = new Label("Game by OrangoMango (C)2021\n https://orangomango.github.io");
       layout.add(playBtn, 0, 0);
@@ -43,8 +47,8 @@ public class Menu{
       this.stage.setScene(new Scene(layout, 300, 200));
     }
 
-    private void startEditor(){
-      Editor editor = new Editor();
+    private void startEditor(String param){
+      Editor editor = new Editor(param);
       editor.start();
     }
 

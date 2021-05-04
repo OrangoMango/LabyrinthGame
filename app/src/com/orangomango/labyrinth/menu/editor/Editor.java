@@ -37,7 +37,7 @@ public class Editor{
   private static String CURRENT_FILE_PATH = "";
   private boolean saved = true;
 
-  public Editor(){
+  public Editor(String editorFilePath){
     setupDirectory();
     this.stage = new Stage();
     this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
@@ -120,10 +120,13 @@ public class Editor{
     	NewWidget wid = new NewWidget();
     	wid.setEDW(edworld);
     	wid.setEditor(this);
-    } else {
+    } else if (editorFilePath == null){
     	System.out.println("Last file: "+getCurrentFilePath());
     	open(new File(getCurrentFilePath()));
-   }
+    } else {
+      System.out.println("Opening: "+editorFilePath);
+      open(new File(editorFilePath));
+    }
 
     BorderPane pane = new BorderPane();
     Canvas canvas = new Canvas(edworld.width*EditableWorld.BLOCK_WIDTH, edworld.height*EditableWorld.BLOCK_WIDTH);
@@ -169,7 +172,7 @@ public class Editor{
   		writer.close();
   	} catch (IOException e){
   	}
-  }
+  } 
   
   public String getCurrentFilePath(){
   	 File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"currentFile.data");
@@ -195,6 +198,7 @@ public class Editor{
       WORKING_FILE_PATH = PATH +".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"cache["+getFileName()+"]"+number+".wld.ns"; // ns = not saved
       copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
       edworld.changeToWorld(WORKING_FILE_PATH);
+      updateCurrentWorldFile(CURRENT_FILE_PATH);
       saved();
     } catch (Exception e){
       Alert alert = new Alert(Alert.AlertType.ERROR);
