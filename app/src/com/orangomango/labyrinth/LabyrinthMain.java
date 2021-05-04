@@ -6,7 +6,6 @@ import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.canvas.*;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
@@ -56,15 +55,9 @@ public class LabyrinthMain extends Application{
     Block block = world.getBlockAt(3, 1); // Get block at X:3 Y:1
 
     //block.draw(world.pen);
-    //System.out.println("\n"+block+"\n");
-    
-     // Make border
-     pen.setStroke(Color.BLACK);
-     pen.setLineWidth(4);
-     pen.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    //System.out.println("\n"+block+"\n");     
      
-     
-     Scene scene = new Scene(layout, World.BLOCK_WIDTH*world.width+20, World.BLOCK_WIDTH*world.height+20);
+     Scene scene = new Scene(layout, World.BLOCK_WIDTH*world.width+20, World.BLOCK_WIDTH*world.height+40);
      stage.setScene(scene);
 
     // Create a player on start position
@@ -88,7 +81,6 @@ public class LabyrinthMain extends Application{
                   } else {
 	                        System.out.println(event.getCode());
                   }
-                  System.out.println(player);
                   if (player.isOnEnd()){
                     try{
                       Thread.sleep(500);

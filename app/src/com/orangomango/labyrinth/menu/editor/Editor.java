@@ -22,6 +22,8 @@ import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Random;
 
 import com.orangomango.labyrinth.Player;
@@ -38,7 +40,7 @@ public class Editor{
   public Editor(){
     setupDirectory();
     this.stage = new Stage();
-    this.stage.setTitle("LabyrinthGame - Editor");
+    this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
     this.stage.setOnCloseRequest(event -> Platform.exit());
 
     GridPane layout = new GridPane();
@@ -59,7 +61,7 @@ public class Editor{
     Button saveBtn = new Button("Save");
     saveBtn.setOnAction(event -> {
       try {
-       this.saved = true;
+       saved();
        copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("File saved successfully");
@@ -83,7 +85,7 @@ public class Editor{
 	      chooser.setTitle("Open world");
 	      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 	      File f = chooser.showOpenDialog(this.stage);
-             open(f);
+        open(f);
       } catch (Exception e){
              Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Error while parsing file");
@@ -94,17 +96,19 @@ public class Editor{
     });
 
     Button addCBtn = new Button("AC");
-    addCBtn.setOnAction(event -> edworld.addColumn());
+    addCBtn.setOnAction(event -> {edworld.addColumn(); unsaved();});
     Button addRBtn = new Button("AR");
-    addRBtn.setOnAction(event -> edworld.addRow());
+    addRBtn.setOnAction(event -> {edworld.addRow(); unsaved();});
     Button rmCBtn = new Button("RC");
-    rmCBtn.setOnAction(event -> checkValidity(edworld.removeColumn()));
+    rmCBtn.setOnAction(event -> {checkValidity(edworld.removeColumn()); unsaved();});
     Button rmRBtn = new Button("RR");
-    rmRBtn.setOnAction(event -> checkValidity(edworld.removeRow()));
+    rmRBtn.setOnAction(event -> {checkValidity(edworld.removeRow()); unsaved();});
 
     Button runBtn = new Button("Run");
+    runBtn.setOnAction(event -> new LevelExe(CURRENT_FILE_PATH, getFileName(), saved));
 
     Button sseBtn = new Button("SSE");
+    sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
 
     toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn);
 
@@ -187,11 +191,11 @@ public class Editor{
       Random r = new Random();
       int number = r.nextInt();
 
-      WORKING_FILE_PATH = PATH +".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"cache"+number+".wld.ns"; // ns = not saved
       CURRENT_FILE_PATH = f.getAbsolutePath();
+      WORKING_FILE_PATH = PATH +".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"cache["+getFileName()+"]"+number+".wld.ns"; // ns = not saved
       copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
       edworld.changeToWorld(WORKING_FILE_PATH);
-      this.saved = true;
+      saved();
     } catch (Exception e){
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setHeaderText("Error while parsing file");
@@ -204,7 +208,7 @@ public class Editor{
   
  private void checkValidity(boolean value){
   	if (!value){
-  		Alert alert = new Alert(Alert.AlertType.ERROR);
+  		  Alert alert = new Alert(Alert.AlertType.ERROR);
 	      alert.setHeaderText("Could not delete row/column");
 	      alert.setTitle("Error");
 	      Label label = new Label("You can not delete the last row/column if start\nor end position is contained in it!");
@@ -216,6 +220,12 @@ public class Editor{
 
   private void unsaved(){
     this.saved = false;
+    this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
+  }
+
+  private void saved(){
+    this.saved = true;
+    this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
   }
 
   private void createNewWorld(String name){
@@ -257,5 +267,11 @@ public class Editor{
     } catch (IOException e){
       e.printStackTrace();
     }
+  }
+
+  private String getFileName(){
+    Path path = Paths.get(CURRENT_FILE_PATH);
+    Path fileName = path.getFileName();
+    return fileName.toString();
   }
 }
