@@ -57,6 +57,24 @@ public class SESetup{
   }
 
   public void change(int sX, int sY, int eX, int eY){
+    if (sX == eX && sY == eY){
+      System.out.println("SSE Error (1)");
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setHeaderText("Start position is on same position of end");
+      alert.setTitle("SSE Error");
+      alert.setContentText(null);
+      alert.showAndWait();
+      return;
+    }
+    if (this.world.getBlockAt(sX, sY).getType() == EditableWorld.WALL || this.world.getBlockAt(eX, eY).getType() == EditableWorld.WALL){
+      System.out.println("SSE Error (2)");
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setHeaderText("Start or end position is on a block");
+      alert.setTitle("SSE Error");
+      alert.setContentText(null);
+      alert.showAndWait();
+      return;
+    }
     this.world.start[0] = sX;
     this.world.start[1] = sY;
     this.world.end[0] = eX;

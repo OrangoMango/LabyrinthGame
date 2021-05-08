@@ -26,7 +26,7 @@ public class World{
   protected Canvas canvas;
 
   public final static String WALL = "wall";
-  public final static String AIR = "none";
+  public final static String AIR = "air";
   public final static int BLOCK_WIDTH = 50;
 
   public World(String path){

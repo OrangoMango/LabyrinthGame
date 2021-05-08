@@ -147,6 +147,15 @@ public class Editor{
       @Override
       public void handle(MouseEvent event){
         EditableBlock edblock = EditableBlock.fromBlock(edworld.getBlockAtCoord((int)event.getX(), (int)event.getY()));
+        if (edblock.getType() == EditableWorld.AIR && ((edblock.getX() == edworld.start[0] && edblock.getY() == edworld.start[1]) || (edblock.getX() == edworld.end[0] || edblock.getY() == edworld.end[1]))){
+          System.out.println("SSE Error (3)");
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setHeaderText("Could not place block on start or end position");
+          alert.setTitle("SSE Error");
+          alert.setContentText(null);
+          alert.showAndWait();
+          return;
+        }
         edblock.toggleType();
         edworld.setBlockOn(edblock);
         edworld.updateOnFile();
@@ -154,10 +163,19 @@ public class Editor{
       }
     });
 
-    
+    final Label pointingOn = new Label("Mouse on Block: null");
+
+    canvas.setOnMouseMoved(new EventHandler<MouseEvent>(){
+      @Override
+      public void handle(MouseEvent event){
+        Block block = edworld.getBlockAtCoord((int)event.getX(), (int)event.getY());
+        pointingOn.setText("Mouse on block: "+block);
+      }
+    });  
 
     layout.add(toolbar, 0, 0);
     layout.add(scrollpane, 0, 1);
+    layout.add(pointingOn, 0, 2);
     this.stage.setScene(new Scene(layout, 705, 500));
     //this.stage.setResizable(false)
   }
