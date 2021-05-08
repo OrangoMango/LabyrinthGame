@@ -82,6 +82,7 @@ public class LevelExe{
                     alert.showAndWait();
                     player.setX(world.start[0]);
                     player.setY(world.start[1]);
+                    world.draw();
                   }
             }
       });

@@ -295,15 +295,15 @@ public class NewWidget{
               writer.write("0");
            }
         }
-	writer.newLine();
-	writer.write(String.format("%s,%s\n", this.sX, this.sY));
-	writer.write(String.format("%s,%s", this.eX, this.eY));
-	writer.close();
-	if (!this.ed.equals(null)){
-		System.out.println("If null");
-		this.editor.open(new File(getPath()));
-		Editor.updateCurrentWorldFile(getPath());
-	}
+        writer.newLine();
+        writer.write(String.format("%s,%s\n", this.sX, this.sY));
+        writer.write(String.format("%s,%s", this.eX, this.eY));
+        writer.close();
+        if (!this.ed.equals(null)){
+          System.out.println("If null");
+          this.editor.open(new File(getPath()));
+          Editor.updateCurrentWorldFile(getPath());
+        }
     } catch (IOException ex){}
     this.stage.hide();
 }

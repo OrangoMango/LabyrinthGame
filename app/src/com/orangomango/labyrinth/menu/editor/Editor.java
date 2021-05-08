@@ -28,6 +28,7 @@ import java.util.Random;
 
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
+import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
 
 public class Editor{
   private Stage stage;
@@ -36,9 +37,11 @@ public class Editor{
   private static String WORKING_FILE_PATH = "";
   private static String CURRENT_FILE_PATH = "";
   private boolean saved = true;
+  public CreatedWorldFiles worldList;
 
   public Editor(String editorFilePath){
     setupDirectory();
+    worldList = new CreatedWorldFiles();
     this.stage = new Stage();
     this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
     this.stage.setOnCloseRequest(event -> Platform.exit());
@@ -151,6 +154,8 @@ public class Editor{
       }
     });
 
+    
+
     layout.add(toolbar, 0, 0);
     layout.add(scrollpane, 0, 1);
     this.stage.setScene(new Scene(layout, 705, 500));
@@ -172,7 +177,7 @@ public class Editor{
   		writer.close();
   	} catch (IOException e){
   	}
-  } 
+  }
   
   public String getCurrentFilePath(){
   	 File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"currentFile.data");
@@ -199,6 +204,7 @@ public class Editor{
       copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
       edworld.changeToWorld(WORKING_FILE_PATH);
       updateCurrentWorldFile(CURRENT_FILE_PATH);
+      worldList.addToList(CURRENT_FILE_PATH);
       saved();
     } catch (Exception e){
       Alert alert = new Alert(Alert.AlertType.ERROR);
