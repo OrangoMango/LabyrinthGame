@@ -13,6 +13,19 @@ public class CreatedWorldFiles{
     createFile();
   }
 
+  public String[] getPaths(){
+    return this.paths;
+  }
+
+  @Override
+  public String toString(){
+    String out = "";
+    for (String p : this.paths){
+      out = out+p+"\n";
+    }
+    return out;
+  }
+
   private void createFile(){
     File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"createdWorldFiles.data");
     try{

@@ -37,10 +37,9 @@ public class Editor{
   private static String WORKING_FILE_PATH = "";
   private static String CURRENT_FILE_PATH = "";
   private boolean saved = true;
-  public CreatedWorldFiles worldList;
+  public static CreatedWorldFiles worldList;
 
   public Editor(String editorFilePath){
-    setupDirectory();
     worldList = new CreatedWorldFiles();
     this.stage = new Stage();
     this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
@@ -99,9 +98,9 @@ public class Editor{
     });
 
     Button addCBtn = new Button("AC");
-    addCBtn.setOnAction(event -> {edworld.addColumn(); unsaved();});
+    addCBtn.setOnAction(event -> {if(checkValidityMax("w")){edworld.addColumn(); unsaved();}});
     Button addRBtn = new Button("AR");
-    addRBtn.setOnAction(event -> {edworld.addRow(); unsaved();});
+    addRBtn.setOnAction(event -> {if(checkValidityMax("h")){edworld.addRow(); unsaved();}});
     Button rmCBtn = new Button("RC");
     rmCBtn.setOnAction(event -> {checkValidity(edworld.removeColumn()); unsaved();});
     Button rmRBtn = new Button("RR");
@@ -246,6 +245,26 @@ public class Editor{
   	}
   }
 
+  private boolean checkValidityMax(String s){
+    if (this.edworld.width+1 > NewWidget.MAX_WORLD_SIZE && s == "w"){
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setHeaderText("You reached world maximum size!");
+      alert.setTitle("MaxSizeError");
+      alert.setContentText(null);
+      alert.showAndWait();
+      return false;
+    } else if (this.edworld.height+1 > NewWidget.MAX_WORLD_SIZE && s == "h"){
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setHeaderText("You reached world maximum size!");
+      alert.setTitle("MaxSizeError");
+      alert.setContentText(null);
+      alert.showAndWait();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   private void unsaved(){
     this.saved = false;
     this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
@@ -271,14 +290,14 @@ public class Editor{
     }
   }
 
-  private void checkAndCreateDir(String path){
+  private static void checkAndCreateDir(String path){
     File f = new File(path);
     if (!f.exists()){
       f.mkdir();
     }
   }
 
-  private void setupDirectory(){
+  public static void setupDirectory(){
     checkAndCreateDir(PATH+".labyrinthgame");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache");

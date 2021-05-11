@@ -7,14 +7,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
+import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
 
 public class Menu{
     private Stage stage;
     private Stage stageExt;
 
-    public Menu(){
+    public Menu(double version){
       this.stage = new Stage();
-      this.stage.setTitle("Menu");
+      this.stage.setTitle("Menu v"+version);
 
       GridPane layout = new GridPane();
       layout.setHgap(20);
@@ -34,7 +35,7 @@ public class Menu{
 
       Button levelsBtn = new Button("My levels");
       levelsBtn.setOnAction(event -> {
-        startEditor(null);
+        HomeWindow hw = new HomeWindow();
         stop();
       });
 

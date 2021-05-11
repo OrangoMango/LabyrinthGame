@@ -29,6 +29,7 @@ public class NewWidget{
   private static Scene SCENE_2;
   private static Scene SCENE_3;
   private static Scene SCENE_4;
+  public static final int MAX_WORLD_SIZE = 30;
 
   private Spinner spinner1, spinner2, spinner3, spinner4;
   private Label pathL;
@@ -118,8 +119,8 @@ public class NewWidget{
     Label sX = new Label("x:");
     Label sY = new Label("y:");
     Canvas preview = new Canvas(100, 100);
-    Slider sl1 = new Slider(2, 30, 2);
-    Slider sl2 = new Slider(2, 30, 2);
+    Slider sl1 = new Slider(2, MAX_WORLD_SIZE, 2);
+    Slider sl2 = new Slider(2, MAX_WORLD_SIZE, 2);
     sl1.setMaxWidth(90);
     sl2.setMaxWidth(90);
     sl1.setShowTickMarks(true);
@@ -155,10 +156,10 @@ public class NewWidget{
     Label lab2 = new Label("Start Y:");
     Label lab3 = new Label("Y:");
     Label lab4 = new Label("Y:");
-    this.spinner1 = new Spinner(0, 30, 0);
-    this.spinner2 = new Spinner(0, 30, 0);
-    this.spinner3 = new Spinner(0, 30, 0);
-    this.spinner4 = new Spinner(0, 30, 0);
+    this.spinner1 = new Spinner(0, MAX_WORLD_SIZE, 0);
+    this.spinner2 = new Spinner(0, MAX_WORLD_SIZE, 0);
+    this.spinner3 = new Spinner(0, MAX_WORLD_SIZE, 0);
+    this.spinner4 = new Spinner(0, MAX_WORLD_SIZE, 0);
     // Default: Disable all buttons:
     lab1.setDisable(true);
     lab2.setDisable(true);
@@ -233,7 +234,7 @@ public class NewWidget{
     pen.setFill(Color.WHITE);
     pen.fillRect(0,0,100,100);
     pen.setStroke(Color.RED);
-    pen.strokeRect(10, 10, this.pWidth*80/30, this.pHeight*80/30);    // x : 80 = width : 30
+    pen.strokeRect(10, 10, this.pWidth*80/MAX_WORLD_SIZE, this.pHeight*80/MAX_WORLD_SIZE);    // x : 80 = width : 30
   }
   
   public String getPath(){
@@ -302,7 +303,6 @@ public class NewWidget{
         if (!this.ed.equals(null)){
           System.out.println("If null");
           this.editor.open(new File(getPath()));
-          Editor.updateCurrentWorldFile(getPath());
         }
     } catch (IOException ex){}
     this.stage.hide();

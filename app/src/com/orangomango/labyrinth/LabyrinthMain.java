@@ -12,11 +12,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 
 import com.orangomango.labyrinth.menu.Menu;
+import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LabyrinthMain extends Application{
 
-  public final static String FILE_PATH = "../lib/world1.wld";
-  public final static String FILE_PATH_2 = "../lib/world2.wld";
+  public static String[] FILE_PATHS = new String[]{"../lib/world1.wld", "../lib/world2.wld"}; 
+  public static int currentWorldIndex = 0;
+  public final static double VERSION = 2.2;
 
   public static void main(String[] args) {
    	launch(args);
@@ -27,18 +29,20 @@ public class LabyrinthMain extends Application{
 
     System.out.println(System.getProperty("user.home")); // Know user's home
 
+    Editor.setupDirectory();
+
     // Start Menu
-    Menu menu = new Menu();
+    Menu menu = new Menu(VERSION);
     menu.start();
     menu.setStageExt(stage);
     stage.setTitle("com.orangomango.labyrinth");
      
     // Create a simple world
-    final World world = new World(FILE_PATH);
+    final World world = new World(FILE_PATHS[currentWorldIndex]);
     world.setStage(stage);
     
     Canvas canvas = new Canvas(World.BLOCK_WIDTH*world.width, World.BLOCK_WIDTH*world.height);
-    Label label = new Label(FILE_PATH);
+    Label label = new Label(FILE_PATHS[currentWorldIndex]);
     world.setAttributes(label, canvas);
  
     canvas.setFocusTraversable(true);
@@ -87,7 +91,10 @@ public class LabyrinthMain extends Application{
                     } catch (InterruptedException ex){
                       ex.printStackTrace();
                     }
-                    world.changeToWorld(FILE_PATH_2);
+                    if (currentWorldIndex < FILE_PATHS.length-1){
+                      currentWorldIndex++;
+                    }
+                    world.changeToWorld(FILE_PATHS[currentWorldIndex]);
                   }
             }
       });
