@@ -8,7 +8,7 @@ import java.net.*;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class LoadingScreen{
-  private static final int LEVELS = 2;
+  private static final int LEVELS = 3;
 
   private void downloadFile(String link, String path){
     try (InputStream in = new URL(link).openStream()) {
