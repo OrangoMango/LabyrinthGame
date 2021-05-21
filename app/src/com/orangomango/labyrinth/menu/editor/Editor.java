@@ -29,6 +29,7 @@ import java.util.Random;
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
+import static com.orangomango.labyrinth.menu.Menu.EDITOR;
 
 public class Editor{
   private Stage stage;
@@ -43,7 +44,7 @@ public class Editor{
     worldList = new CreatedWorldFiles();
     this.stage = new Stage();
     this.stage.setTitle("LabyrinthGame - Editor ("+getFileName()+((saved) ? "" : "*")+")");
-    this.stage.setOnCloseRequest(event -> Platform.exit());
+    this.stage.setOnCloseRequest(event -> EDITOR = false);
 
     GridPane layout = new GridPane();
 
@@ -56,7 +57,7 @@ public class Editor{
 
     Button newBtn = new Button("New");
     newBtn.setOnAction(event -> {
-      NewWidget wid = new NewWidget();
+      NewWidget wid = new NewWidget(false);
       wid.setEDW(edworld);
       wid.setEditor(this);
     });
@@ -119,7 +120,7 @@ public class Editor{
     scrollpane.setPrefSize(700, 460);
 
     if (getCurrentFilePath() == null){
-    	NewWidget wid = new NewWidget();
+    	NewWidget wid = new NewWidget(true);
     	wid.setEDW(edworld);
     	wid.setEditor(this);
     } else if (editorFilePath == null){
@@ -146,7 +147,7 @@ public class Editor{
       @Override
       public void handle(MouseEvent event){
         EditableBlock edblock = EditableBlock.fromBlock(edworld.getBlockAtCoord((int)event.getX(), (int)event.getY()));
-        if (edblock.getType() == EditableWorld.AIR && ((edblock.getX() == edworld.start[0] && edblock.getY() == edworld.start[1]) || (edblock.getX() == edworld.end[0] || edblock.getY() == edworld.end[1]))){
+        if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(edworld) || edblock.isOnEnd(edworld))){
           System.out.println("SSE Error (3)");
           Alert alert = new Alert(Alert.AlertType.ERROR);
           alert.setHeaderText("Could not place block on start or end position");
@@ -168,7 +169,7 @@ public class Editor{
       @Override
       public void handle(MouseEvent event){
         Block block = edworld.getBlockAtCoord((int)event.getX(), (int)event.getY());
-        pointingOn.setText("Mouse on block: "+block);
+        pointingOn.setText("Mouse on block: "+block+" "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position")));
       }
     });  
 
@@ -299,6 +300,7 @@ public class Editor{
 
   public static void setupDirectory(){
     checkAndCreateDir(PATH+".labyrinthgame");
+    checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"SystemLevels");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels");

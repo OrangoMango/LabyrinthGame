@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
@@ -30,6 +31,7 @@ public class NewWidget{
   private static Scene SCENE_3;
   private static Scene SCENE_4;
   public static final int MAX_WORLD_SIZE = 30;
+  private static boolean FIRST_TIME = false;
 
   private Spinner spinner1, spinner2, spinner3, spinner4;
   private Label pathL;
@@ -41,7 +43,8 @@ public class NewWidget{
 
   private File file;
   
-  public NewWidget(){
+  public NewWidget(boolean firstTime){
+    FIRST_TIME = firstTime;
     stage = new Stage();
     
     stage.focusedProperty().addListener(new ChangeListener<Boolean>(){
@@ -54,7 +57,7 @@ public class NewWidget{
       }
     });
     
-    stage.setOnCloseRequest(event -> Platform.exit());
+    stage.setOnCloseRequest(event -> {if(FIRST_TIME) {Platform.exit();}});
 
     GridPane layout = new GridPane();
     
@@ -89,24 +92,26 @@ public class NewWidget{
     l1.setPadding(new Insets(10, 10, 10, 10));
     l1.setHgap(10);
     l1.setVgap(10);
-    Label sel = new Label("Select file path: \n\nnull");
+    Label sel = new Label("Selected file path: null");
+    ScrollPane bp = new ScrollPane(sel);
     Button browse = new Button("Browse");
     browse.setOnAction(event -> {
       FileChooser chooser = new FileChooser();
-      chooser.setTitle("Select new level file path   >> ENDING WITH .wld <<");
-      chooser.setInitialDirectory(new File(Editor.PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+""));
+      chooser.setTitle("Select new level file path");
+      chooser.setInitialDirectory(new File(Editor.PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator));
+      chooser.setInitialFileName("test.wld");
       chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
       try {
            this.file = chooser.showSaveDialog(this.stage);
-           sel.setText("Select file path: \n"+this.file.getAbsolutePath());
-           this.pathL.setText("Select file path: \n"+this.file.getAbsolutePath());
+           sel.setText("Selected file path: "+this.file.getAbsolutePath());
+           this.pathL.setText("Selected file path: "+this.file.getAbsolutePath());
       } catch (Exception e) {
            this.file = null;
-           sel.setText("Select file path: null");
-           this.pathL.setText("Select file path: null");
+           sel.setText("Selected file path: null");
+           this.pathL.setText("Selected file path: null");
      }
     });
-    l1.add(sel, 0, 0);
+    l1.add(bp, 0, 0);
     l1.add(browse, 0, 1);
     l1.add(boxes[0], 0, 2, 2, 1);
     
@@ -211,12 +216,13 @@ public class NewWidget{
     l4.setPadding(new Insets(10, 10, 10, 10));
     l4.setHgap(10);
     l4.setVgap(10);
-    Label success = new Label("Level created successfully");
+    Label success = new Label("Level will be created successfully");
     Label toDo = new Label("To change your settings use the \"<--\"\nbutton");
-    this.pathL = new Label("Select file path: null");
+    this.pathL = new Label("Selected file path: null");
+    ScrollPane pathP = new ScrollPane(this.pathL);
     l4.add(success, 0, 0);
     l4.add(toDo, 0, 1);
-    l4.add(pathL, 0, 2);
+    l4.add(pathP, 0, 2);
     l4.add(boxes[3], 0, 3, 2, 1);
 
     SCENE_1 = new Scene(l1, 300, 250);
@@ -313,7 +319,6 @@ public void setEditor(Editor editor){
 }
 
   public void switchScene(int move){
-    System.out.println(move);
     if (move == 1){
       if (this.stage.getScene() == SCENE_1){
         this.stage.setScene(SCENE_2);

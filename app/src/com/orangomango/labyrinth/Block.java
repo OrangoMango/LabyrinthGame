@@ -55,12 +55,26 @@ public class Block{
   	pen.fillRect(this.x*World.BLOCK_WIDTH, this.y*World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
   }
 
+  public boolean isOnStart(World w){
+    if (getX() == w.start[0] && getY() == w.start[1]){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isOnEnd(World w){
+    if (getX() == w.end[0] && getY() == w.end[1]){
+      return true;
+    }
+    return false;
+  }
+
   /**
     Print block object in this format:
     <pre>BT:wall X:6 Y.8</pre>
   */
   @Override
   public String toString(){
-    return "Block Type:"+this.type+" X:"+this.x+" Y:"+this.y;
+    return "Block Type: "+this.type+" X:"+this.x+" Y:"+this.y;
   }
 }

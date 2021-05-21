@@ -11,12 +11,14 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 
+import java.io.File;
+
 import com.orangomango.labyrinth.menu.Menu;
 import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LabyrinthMain extends Application{
 
-  public static String[] FILE_PATHS = new String[]{"../lib/world1.wld", "../lib/world2.wld"}; 
+  public static String[] FILE_PATHS = new String[]{Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level1.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level2.wld"}; 
   public static int currentWorldIndex = 0;
   public final static double VERSION = 2.2;
 

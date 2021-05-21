@@ -12,10 +12,15 @@ import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
 public class Menu{
     private Stage stage;
     private Stage stageExt;
+    
+    public static boolean MYLEVELS = false;
+    public static boolean EDITOR = false;
 
     public Menu(double version){
       this.stage = new Stage();
       this.stage.setTitle("Menu v"+version);
+
+      LoadingScreen ls = new LoadingScreen();
 
       GridPane layout = new GridPane();
       layout.setHgap(20);
@@ -29,14 +34,18 @@ public class Menu{
 
       Button editorBtn = new Button("Editor");
       editorBtn.setOnAction(event -> {
-        startEditor(null);
-        stop();
+        if (!EDITOR){
+            startEditor(null);
+            EDITOR = true;
+        }
       });
 
       Button levelsBtn = new Button("My levels");
       levelsBtn.setOnAction(event -> {
-        HomeWindow hw = new HomeWindow();
-        stop();
+        if (!MYLEVELS){
+            HomeWindow hw = new HomeWindow();
+            MYLEVELS = true;
+        }
       });
 
       Label sign = new Label("Game by OrangoMango (C)2021\n https://orangomango.github.io");

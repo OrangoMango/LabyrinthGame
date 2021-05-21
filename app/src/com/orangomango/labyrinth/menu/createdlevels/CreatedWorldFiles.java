@@ -70,6 +70,10 @@ public class CreatedWorldFiles{
   }
 
   public void addToList(String path){
+    if (Arrays.asList(this.paths).contains(path)){
+        System.out.println("Could not add item to mylevelslist because already exists");
+        return;
+    }
     String[] temp = Arrays.copyOf(this.paths, this.paths.length+1);
     temp[temp.length-1] = path;
     this.paths = Arrays.copyOf(temp, temp.length);
