@@ -15,6 +15,8 @@ public class Menu{
     
     public static boolean MYLEVELS = false;
     public static boolean EDITOR = false;
+    
+    public static String OPEN = null;
 
     public Menu(double version){
       this.stage = new Stage();
@@ -68,6 +70,12 @@ public class Menu{
 
     public void start(){
       this.stage.show();
+      if (!OPEN.equals(null)){
+      		System.out.println("Opening requested file: "+OPEN);
+      		Editor editor = new Editor(OPEN);
+      		editor.start();
+      		EDITOR = true;
+      }
     }
 
     public void stop(){

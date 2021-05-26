@@ -18,11 +18,16 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LabyrinthMain extends Application{
 
-  public static String[] FILE_PATHS = new String[]{Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level1.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level2.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level3.wld"}; 
+  public static String[] FILE_PATHS = new String[]{Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level1.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level2.wld"}; 
   public static int currentWorldIndex = 0;
   public final static double VERSION = 2.2;
+  
+  private static String ARG = "";
 
   public static void main(String[] args) {
+   	if (args.length >= 1){
+   		ARG = args[0];
+        }
    	launch(args);
    }
 
@@ -35,6 +40,7 @@ public class LabyrinthMain extends Application{
 
     // Start Menu
     Menu menu = new Menu(VERSION);
+    Menu.OPEN = ARG;
     menu.start();
     menu.setStageExt(stage);
     stage.setTitle("com.orangomango.labyrinth");
