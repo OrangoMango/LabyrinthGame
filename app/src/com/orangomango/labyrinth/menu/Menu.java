@@ -70,7 +70,7 @@ public class Menu{
 
     public void start(){
       this.stage.show();
-      if (!OPEN.equals(null)){
+      if (OPEN != null){
       		System.out.println("Opening requested file: "+OPEN);
       		Editor editor = new Editor(OPEN);
       		editor.start();

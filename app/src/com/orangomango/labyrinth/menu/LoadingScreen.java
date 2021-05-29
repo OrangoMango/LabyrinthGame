@@ -18,7 +18,7 @@ public class LoadingScreen{
   }
 
   public LoadingScreen(){
-    if (new File(PATH+".labyrinthgame").exists()){
+    if (new File(PATH+".labyrinthgame"+File.separator+"SystemLevels").list().length != 0){
       return;
     }
     System.out.println("Downloading files...");

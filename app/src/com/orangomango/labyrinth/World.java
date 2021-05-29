@@ -55,8 +55,8 @@ public class World{
     	System.out.println("There are some null values! (1)");
     }
     try {
-      this.stage.setHeight(height*BLOCK_WIDTH+40);
-      this.stage.setWidth(width*BLOCK_WIDTH+20);
+      this.stage.setHeight(this.height*BLOCK_WIDTH+60);
+      this.stage.setWidth(this.width*BLOCK_WIDTH+20);
       this.label.setText(filePath);
     } catch (NullPointerException e){
       System.out.println("There are some null values! (2)");

@@ -20,14 +20,15 @@ public class LabyrinthMain extends Application{
 
   public static String[] FILE_PATHS = new String[]{Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level1.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level2.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level3.wld"}; 
   public static int currentWorldIndex = 0;
-  public final static double VERSION = 2.2;
+  public final static double VERSION = 3.0;
   
-  private static String ARG = "";
+  private static String ARG = null;
 
   public static void main(String[] args) {
    	if (args.length >= 1){
    		ARG = args[0];
-        }
+      System.out.println("File path requested");
+    }
    	launch(args);
    }
 
