@@ -3,6 +3,8 @@
 
 # Run program
 Use the `run.sh` file in the `app/` folder.
+## Run program in your browser
+To try it in your browser use [this](https://repl.it/@OrangoMango/LabyrinthGame) link.
 
 # Screenshots
 * Gameplay (*Use arrows to move*)<br>
