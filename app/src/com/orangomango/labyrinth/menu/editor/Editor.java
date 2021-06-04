@@ -18,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.*;
 import javafx.stage.FileChooser;
 
 import java.io.*;
@@ -56,12 +57,14 @@ public class Editor{
     edworld = new EditableWorld(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+"testSystemWorld-DefaultName_NoCopy.wld.sys");
 
     Button newBtn = new Button("New");
+		newBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"new.png")));
     newBtn.setOnAction(event -> {
       NewWidget wid = new NewWidget(false);
       wid.setEDW(edworld);
       wid.setEditor(this);
     });
     Button saveBtn = new Button("Save");
+		saveBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"save.png")));
     saveBtn.setOnAction(event -> {
       try {
        saved();
@@ -81,10 +84,11 @@ public class Editor{
       
     });
     Button openBtn = new Button("Open");
+		openBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"open.png")));
     openBtn.setOnAction(event -> {
     try {
 	      FileChooser chooser = new FileChooser();
-	      chooser.setInitialDirectory(new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+""));
+	      chooser.setInitialDirectory(new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator));
 	      chooser.setTitle("Open world");
 	      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 	      File f = chooser.showOpenDialog(this.stage);
@@ -98,19 +102,25 @@ public class Editor{
       }
     });
 
-    Button addCBtn = new Button("AC");
+    Button addCBtn = new Button();
+		addCBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"ac.png")));
     addCBtn.setOnAction(event -> {if(checkValidityMax("w")){edworld.addColumn(); unsaved();}});
-    Button addRBtn = new Button("AR");
+    Button addRBtn = new Button();
+		addRBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"ar.png")));
     addRBtn.setOnAction(event -> {if(checkValidityMax("h")){edworld.addRow(); unsaved();}});
-    Button rmCBtn = new Button("RC");
+    Button rmCBtn = new Button();
+		rmCBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"rc.png")));
     rmCBtn.setOnAction(event -> {checkValidity(edworld.removeColumn()); unsaved();});
-    Button rmRBtn = new Button("RR");
+    Button rmRBtn = new Button();
+		rmRBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"rr.png")));
     rmRBtn.setOnAction(event -> {checkValidity(edworld.removeRow()); unsaved();});
 
     Button runBtn = new Button("Run");
+		runBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"run.png")));
     runBtn.setOnAction(event -> new LevelExe(CURRENT_FILE_PATH, getFileName(), saved));
 
-    Button sseBtn = new Button("SSE");
+    Button sseBtn = new Button();
+		sseBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"sse.png")));
     sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
 
     toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn);
@@ -301,6 +311,7 @@ public class Editor{
   public static void setupDirectory(){
     checkAndCreateDir(PATH+".labyrinthgame");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"SystemLevels");
+    checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Images");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels");
