@@ -20,7 +20,7 @@ public class LabyrinthMain extends Application{
 
   public static String[] FILE_PATHS = new String[]{Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level1.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level2.wld", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level3.wld"}; 
   public static int currentWorldIndex = 0;
-  public final static double VERSION = 3.0;
+  public final static double VERSION = 3.1;
   
   private static String ARG = null;
 

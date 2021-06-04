@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Hyperlink;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
@@ -50,11 +51,14 @@ public class Menu{
         }
       });
 
-      Label sign = new Label("Game by OrangoMango (C)2021\n https://orangomango.github.io");
+      Label sign = new Label("Game by OrangoMango (C)2021");
+			Hyperlink l = new Hyperlink("https://orangomango.github.io");
+			l.setOnAction(event -> System.out.println("You clicked the link"));
       layout.add(playBtn, 0, 0);
       layout.add(editorBtn, 1, 0);
       layout.add(levelsBtn, 2, 0);
       layout.add(sign, 0, 1, 3, 1);
+			layout.add(l, 0, 2, 3, 1);
 
       this.stage.setScene(new Scene(layout, 300, 200));
     }
