@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.BorderPane;
 import javafx.geometry.Orientation;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -40,6 +39,7 @@ public class Editor{
   private static String CURRENT_FILE_PATH = "";
   private boolean saved = true;
   public static CreatedWorldFiles worldList;
+	public static boolean DONE = true;
 
   public Editor(String editorFilePath){
     worldList = new CreatedWorldFiles();
@@ -86,20 +86,20 @@ public class Editor{
     Button openBtn = new Button("Open");
 		openBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"open.png")));
     openBtn.setOnAction(event -> {
-    try {
-	      FileChooser chooser = new FileChooser();
-	      chooser.setInitialDirectory(new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator));
-	      chooser.setTitle("Open world");
-	      chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
-	      File f = chooser.showOpenDialog(this.stage);
-        open(f);
-      } catch (Exception e){
-             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Error while parsing file");
-            alert.setTitle("Error");
-            alert.setContentText("Could not open world file!");
-            alert.showAndWait();
-      }
+			try {
+					FileChooser chooser = new FileChooser();
+					chooser.setInitialDirectory(new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator));
+					chooser.setTitle("Open world");
+					chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
+					File f = chooser.showOpenDialog(this.stage);
+					open(f);
+				} catch (Exception e){
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setHeaderText("Error while parsing file");
+					alert.setTitle("Error");
+					alert.setContentText("Could not open world file!");
+					alert.showAndWait();
+				}
     });
 
     Button addCBtn = new Button();
@@ -130,9 +130,8 @@ public class Editor{
     scrollpane.setPrefSize(700, 460);
 
     if (getCurrentFilePath() == null){
-    	NewWidget wid = new NewWidget(true);
-    	wid.setEDW(edworld);
-    	wid.setEditor(this);
+			DONE = false;
+			Selection sel = new Selection(edworld, this);
     } else if (editorFilePath == null){
     	System.out.println("Last file: "+getCurrentFilePath());
     	open(new File(getCurrentFilePath()));
@@ -141,11 +140,9 @@ public class Editor{
       open(new File(editorFilePath));
     }
 
-    BorderPane pane = new BorderPane();
     Canvas canvas = new Canvas(edworld.width*EditableWorld.BLOCK_WIDTH, edworld.height*EditableWorld.BLOCK_WIDTH);
     canvas.setFocusTraversable(true);
-    pane.setCenter(canvas);
-    scrollpane.setContent(pane);
+    scrollpane.setContent(canvas);
 
     GraphicsContext pen = canvas.getGraphicsContext2D();
     edworld.setPen(pen);
@@ -191,7 +188,9 @@ public class Editor{
   }
 
   public void start(){
-    this.stage.show();
+		if (DONE){
+    	this.stage.show();
+		}
   }
   
   public static void updateCurrentWorldFile(String currentPath){
@@ -207,7 +206,7 @@ public class Editor{
   	}
   }
   
-  public String getCurrentFilePath(){
+  public static String getCurrentFilePath(){
   	 File f = new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache"+File.separator+"currentFile.data");
   	 if (!f.exists()){
   	 	return null;
@@ -311,8 +310,8 @@ public class Editor{
   public static void setupDirectory(){
     checkAndCreateDir(PATH+".labyrinthgame");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"SystemLevels");
-    checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Images");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor");
+		checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Images");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Cache");
     checkAndCreateDir(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels");
   }

@@ -47,16 +47,6 @@ public class NewWidget{
     FIRST_TIME = firstTime;
     stage = new Stage();
     
-    stage.focusedProperty().addListener(new ChangeListener<Boolean>(){
-      @Override
-      public void changed(ObservableValue<? extends Boolean> o, Boolean v, Boolean v1){
-        //System.out.println(v1.booleanValue() == false);
-        if (v1.booleanValue() == false){
-          stage.requestFocus();
-        }
-      }
-    });
-    
     stage.setOnCloseRequest(event -> {if(FIRST_TIME) {Platform.exit();}});
 
     GridPane layout = new GridPane();
@@ -308,6 +298,8 @@ public class NewWidget{
         writer.close();
         if (!this.ed.equals(null)){
           System.out.println("If null");
+					Editor.DONE = true;
+					this.editor.start(); // If it's hidded the show
           this.editor.open(new File(getPath()));
         }
     } catch (IOException ex){}

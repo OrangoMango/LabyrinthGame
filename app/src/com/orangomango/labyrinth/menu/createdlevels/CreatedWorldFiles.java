@@ -79,4 +79,20 @@ public class CreatedWorldFiles{
     this.paths = Arrays.copyOf(temp, temp.length);
     updateFile();
   }
+
+	public void removeFromList(String path){
+		if (!Arrays.asList(this.paths).contains(path)){
+			System.out.println("Item does not exists so it could not be deleted");
+			return;
+		}
+		int x = 0;
+		String[] temp = new String[this.paths.length-1];
+		for (String p : this.paths){
+			if (p != path){
+				temp[x++] = p;
+			}
+		}
+		this.paths = Arrays.copyOf(temp, temp.length);
+		updateFile();
+	}
 }

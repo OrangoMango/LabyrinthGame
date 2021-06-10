@@ -18,7 +18,7 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LabyrinthMain extends Application{
 
-  public static String[] FILE_PATHS = new String[]{Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level1.wld.sys", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level2.wld.sys", Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+"level3.wld.sys"}; 
+  public static String[] FILE_PATHS;;
   public static int currentWorldIndex = 0;
   public final static double VERSION = 3.1;
   
@@ -30,7 +30,12 @@ public class LabyrinthMain extends Application{
       System.out.println("File path requested");
     }
    	launch(args);
-   }
+  }
+
+	private static String[] getLevelsList(){
+		File dir = new File(Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels");
+		return dir.list();
+	}
 
   @Override
   public void start(Stage stage){
@@ -45,9 +50,11 @@ public class LabyrinthMain extends Application{
     menu.start();
     menu.setStageExt(stage);
     stage.setTitle("com.orangomango.labyrinth");
+
+		FILE_PATHS = getLevelsList();
      
     // Create a simple world
-    final World world = new World(FILE_PATHS[currentWorldIndex]);
+    final World world = new World(Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+FILE_PATHS[currentWorldIndex]);
     world.setStage(stage);
     
     Canvas canvas = new Canvas(World.BLOCK_WIDTH*world.width, World.BLOCK_WIDTH*world.height);
@@ -81,31 +88,31 @@ public class LabyrinthMain extends Application{
 
     world.draw();
     canvas.setOnKeyPressed(new EventHandler<KeyEvent>(){
-            @Override
-            public void handle(KeyEvent event){
-                  if (event.getCode() == KeyCode.UP){
-                          player.moveOn(player.Y, player.NEGATIVE);
-                  } else if (event.getCode() == KeyCode.DOWN){
-                          player.moveOn(player.Y, player.POSITIVE);
-                  } else if (event.getCode() == KeyCode.RIGHT){
-                          player.moveOn(player.X, player.POSITIVE);
-                  } else if (event.getCode() == KeyCode.LEFT){
-                          player.moveOn(player.X, player.NEGATIVE);
-                  } else {
-	                        System.out.println(event.getCode());
-                  }
-                  if (player.isOnEnd()){
-                    try{
-                      Thread.sleep(500);
-                    } catch (InterruptedException ex){
-                      ex.printStackTrace();
-                    }
-                    if (currentWorldIndex < FILE_PATHS.length-1){
-                      currentWorldIndex++;
-                    }
-                    world.changeToWorld(FILE_PATHS[currentWorldIndex]);
-                  }
-            }
+			@Override
+			public void handle(KeyEvent event){
+				if (event.getCode() == KeyCode.UP){
+					player.moveOn(player.Y, player.NEGATIVE);
+				} else if (event.getCode() == KeyCode.DOWN){
+					player.moveOn(player.Y, player.POSITIVE);
+				} else if (event.getCode() == KeyCode.RIGHT){
+					player.moveOn(player.X, player.POSITIVE);
+				} else if (event.getCode() == KeyCode.LEFT){
+					player.moveOn(player.X, player.NEGATIVE);
+				} else {
+					System.out.println(event.getCode());
+				}
+				if (player.isOnEnd()){
+					try{
+						Thread.sleep(500);
+					} catch (InterruptedException ex){
+						ex.printStackTrace();
+					}
+					if (currentWorldIndex < FILE_PATHS.length-1){
+						currentWorldIndex++;
+					}
+					world.changeToWorld(Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+FILE_PATHS[currentWorldIndex]);
+				}
+			}
       });
     //stage.setResizable(false);
 
