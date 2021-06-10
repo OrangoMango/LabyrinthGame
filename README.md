@@ -12,4 +12,4 @@ To try it in your browser use [this](https://repl.it/@OrangoMango/LabyrinthGame)
 * Editor (*Click on the block to change its type*)<br>
 ![editor](https://user-images.githubusercontent.com/61402409/120788171-73fd1500-c530-11eb-8c0a-b29b6300f616.png)
 * `My levels` interface (*Edit, delete and run levels*)<br>
-![labmenu](https://user-images.githubusercontent.com/61402409/120764314-5328c580-c518-11eb-91a4-f489fcb07232.png)
+![labgame](https://user-images.githubusercontent.com/61402409/121567737-37915380-ca1f-11eb-8de0-25b3fea0f7ad.png)
