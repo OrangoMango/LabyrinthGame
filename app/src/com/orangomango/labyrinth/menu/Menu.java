@@ -9,10 +9,11 @@ import javafx.scene.control.Hyperlink;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
+import com.orangomango.labyrinth.LabyrinthMain; // import main application
 
 public class Menu{
     private Stage stage;
-    private Stage stageExt;
+    private LabyrinthMain toShowWorld;
     
     public static boolean MYLEVELS = false;
     public static boolean EDITOR = false;
@@ -23,7 +24,7 @@ public class Menu{
       this.stage = new Stage();
       this.stage.setTitle("Menu v"+version);
 
-      LoadingScreen ls = new LoadingScreen();
+      LoadingScreen ls = new LoadingScreen(this);
 
       GridPane layout = new GridPane();
       layout.setHgap(20);
@@ -31,7 +32,7 @@ public class Menu{
 
       Button playBtn = new Button("Play");
       playBtn.setOnAction(event -> {
-        this.stageExt.show();
+        this.toShowWorld.startShowing();
         stop();
       });
 
@@ -68,8 +69,8 @@ public class Menu{
       editor.start();
     }
 
-    public void setStageExt(Stage st){
-      this.stageExt = st;
+    public void setTSW(LabyrinthMain tsw){
+      this.toShowWorld = tsw;
     }
 
     public void start(){

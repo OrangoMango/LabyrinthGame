@@ -51,8 +51,11 @@ public class HomeWindow{
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				Label mod = new Label("Last modified: "+format.format(file.lastModified()));
 				Label size = new Label(String.format("Size: %d bytes", file.length()));
+				Label author = new Label("Author: -");
 				Button del = new Button("Delete");
 				Button run = new Button("Run");
+				Button pub = new Button("Publish");
+				pub.setDisable(true);
 				run.setOnAction(event -> new LevelExe(p, file.getName(), true));
 				innerpane.add(plabel, 0, 0);
 				innerpane.add(edit, 1, 0);
@@ -60,6 +63,8 @@ public class HomeWindow{
 				innerpane.add(size, 0, 2);
 				innerpane.add(del, 1, 1);
 				innerpane.add(run, 1, 2);
+				innerpane.add(author, 0, 3);
+				innerpane.add(pub, 1, 3);
 
 				final TitledPane tp = new TitledPane(file.getName(), innerpane);
 
