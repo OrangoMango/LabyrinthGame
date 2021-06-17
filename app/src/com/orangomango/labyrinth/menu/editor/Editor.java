@@ -128,6 +128,8 @@ public class Editor{
     // Setup world editor
     ScrollPane scrollpane = new ScrollPane();
     scrollpane.setPrefSize(700, 460);
+    this.stage.widthProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize((double)newVal, this.stage.getHeight()));
+    this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double)newVal));
 
     if (getCurrentFilePath() == null){
 			DONE = false;

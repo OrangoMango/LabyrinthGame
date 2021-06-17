@@ -1,13 +1,16 @@
 package com.orangomango.labyrinth.menu;
 
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.Scene;
+import javafx.geometry.Insets;
 
 import javafx.concurrent.Task;
 
@@ -24,11 +27,14 @@ public class LoadingScreen{
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;
 	private Menu menu;
+	private static int ALERTS = 0;
 
   private void downloadFile(String link, String path){
     try (InputStream in = new URL(link).openStream()) {
-      Files.copy(in, Paths.get(path));
-    } catch (IOException ex){}
+			Files.copy(in, Paths.get(path));
+    } catch (IOException ex){
+			internetError(true, "Could not connect to "+ex.getMessage());
+		}
   }
 
   public LoadingScreen(Menu menu){
@@ -43,6 +49,7 @@ public class LoadingScreen{
 		GridPane pane = new GridPane();
 		pane.setVgap(10);
 		pane.setHgap(5);
+		pane.setPadding(new Insets(10, 10, 10, 10));
 		final Label label = new Label("Start download to continue");
 		final ProgressIndicator bar = new ProgressIndicator(0);
 		bar.setMaxHeight(50);
@@ -61,7 +68,7 @@ public class LoadingScreen{
 			Task dwlworker = new Task(){
 				@Override
 				protected Object call(){
-					int total = LEVELS + IMAGES - 2;
+					int total = LEVELS + IMAGES-2;
 					int progress = 0;
 					for (int x = 0; x < LEVELS; x++){
 						updateMessage("Downloading "+"level "+(x+1)+".wld.sys");
@@ -70,8 +77,8 @@ public class LoadingScreen{
 						progress++;
 					}
 					for (int x = 0; x < IMAGES; x++){
-						updateMessage("Downloading image "+IMGNAMES[x]+".png");
 						updateProgress(progress, total);
+						updateMessage("Downloading image "+IMGNAMES[x]+".png");
 						downloadFile(String.format("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/%s.png", IMGNAMES[x]), String.format(PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"%s.png", IMGNAMES[x]));
 						progress++;
 					}
@@ -91,6 +98,27 @@ public class LoadingScreen{
 		this.stage.setScene(new Scene(pane, 300, 350));
 		this.stage.show();
   }
+
+	private void internetError(boolean delete, String errormsg){
+		ALERTS++;
+		if (ALERTS > 1){
+			return;
+		}
+		Platform.runLater(() -> {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setHeaderText("Internet error, please check your connection");
+			alert.setTitle("Internet Error");
+			alert.setContentText("ERROR: "+errormsg);
+			alert.showAndWait();
+			if (delete){
+				File f = new File(PATH+".labyrinthgame"+File.separator+"SystemLevels");
+				for (String file : f.list()){
+					new File(file).delete();
+				}
+			}
+			Platform.exit();
+		});
+	}
 
 	private void endWindow(){
 		this.stage.hide();

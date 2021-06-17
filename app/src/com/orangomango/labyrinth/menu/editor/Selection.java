@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import java.io.*;
 
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.DONE;
 
 public class Selection{
 
@@ -58,6 +59,8 @@ public class Selection{
 			chooser.setTitle("Open world");
 			chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 			File f = chooser.showOpenDialog(this.stage);
+			DONE = true;
+			this.stage.hide();
 			this.editor.start();
 			this.editor.open(f);
 		} catch (Exception e){

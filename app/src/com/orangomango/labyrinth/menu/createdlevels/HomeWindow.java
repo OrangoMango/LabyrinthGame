@@ -17,6 +17,7 @@ import static com.orangomango.labyrinth.menu.Menu.MYLEVELS;
 import static com.orangomango.labyrinth.menu.Menu.EDITOR;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
+import com.orangomango.labyrinth.World;
 
 public class HomeWindow{
   public HomeWindow(){
@@ -37,6 +38,7 @@ public class HomeWindow{
 			acc.setMaxWidth(450);
 			for (String p : cwf.getPaths()){
 				File file = new File(p);
+				World temp = new World(p);
 
 				GridPane innerpane = new GridPane();
 				innerpane.setHgap(10);
@@ -50,7 +52,7 @@ public class HomeWindow{
 				});
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				Label mod = new Label("Last modified: "+format.format(file.lastModified()));
-				Label size = new Label(String.format("Size: %d bytes", file.length()));
+				Label size = new Label(String.format("Size: %d bytes (Dim.: %dx%d)", file.length(), temp.width, temp.height));
 				Label author = new Label("Author: -");
 				Button del = new Button("Delete");
 				Button run = new Button("Run");
