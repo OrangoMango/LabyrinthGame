@@ -29,6 +29,8 @@ public class HomeWindow{
 
 		ScrollPane pane = new ScrollPane();
 		pane.setPrefSize(450, 200);
+		stage.widthProperty().addListener((obs, oldVal, newVal) -> pane.setPrefSize((double)newVal, stage.getHeight()));
+    stage.heightProperty().addListener((obs, oldVal, newVal) -> pane.setPrefSize(stage.getWidth(), (double)newVal));
 
 
 		if (cwf.getPaths().length == 0){
