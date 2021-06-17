@@ -254,7 +254,7 @@ public class NewWidget{
       if (sX == 0 || sY == 0 || eX == 0 || eY == 0){
         sX = 1;
         eX = 1;
-        eY = 2;
+        eY = 1;
       }
       if (this.pWidth == 0 || this.pHeight == 0){
         Alert alert = new Alert(Alert.AlertType.ERROR);
