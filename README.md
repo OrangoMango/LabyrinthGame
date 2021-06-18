@@ -6,8 +6,6 @@ Execute the `run.sh` file in the `app/` folder with the command:
 ```bash
 sh run.sh
 ```
-## Run program in your browser
-To try it (**beta**) in your browser use [this](https://repl.it/@OrangoMango/LabyrinthGame) link.
 
 # Screenshots
 * Gameplay (*Use arrows to move*)<br>
