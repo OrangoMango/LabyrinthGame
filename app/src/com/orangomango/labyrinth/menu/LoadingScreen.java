@@ -65,6 +65,7 @@ public class LoadingScreen{
 		pane.add(end, 1, 2);
 
 		start.setOnAction(event -> {
+                        start.setDisable(true);
 			Task dwlworker = new Task(){
 				@Override
 				protected Object call(){
@@ -84,7 +85,6 @@ public class LoadingScreen{
 					}
 					updateMessage("Download finished.");
 					end.setDisable(false);
-					start.setDisable(true);
 					return null;
 				}
 			};

@@ -81,7 +81,7 @@ public class LabyrinthMain extends Application{
     //block.draw(world.pen);
     //System.out.println("\n"+block+"\n");     
      
-    Scene scene = new Scene(layout, World.BLOCK_WIDTH*world.width+20, World.BLOCK_WIDTH*world.height+40);
+    Scene scene = new Scene(layout, World.BLOCK_WIDTH*world.width+40, World.BLOCK_WIDTH*world.height+80);
     this.stage.setScene(scene);
 
     // Create a player on start position

@@ -39,7 +39,7 @@ public class Editor{
   private static String CURRENT_FILE_PATH = "";
   private boolean saved = true;
   public static CreatedWorldFiles worldList;
-	public static boolean DONE = true;
+  public static boolean DONE = true;
 
   public Editor(String editorFilePath){
     worldList = new CreatedWorldFiles();
@@ -57,14 +57,14 @@ public class Editor{
     edworld = new EditableWorld(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator+"testSystemWorld-DefaultName_NoCopy.wld.sys");
 
     Button newBtn = new Button("New");
-		newBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"new.png")));
+    newBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/new.png")));
     newBtn.setOnAction(event -> {
       NewWidget wid = new NewWidget(false);
       wid.setEDW(edworld);
       wid.setEditor(this);
     });
     Button saveBtn = new Button("Save");
-		saveBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"save.png")));
+		saveBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/save.png")));
     saveBtn.setOnAction(event -> {
       try {
        saved();
@@ -84,7 +84,7 @@ public class Editor{
       
     });
     Button openBtn = new Button("Open");
-		openBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"open.png")));
+		openBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/open.png")));
     openBtn.setOnAction(event -> {
 			try {
 					FileChooser chooser = new FileChooser();
@@ -103,24 +103,24 @@ public class Editor{
     });
 
     Button addCBtn = new Button();
-		addCBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"ac.png")));
+		addCBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/ac.png")));
     addCBtn.setOnAction(event -> {if(checkValidityMax("w")){edworld.addColumn(); unsaved();}});
     Button addRBtn = new Button();
-		addRBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"ar.png")));
+		addRBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/ar.png")));
     addRBtn.setOnAction(event -> {if(checkValidityMax("h")){edworld.addRow(); unsaved();}});
     Button rmCBtn = new Button();
-		rmCBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"rc.png")));
+		rmCBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/rc.png")));
     rmCBtn.setOnAction(event -> {checkValidity(edworld.removeColumn()); unsaved();});
     Button rmRBtn = new Button();
-		rmRBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"rr.png")));
+		rmRBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/rr.png")));
     rmRBtn.setOnAction(event -> {checkValidity(edworld.removeRow()); unsaved();});
 
     Button runBtn = new Button("Run");
-		runBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"run.png")));
+		runBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/run.png")));
     runBtn.setOnAction(event -> new LevelExe(CURRENT_FILE_PATH, getFileName(), saved));
 
     Button sseBtn = new Button();
-		sseBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame"+File.separator+"Images"+File.separator+"sse.png")));
+		sseBtn.setGraphic(new ImageView(new Image("file://"+PATH+".labyrinthgame/Images/sse.png")));
     sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
 
     toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn);
