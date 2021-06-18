@@ -53,7 +53,7 @@ public class LoadingScreen{
 		final Label label = new Label("Start download to continue");
 		final ProgressIndicator bar = new ProgressIndicator(0);
 		bar.setMaxHeight(50);
-		ImageView view = new ImageView(new Image("https://orangomango.github.io/img/icon.png"));
+		ImageView view = new ImageView(new Image("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/icon.png"));
 		Button start = new Button("Start downloading files");
 		Button end = new Button("Done");
 		end.setDisable(true);
@@ -95,7 +95,8 @@ public class LoadingScreen{
 			new Thread(dwlworker).start();
 		});
 
-		this.stage.setScene(new Scene(pane, 300, 350));
+		this.stage.setScene(new Scene(pane, 300, 250));
+		this.stage.setResizable(false);
 		this.stage.show();
   }
 

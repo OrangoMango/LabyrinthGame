@@ -222,6 +222,7 @@ public class NewWidget{
     
     stage.setTitle("Create a new world");
     stage.setScene(SCENE_1);
+		stage.setResizable(false);
     stage.show();
   }
 

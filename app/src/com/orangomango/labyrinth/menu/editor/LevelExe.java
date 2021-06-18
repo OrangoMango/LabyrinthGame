@@ -88,6 +88,7 @@ public class LevelExe{
       });
 
     stage.setScene(scene);
+		stage.setResizable(false);
     stage.show();
   }
 

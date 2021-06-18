@@ -118,11 +118,12 @@ public class LabyrinthMain extends Application{
 				}
 			}
       });
+		this.stage.setResizable(false);
     this.stage.show();
 
 
     /* 
-      Move player example from start to end (WORLD1)
+      Move player (example) from start to end (WORLD1)
 
       player.moveOn(player.Y, player.NEGATIVE);
       player.moveOn(player.X, player.NEGATIVE);
