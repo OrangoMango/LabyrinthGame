@@ -3,6 +3,7 @@ package com.orangomango.labyrinth;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.canvas.*;
 import javafx.scene.control.Label;
@@ -40,7 +41,8 @@ public class LabyrinthMain extends Application{
 
   @Override
   public void start(Stage stage){
-		this.stage = stage;
+    this.stage = stage;
+    //this.stage.getIcons().add(new Image("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/icon.png"));   TBD
 
     System.out.println(System.getProperty("user.home")); // Know user's home
 
@@ -51,11 +53,10 @@ public class LabyrinthMain extends Application{
     Menu.OPEN = ARG;
     menu.setTSW(this);
     this.stage.setTitle("com.orangomango.labyrinth");
-		
   }
 
-	public void startShowing(){
-		FILE_PATHS = getLevelsList();
+ public void startShowing(){
+    FILE_PATHS = getLevelsList();
     System.out.println(java.util.Arrays.toString(FILE_PATHS));
     // Create a simple world
     final World world = new World(Editor.PATH+".labyrinthgame"+File.separator+"SystemLevels"+File.separator+FILE_PATHS[currentWorldIndex]);

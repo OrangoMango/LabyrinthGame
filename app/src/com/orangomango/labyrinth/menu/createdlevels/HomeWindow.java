@@ -98,7 +98,7 @@ public class HomeWindow{
     layout.add(pane, 0, 0);
 
     stage.setOnCloseRequest(event -> MYLEVELS = false);
-    stage.setScene(new Scene(layout, 450, 200));
+    stage.setScene(new Scene(layout, 450, 300));
     
     stage.show();
   }  
