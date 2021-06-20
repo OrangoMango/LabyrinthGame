@@ -9,6 +9,7 @@ import javafx.scene.control.Hyperlink;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
+import com.orangomango.labyrinth.menu.play.PlayScreen;
 import com.orangomango.labyrinth.LabyrinthMain; // import main application
 
 public class Menu {
@@ -32,7 +33,7 @@ public class Menu {
 
         Button playBtn = new Button("Play");
         playBtn.setOnAction(event -> {
-            this.toShowWorld.startShowing();
+            PlayScreen screen = new PlayScreen(this.toShowWorld);
             stop();
         });
 

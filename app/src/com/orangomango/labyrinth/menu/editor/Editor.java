@@ -156,15 +156,15 @@ public class Editor {
         this.stage.widthProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize((double) newVal, this.stage.getHeight()));
         this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
 
-        if (getCurrentFilePath() == null) {
-            DONE = false;
-            Selection sel = new Selection(edworld, this);
-        } else if (editorFilePath == null) {
-            System.out.println("Last file: " + getCurrentFilePath());
-            open(new File(getCurrentFilePath()));
-        } else {
+        if (editorFilePath != null){
             System.out.println("Opening: " + editorFilePath);
             open(new File(editorFilePath));
+        } else  if (getCurrentFilePath() == null) {
+            DONE = false;
+            Selection sel = new Selection(edworld, this);
+        } else {
+            System.out.println("Last file: " + getCurrentFilePath());
+            open(new File(getCurrentFilePath()));
         }
 
         Canvas canvas = new Canvas(edworld.width * EditableWorld.BLOCK_WIDTH, edworld.height * EditableWorld.BLOCK_WIDTH);

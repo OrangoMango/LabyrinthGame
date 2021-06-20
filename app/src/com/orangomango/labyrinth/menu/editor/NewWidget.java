@@ -24,7 +24,7 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 
 import java.io.*;
 
-public class NewWidget{
+public class NewWidget {
   private Stage stage;
   private static Scene SCENE_1;
   private static Scene SCENE_2;
@@ -42,22 +42,26 @@ public class NewWidget{
   private int sX, sY, eX, eY;
 
   private File file;
-  
-  public NewWidget(boolean firstTime){
+
+  public NewWidget(boolean firstTime) {
     FIRST_TIME = firstTime;
     stage = new Stage();
-    
-    stage.setOnCloseRequest(event -> {if(FIRST_TIME) {Platform.exit();}});
+
+    stage.setOnCloseRequest(event -> {
+      if (FIRST_TIME) {
+        Platform.exit();
+      }
+    });
 
     GridPane layout = new GridPane();
-    
+
     HBox[] boxes = new HBox[4];
     Button[] pres = new Button[4];
     Button[] nexts = new Button[4];
     Button[] finish = new Button[4];
 
     // HBoxes
-    for (int x = 0; x<4; x++){
+    for (int x = 0; x < 4; x++) {
       boxes[x] = new HBox();
       pres[x] = new Button("<--");
       pres[x].setOnAction(event -> switchScene(-1));
@@ -66,17 +70,17 @@ public class NewWidget{
       }
       nexts[x] = new Button("-->");
       nexts[x].setOnAction(event -> switchScene(1));
-      if (x == 3){
+      if (x == 3) {
         nexts[x].setDisable(true);
       }
       finish[x] = new Button("Finish");
       finish[x].setOnAction(event -> finishWidget());
-      if (x != 3){
+      if (x != 3) {
         finish[x].setDisable(true);
       }
       boxes[x].getChildren().addAll(pres[x], nexts[x], finish[x]);
     }
-    
+
     // Scene 1
     GridPane l1 = new GridPane();
     l1.setPadding(new Insets(10, 10, 10, 10));
@@ -88,23 +92,25 @@ public class NewWidget{
     browse.setOnAction(event -> {
       FileChooser chooser = new FileChooser();
       chooser.setTitle("Select new level file path");
-      chooser.setInitialDirectory(new File(Editor.PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator));
+      chooser.setInitialDirectory(new File(Editor.PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator));
       chooser.setInitialFileName("test.wld");
       chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
       try {
-           this.file = chooser.showSaveDialog(this.stage);
-           sel.setText("Selected file path: "+this.file.getAbsolutePath());
-           this.pathL.setText("Selected file path: "+this.file.getAbsolutePath());
+        this.file = chooser.showSaveDialog(this.stage);
+        sel.setText("Selected file path: " + this.file.getAbsolutePath());
+        this.pathL.setText("Selected file path: " + this.file.getAbsolutePath());
       } catch (Exception e) {
-           this.file = null;
-           sel.setText("Selected file path: null");
-           this.pathL.setText("Selected file path: null");
-     }
+        this.file = null;
+        sel.setText("Selected file path: null");
+        this.pathL.setText("Selected file path: null");
+      }
     });
+    Label info = new Label("Use arrows to switch between pages");
     l1.add(bp, 0, 0);
     l1.add(browse, 0, 1);
-    l1.add(boxes[0], 0, 2, 2, 1);
-    
+    l1.add(info, 0, 2);
+    l1.add(boxes[0], 0, 3, 2, 1);
+
     // Scene 2
     GridPane l2 = new GridPane();
     l2.setPadding(new Insets(10, 10, 10, 10));
@@ -128,10 +134,14 @@ public class NewWidget{
     sl2.setSnapToTicks(true);
     GraphicsContext pen = preview.getGraphicsContext2D();
     pen.setFill(Color.WHITE);
-    pen.fillRect(0,0,100,100);
+    pen.fillRect(0, 0, 100, 100);
     Label cPreview = new Label("preview (0x0)");
-    sl1.setOnMouseDragged(event -> {this.pWidth = (int) sl1.getValue(); updateCanvas(pen, cPreview); });
-    sl2.setOnMouseDragged(event -> {this.pHeight = (int) sl2.getValue(); updateCanvas(pen, cPreview); });
+    sl1.setOnMouseDragged(event -> {
+      this.pWidth = (int) sl1.getValue();updateCanvas(pen, cPreview);
+    });
+    sl2.setOnMouseDragged(event -> {
+      this.pHeight = (int) sl2.getValue();updateCanvas(pen, cPreview);
+    });
     l2.add(lvlSize, 0, 0, 2, 2);
     l2.add(sX, 0, 1);
     l2.add(sY, 0, 2);
@@ -140,7 +150,7 @@ public class NewWidget{
     l2.add(preview, 2, 0);
     l2.add(cPreview, 2, 1);
     l2.add(boxes[1], 0, 3, 2, 1);
-    
+
     // Scene 3
     GridPane l3 = new GridPane();
     l3.setPadding(new Insets(10, 10, 10, 10));
@@ -166,7 +176,7 @@ public class NewWidget{
     this.spinner4.setDisable(true);
     // When checkbox is clicked able all buttons
     allow.setOnAction(event -> {
-      if (!allow.isSelected()){
+      if (!allow.isSelected()) {
         lab1.setDisable(true);
         lab2.setDisable(true);
         lab3.setDisable(true);
@@ -200,7 +210,7 @@ public class NewWidget{
     l3.add(this.spinner3, 1, 3);
     l3.add(this.spinner4, 3, 3);
     l3.add(boxes[2], 0, 4, 2, 1);
-    
+
     // Scene 4
     GridPane l4 = new GridPane();
     l4.setPadding(new Insets(10, 10, 10, 10));
@@ -219,45 +229,45 @@ public class NewWidget{
     SCENE_2 = new Scene(l2, 300, 250);
     SCENE_3 = new Scene(l3, 300, 250);
     SCENE_4 = new Scene(l4, 300, 250);
-    
+
     stage.setTitle("Create a new world");
     stage.setScene(SCENE_1);
-		stage.setResizable(false);
+    stage.setResizable(false);
     stage.show();
   }
 
-  public void updateCanvas(GraphicsContext pen, Label preview){
+  public void updateCanvas(GraphicsContext pen, Label preview) {
     preview.setText(String.format("preview (%sx%s)", this.pWidth, this.pHeight));
     pen.setFill(Color.WHITE);
-    pen.fillRect(0,0,100,100);
+    pen.fillRect(0, 0, 100, 100);
     pen.setStroke(Color.RED);
-    pen.strokeRect(10, 10, this.pWidth*80/MAX_WORLD_SIZE, this.pHeight*80/MAX_WORLD_SIZE);    // x : 80 = width : 30
-  }
-  
-  public String getPath(){
-  	return this.file.getAbsolutePath();
-  }
-  
-  public void setEDW(EditableWorld ed){
-  	this.ed = ed;
+    pen.strokeRect(10, 10, this.pWidth * 80 / MAX_WORLD_SIZE, this.pHeight * 80 / MAX_WORLD_SIZE); // x : 80 = width : 30
   }
 
-  public void finishWidget(){
+  public String getPath() {
+    return this.file.getAbsolutePath();
+  }
+
+  public void setEDW(EditableWorld ed) {
+    this.ed = ed;
+  }
+
+  public void finishWidget() {
     try {
       String path = this.file.getAbsolutePath();
       System.out.println(path);
       System.out.println(String.format("%sx%s", this.pWidth, this.pHeight));
-      System.out.println(this.pWidth*this.pHeight);
-      this.sX = (int)this.spinner1.getValue();
-      this.sY = (int)this.spinner2.getValue();
-      this.eX = (int)this.spinner3.getValue();
-      this.eY = (int)this.spinner4.getValue();
-      if (sX == 0 || sY == 0 || eX == 0 || eY == 0){
+      System.out.println(this.pWidth * this.pHeight);
+      this.sX = (int) this.spinner1.getValue();
+      this.sY = (int) this.spinner2.getValue();
+      this.eX = (int) this.spinner3.getValue();
+      this.eY = (int) this.spinner4.getValue();
+      if (sX == 0 || sY == 0 || eX == 0 || eY == 0) {
         sX = 1;
         eX = 1;
         eY = 1;
       }
-      if (this.pWidth == 0 || this.pHeight == 0){
+      if (this.pWidth == 0 || this.pHeight == 0) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText("No dimension defined for world");
         alert.setTitle("Error");
@@ -266,7 +276,7 @@ public class NewWidget{
         return;
       }
       System.out.println(String.format("%s %s     %s %s", sX, sY, eX, eY));
-      if (sX > this.pWidth || sY > this.pHeight || eX > this.pWidth || eY > this.pHeight){
+      if (sX > this.pWidth || sY > this.pHeight || eX > this.pWidth || eY > this.pHeight) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText("Start or end position is outside world");
         alert.setTitle("Error");
@@ -274,62 +284,62 @@ public class NewWidget{
         alert.showAndWait();
         return;
       }
-    } catch (Exception e){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText("Insert a path for new file");
-        alert.setTitle("Error");
-        alert.setContentText("Please choose a path for your new world location!");
-        alert.showAndWait();
-        return;
+    } catch (Exception e) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setHeaderText("Insert a path for new file");
+      alert.setTitle("Error");
+      alert.setContentText("Please choose a path for your new world location!");
+      alert.showAndWait();
+      return;
     }
     try {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(this.file));
-        writer.write(String.format("%sx%s", this.pWidth, this.pHeight));
-        writer.newLine();
-        for (int i = 0; i < this.pWidth*this.pHeight; i++){
-           if (i != this.pWidth*this.pHeight-1){
-              writer.write("0,");
-           } else {
-              writer.write("0");
-           }
+      BufferedWriter writer = new BufferedWriter(new FileWriter(this.file));
+      writer.write(String.format("%sx%s", this.pWidth, this.pHeight));
+      writer.newLine();
+      for (int i = 0; i < this.pWidth * this.pHeight; i++) {
+        if (i != this.pWidth * this.pHeight - 1) {
+          writer.write("0,");
+        } else {
+          writer.write("0");
         }
-        writer.newLine();
-        writer.write(String.format("%s,%s\n", this.sX, this.sY));
-        writer.write(String.format("%s,%s", this.eX, this.eY));
-        writer.close();
-        if (!this.ed.equals(null)){
-          System.out.println("If null");
-					Editor.DONE = true;
-					this.editor.start(); // If it's hidded the show
-          this.editor.open(new File(getPath()));
-        }
-    } catch (IOException ex){}
+      }
+      writer.newLine();
+      writer.write(String.format("%s,%s\n", this.sX, this.sY));
+      writer.write(String.format("%s,%s", this.eX, this.eY));
+      writer.close();
+      if (!this.ed.equals(null)) {
+        System.out.println("If null");
+        Editor.DONE = true;
+        this.editor.start(); // If it's hidded the show
+        this.editor.open(new File(getPath()));
+      }
+    } catch (IOException ex) {}
     this.stage.hide();
-}
+  }
 
-public void setEditor(Editor editor){
-	this.editor = editor;
-}
+  public void setEditor(Editor editor) {
+    this.editor = editor;
+  }
 
-  public void switchScene(int move){
-    if (move == 1){
-      if (this.stage.getScene() == SCENE_1){
+  public void switchScene(int move) {
+    if (move == 1) {
+      if (this.stage.getScene() == SCENE_1) {
         this.stage.setScene(SCENE_2);
-      } else if (this.stage.getScene() == SCENE_2){
+      } else if (this.stage.getScene() == SCENE_2) {
         this.stage.setScene(SCENE_3);
-      } else if (this.stage.getScene() == SCENE_3){
+      } else if (this.stage.getScene() == SCENE_3) {
         this.stage.setScene(SCENE_4);
-      } else if (this.stage.getScene() == SCENE_4){
+      } else if (this.stage.getScene() == SCENE_4) {
         this.stage.setScene(SCENE_1);
       }
-    } else if (move == -1){
-      if (this.stage.getScene() == SCENE_1){
+    } else if (move == -1) {
+      if (this.stage.getScene() == SCENE_1) {
         this.stage.setScene(SCENE_4);
-      } else if (this.stage.getScene() == SCENE_2){
+      } else if (this.stage.getScene() == SCENE_2) {
         this.stage.setScene(SCENE_1);
-      } else if (this.stage.getScene() == SCENE_3){
+      } else if (this.stage.getScene() == SCENE_3) {
         this.stage.setScene(SCENE_2);
-      } else if (this.stage.getScene() == SCENE_4){
+      } else if (this.stage.getScene() == SCENE_4) {
         this.stage.setScene(SCENE_3);
       }
     }
