@@ -14,42 +14,58 @@ import java.io.*;
 import com.orangomango.labyrinth.LabyrinthMain;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.Menu.PLAY;
+import static com.orangomango.labyrinth.menu.LoadingScreen.LEVELS;
 
-public class PlayScreen{
-	public PlayScreen(LabyrinthMain main){
-		final Stage stage = new Stage();
-		TabPane tabpane = new TabPane();
-		Tab tab = new Tab("Levels");
-		tab.setClosable(false);
-		TilePane pane = new TilePane();
-		pane.setPadding(new Insets(7, 7, 7, 7));
-		pane.setHgap(10);
-		pane.setVgap(10);
-		main.startShowing();
-		
-		for (String level : LabyrinthMain.FILE_PATHS){
-			Button b = new Button(level);
-			b.setOnAction(event -> {
-				Tab LevelInfoTab = new Tab(level);
-				GridPane grid = new GridPane();
-				
-				Button playBtn = new Button("Play level");
-				playBtn.setOnAction(clickEvent -> {
-					new LevelExe(PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + level, level, true);
-					LevelExe.setOnFinish(stage);
-					stage.hide();
-				});
-				grid.add(playBtn, 0, 0);
-				LevelInfoTab.setContent(grid);
-				tabpane.getTabs().add(LevelInfoTab);
-				tabpane.getSelectionModel().select(LevelInfoTab);
-			});
-			pane.getChildren().add(b);
-		}
-		
-		tab.setContent(pane);
-		tabpane.getTabs().add(tab);
-		stage.setScene(new Scene(tabpane, 600, 300));
-		stage.show();
-	}
+public class PlayScreen {
+
+  public static int[] LEVELS_OPEN = new int[LEVELS];
+
+  private static int getLevelIndex(String level) {
+    return Integer.parseInt(Character.toString(level.charAt(5)));
+  }
+
+  public PlayScreen(LabyrinthMain main) {
+    final Stage stage = new Stage();
+    stage.setOnCloseRequest(event -> PLAY = false);
+    TabPane tabpane = new TabPane();
+    Tab tab = new Tab("Levels");
+    tab.setClosable(false);
+    TilePane pane = new TilePane();
+    pane.setPadding(new Insets(7, 7, 7, 7));
+    pane.setHgap(10);
+    pane.setVgap(10);
+    main.startShowing();
+
+    for (String level: LabyrinthMain.FILE_PATHS) {
+      Button b = new Button(level);
+      b.setOnAction(event -> {
+        Tab LevelInfoTab = new Tab(level);
+        LevelInfoTab.setOnClosed(closeEvent -> LEVELS_OPEN[getLevelIndex(level)] = 0);
+        GridPane grid = new GridPane();
+        
+        if (LEVELS_OPEN[getLevelIndex(level)] == 1) {
+          return;
+        }
+        LEVELS_OPEN[getLevelIndex(level)] = 1;
+
+        Button playBtn = new Button("Play level");
+        playBtn.setOnAction(clickEvent -> {
+          new LevelExe(PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + level, level, true);
+          LevelExe.setOnFinish(stage);
+          stage.hide();
+        });
+        grid.add(playBtn, 0, 0);
+        LevelInfoTab.setContent(grid);
+        tabpane.getTabs().add(LevelInfoTab);
+        tabpane.getSelectionModel().select(LevelInfoTab);
+      });
+      pane.getChildren().add(b);
+    }
+
+    tab.setContent(pane);
+    tabpane.getTabs().add(tab);
+    stage.setScene(new Scene(tabpane, 600, 300));
+    stage.show();
+  }
 }

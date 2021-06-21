@@ -14,6 +14,7 @@ import javafx.scene.input.KeyCode;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import com.orangomango.labyrinth.menu.Menu;
 import com.orangomango.labyrinth.menu.editor.Editor;
@@ -58,7 +59,6 @@ public class LabyrinthMain extends Application {
 
     public void startShowing() {
         FILE_PATHS = getLevelsList();
-        System.out.println(Arrays.toString(FILE_PATHS));
 
     /* 
       Move player (example) from start to end (WORLD1)

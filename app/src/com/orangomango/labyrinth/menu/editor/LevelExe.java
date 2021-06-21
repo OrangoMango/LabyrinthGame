@@ -17,10 +17,21 @@ import com.orangomango.labyrinth.Player;
 
 public class LevelExe {
   private static Stage exStage = null;
+  private static boolean OPEN = false;
 
   public LevelExe(String path, String filename, boolean saved) {
+    if (OPEN){
+    	return;
+    }
     Stage stage = new Stage();
     stage.setTitle(filename);
+    stage.setOnCloseRequest(event -> {
+    	if (LevelExe.exStage != null){
+          	LevelExe.exStage.show();
+      }
+      OPEN = false;
+    });
+    OPEN = true;
 
     final World world = new World(path);
 
@@ -83,10 +94,11 @@ public class LevelExe {
           alert.setTitle("Level complete");
           alert.setContentText(null);
           alert.showAndWait();
+          OPEN = false;
           stage.hide();
           if (LevelExe.exStage != null)
           	LevelExe.exStage.show();
-      }
+          }
     }});
 
     stage.setScene(scene);

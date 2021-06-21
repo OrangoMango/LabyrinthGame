@@ -10,13 +10,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Alert;
 
-public class SESetup{
+public class SESetup {
   private EditableWorld world;
   private Stage stage;
+  private static boolean OPEN = false;
 
-	public SESetup(EditableWorld world, int width, int height, int[] start, int[]end){
+  public SESetup(EditableWorld world, int width, int height, int[] start, int[] end) {
+    if (OPEN){
+    	return;
+    }
     this.world = world;
     this.stage = new Stage();
+    this.stage.setOnCloseRequest(event -> OPEN = false);
+    OPEN = true;
 
     GridPane layout = new GridPane();
     layout.setHgap(10);
@@ -33,7 +39,7 @@ public class SESetup{
     Spinner spinner3 = new Spinner(0, width, end[0]);
     Spinner spinner4 = new Spinner(0, height, end[1]);
     Button ok = new Button("Save changes");
-    ok.setOnAction(event -> change((int)spinner1.getValue(), (int)spinner2.getValue(), (int)spinner3.getValue(), (int)spinner4.getValue()));
+    ok.setOnAction(event -> change((int) spinner1.getValue(), (int) spinner2.getValue(), (int) spinner3.getValue(), (int) spinner4.getValue()));
     Button cancel = new Button("Cancel");
     cancel.setOnAction(event -> this.stage.hide());
 
@@ -56,8 +62,8 @@ public class SESetup{
     this.stage.show();
   }
 
-  public void change(int sX, int sY, int eX, int eY){
-    if (sX == eX && sY == eY){
+  public void change(int sX, int sY, int eX, int eY) {
+    if (sX == eX && sY == eY) {
       System.out.println("SSE Error (1)");
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setHeaderText("Start position is on same position of end");
@@ -66,7 +72,7 @@ public class SESetup{
       alert.showAndWait();
       return;
     }
-    if (this.world.getBlockAt(sX, sY).getType() == EditableWorld.WALL || this.world.getBlockAt(eX, eY).getType() == EditableWorld.WALL){
+    if (this.world.getBlockAt(sX, sY).getType() == EditableWorld.WALL || this.world.getBlockAt(eX, eY).getType() == EditableWorld.WALL) {
       System.out.println("SSE Error (2)");
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setHeaderText("Start or end position is on a block");

@@ -39,9 +39,10 @@ public class Block{
   public static Block fromInt(int x, int x1, int y1){
     if (x == 0){
       return new Block(World.AIR, x1, y1);
-    } else {
+    } else if  (x==1){
       return new Block(World.WALL, x1, y1);
     }
+    return null;    
   }
   
   /**

@@ -142,7 +142,7 @@ public class Editor {
 
         Button runBtn = new Button("Run");
         runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/run.png")));
-        runBtn.setOnAction(event -> new LevelExe(CURRENT_FILE_PATH, getFileName(), saved));
+        runBtn.setOnAction(event -> {new LevelExe(CURRENT_FILE_PATH, getFileName(), saved); LevelExe.setOnFinish(null);});
 
         Button sseBtn = new Button();
         sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/sse.png")));

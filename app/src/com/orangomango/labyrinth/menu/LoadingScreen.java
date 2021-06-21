@@ -22,7 +22,7 @@ import java.net.*;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class LoadingScreen {
-    private static final int LEVELS = 4;
+    public static final int LEVELS = 4;
     private static final String[] IMGNAMES = new String[] {
         "ac",
         "ar",

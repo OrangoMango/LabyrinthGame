@@ -18,6 +18,7 @@ public class Menu {
 
     public static boolean MYLEVELS = false;
     public static boolean EDITOR = false;
+    public static boolean PLAY = false;
 
     public static String OPEN = null;
 
@@ -33,8 +34,10 @@ public class Menu {
 
         Button playBtn = new Button("Play");
         playBtn.setOnAction(event -> {
-            PlayScreen screen = new PlayScreen(this.toShowWorld);
-            stop();
+            if (!PLAY){
+		    PlayScreen screen = new PlayScreen(this.toShowWorld);
+		    PLAY = true;
+            }
         });
 
         Button editorBtn = new Button("Editor");
