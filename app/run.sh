@@ -1,6 +1,7 @@
 export FX_PATH=/usr/share/openjfx/lib
 cd src
 echo "Compiling..."
+rm -r ../bin
 javac --module-path $FX_PATH --add-modules javafx.controls -d ../bin com/orangomango/labyrinth/LabyrinthMain.java
 cd ../bin
 echo "Executing..."
