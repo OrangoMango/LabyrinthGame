@@ -70,6 +70,9 @@ public class Block {
 			case World.NULL:
 				pen.setFill(Color.GRAY);
 				break;
+                        default:
+                            pen.setFill(Color.RED);
+                            break;
 		}
 		pen.fillRect(this.x * World.BLOCK_WIDTH, this.y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
