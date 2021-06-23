@@ -31,7 +31,7 @@ public class LabyrinthMain extends Application {
     public static void main(String[] args) {
         if (args.length >= 1) {
             ARG = args[0];
-            System.out.println("File path requested");
+            Logger.info("File path requested in command line args");
         }
         launch(args);
     }
@@ -48,6 +48,7 @@ public class LabyrinthMain extends Application {
         System.out.println(System.getProperty("user.home")); // Know user's home
 
         Editor.setupDirectory();
+	Logger.info("application started");
 
         // Start Menu
         Menu.OPEN = ARG;

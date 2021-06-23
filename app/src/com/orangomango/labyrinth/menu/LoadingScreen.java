@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.net.*;
 
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import com.orangomango.labyrinth.Logger;
 
 public class LoadingScreen {
 	public static final int LEVELS = 4;
@@ -43,6 +44,7 @@ public class LoadingScreen {
 		try (InputStream in = new URL(link).openStream()) {
 			Files.copy( in , Paths.get(path));
 		} catch (IOException ex) {
+			Logger.error("No internet available");
 			internetError(true, "Could not connect to " + ex.getMessage());
 		}
 	}

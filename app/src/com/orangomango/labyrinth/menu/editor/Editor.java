@@ -32,6 +32,7 @@ import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
 import static com.orangomango.labyrinth.menu.Menu.EDITOR;
+import com.orangomango.labyrinth.Logger;
 
 public class Editor {
 	private Stage stage;
@@ -167,13 +168,13 @@ public class Editor {
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
 
 		if (editorFilePath != null) {
-			System.out.println("Opening: " + editorFilePath);
+			Logger.info("Opening: " + editorFilePath);
 			open(new File(editorFilePath));
 		} else if (getCurrentFilePath() == null) {
 			DONE = false;
 			Selection sel = new Selection(edworld, this);
 		} else {
-			System.out.println("Last file: " + getCurrentFilePath());
+			Logger.info("Last file: " + getCurrentFilePath());
 			open(new File(getCurrentFilePath()));
 		}
 
@@ -192,7 +193,7 @@ public class Editor {
 			public void handle(MouseEvent event) {
 				EditableBlock edblock = EditableBlock.fromBlock(edworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
 				if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(edworld) || edblock.isOnEnd(edworld))) {
-					System.out.println("SSE Error (3)");
+					Logger.warning("Could not place block on start or end position");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setHeaderText("Could not place block on start or end position");
 					alert.setTitle("SSE Error");
@@ -308,6 +309,7 @@ public class Editor {
 			worldList.addToList(CURRENT_FILE_PATH);
 			saved();
 		} catch (Exception e) {
+			Logger.error("Could not load world file");
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setHeaderText("Error while parsing file");
 			alert.setTitle("Error");

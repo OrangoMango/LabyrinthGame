@@ -6,6 +6,7 @@ import java.io.*;
 
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Block;
+import com.orangomango.labyrinth.Logger;
 
 public class EditableWorld extends World {
 	public EditableWorld(String path) {
@@ -37,7 +38,7 @@ public class EditableWorld extends World {
 			writer.write(end[0] + "," + end[1]);
 			writer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e.getMessage());
 		}
 		changeToWorld(this.filePath);
 	}

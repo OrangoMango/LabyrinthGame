@@ -53,13 +53,13 @@ public class World {
 			this.canvas.setHeight(this.height * BLOCK_WIDTH);
 			this.canvas.setWidth(this.width * BLOCK_WIDTH);
 		} catch (NullPointerException e) {
-			System.out.println("There are some null values! (1)");
+			Logger.error("World canvas is null");
 		}
 		try {
 			this.player.setX(start[0]);
 			this.player.setY(start[1]);
 		} catch (NullPointerException e) {
-			System.out.println("There are some null values! (3)");
+			Logger.error("World player is null");
 		}
 		update();
 	}
@@ -70,7 +70,7 @@ public class World {
 			this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
 			draw();
 		} catch (NullPointerException e) {
-			System.out.println("There are some null values! (4)");
+			Logger.error("World pen is null");
 		}
 	}
 
@@ -105,7 +105,7 @@ public class World {
 			return Fworld;
 
 		} catch (IOException ex) {
-			System.err.println("Error in world file");
+			Logger.error("Could not read world");
 			return null;
 		}
 	}
