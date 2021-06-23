@@ -284,6 +284,14 @@ public class NewWidget {
         alert.showAndWait();
         return;
       }
+      if (sX == eX && sY == eY){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("Start position is on same position of end");
+        alert.setTitle("SSE Error");
+        alert.setContentText(null);
+        alert.showAndWait();
+        return;
+      }
     } catch (Exception e) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setHeaderText("Insert a path for new file");

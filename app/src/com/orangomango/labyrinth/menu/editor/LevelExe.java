@@ -37,7 +37,7 @@ public class LevelExe {
 
     Canvas canvas = new Canvas(World.BLOCK_WIDTH * world.width, World.BLOCK_WIDTH * world.height);
     Label label = new Label(filename + ((saved) ? " (Level is currently synchronized)" : " (Level not synchronized, unsaved)"));
-    world.setAttributes(label, canvas);
+    world.setCanvas(canvas);
 
     canvas.setFocusTraversable(true);
 

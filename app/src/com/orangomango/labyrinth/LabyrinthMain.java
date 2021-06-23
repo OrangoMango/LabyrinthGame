@@ -44,7 +44,6 @@ public class LabyrinthMain extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        //this.stage.getIcons().add(new Image("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/icon.png"));   TBD
 
         System.out.println(System.getProperty("user.home")); // Know user's home
 

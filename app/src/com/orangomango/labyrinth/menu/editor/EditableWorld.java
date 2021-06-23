@@ -46,10 +46,6 @@ public class EditableWorld extends World {
 		this.world[block.getY()][block.getX()] = new Block(block.getType(), block.getX(), block.getY());
 	}
 
-	public void setCanvas(Canvas c) {
-		this.canvas = c;
-	}
-
 	public void addRow() {
 		Block[][] newArray = new Block[this.height + 1][this.width];
 		int counter = 0;

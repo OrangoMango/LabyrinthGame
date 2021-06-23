@@ -46,6 +46,9 @@ public class Editor {
 
 	private String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
+                if (input.contains("\\")){
+                    output.append("/");
+                }
 		for (char c: input.toCharArray()) {
 			if (Character.toString(c).equals("\\")) {
 				output.append("/");
@@ -160,6 +163,8 @@ public class Editor {
 
 		// Setup world editor
 		ScrollPane scrollpane = new ScrollPane();
+		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize((double) newVal, this.stage.getHeight()));
+		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
 
 		if (editorFilePath != null) {
 			System.out.println("Opening: " + editorFilePath);

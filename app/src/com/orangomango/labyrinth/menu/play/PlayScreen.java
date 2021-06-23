@@ -27,7 +27,10 @@ public class PlayScreen {
 
   public PlayScreen(LabyrinthMain main) {
     final Stage stage = new Stage();
-    stage.setOnCloseRequest(event -> PLAY = false);
+    stage.setOnCloseRequest(event -> {
+        PLAY = false;
+        LEVELS_OPEN = new int[LEVELS];
+    });
     TabPane tabpane = new TabPane();
     Tab tab = new Tab("Levels");
     tab.setClosable(false);
@@ -41,13 +44,13 @@ public class PlayScreen {
       Button b = new Button(level);
       b.setOnAction(event -> {
         Tab LevelInfoTab = new Tab(level);
-        LevelInfoTab.setOnClosed(closeEvent -> LEVELS_OPEN[getLevelIndex(level)] = 0);
+        LevelInfoTab.setOnClosed(closeEvent -> LEVELS_OPEN[getLevelIndex(level)-1] = 0);
         GridPane grid = new GridPane();
         
-        if (LEVELS_OPEN[getLevelIndex(level)] == 1) {
+        if (LEVELS_OPEN[getLevelIndex(level)-1] == 1) {
           return;
         }
-        LEVELS_OPEN[getLevelIndex(level)] = 1;
+        LEVELS_OPEN[getLevelIndex(level)-1] = 1;
 
         Button playBtn = new Button("Play level");
         playBtn.setOnAction(clickEvent -> {
