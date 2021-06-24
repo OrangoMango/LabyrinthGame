@@ -40,6 +40,7 @@ public class Selection{
 		layout.add(openBtn, 2, 0);
 
 		this.stage.setScene(new Scene(layout, 300, 100));
+                this.stage.setResizable(false);
 		this.stage.setOnCloseRequest(event -> Platform.exit());
 		this.stage.show();
 	}

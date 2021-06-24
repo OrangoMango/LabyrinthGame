@@ -45,7 +45,7 @@ public class LabyrinthMain extends Application {
     public void start(Stage stage) {
         this.stage = stage;
 
-        System.out.println(System.getProperty("user.home")); // Know user's home
+        Logger.info("user home: "+System.getProperty("user.home")); // Know user's home
 
         Editor.setupDirectory();
 	Logger.info("application started");

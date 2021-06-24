@@ -50,7 +50,6 @@ public class HomeWindow{
 				edit.setOnAction(event -> {
 					Editor editor = new Editor(p);
 					editor.start();
-					EDITOR = true;
 				});
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				Label mod = new Label("Last modified: "+format.format(file.lastModified()));
