@@ -44,6 +44,7 @@ public class Editor {
 	public static CreatedWorldFiles worldList;
 	public static boolean DONE = true;
 	private static int SELECTED_BLOCK = 1;
+        private static String OPENED_FILES = "";
 
 	private String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
@@ -303,7 +304,14 @@ public class Editor {
 
 			CURRENT_FILE_PATH = f.getAbsolutePath();
 			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
-			copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
+                        if (java.util.Arrays.asList(OPENED_FILES.split(";")).contains(CURRENT_FILE_PATH)){
+                            Logger.warning("Exiting editor, file already opened");
+                            // TBD
+                        }
+                        OPENED_FILES = OPENED_FILES + CURRENT_FILE_PATH + ";";
+                        Logger.info("opened files: "+OPENED_FILES);
+                        Logger.info("opened files as list: "+java.util.Arrays.toString(OPENED_FILES.split(";")));
+                        copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
 			edworld.changeToWorld(WORKING_FILE_PATH);
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);

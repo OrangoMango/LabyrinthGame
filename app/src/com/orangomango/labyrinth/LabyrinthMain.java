@@ -45,10 +45,10 @@ public class LabyrinthMain extends Application {
     public void start(Stage stage) {
         this.stage = stage;
 
-        Logger.info("user home: "+System.getProperty("user.home")); // Know user's home
+        Logger.info("User home: "+System.getProperty("user.home")); // Know user's home
 
         Editor.setupDirectory();
-	Logger.info("application started");
+	Logger.info("Application started");
 
         // Start Menu
         Menu.OPEN = ARG;
