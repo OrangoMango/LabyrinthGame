@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.SplitPane;
 import javafx.scene.image.*;
 import javafx.stage.FileChooser;
 
@@ -44,7 +45,7 @@ public class Editor {
 	public static CreatedWorldFiles worldList;
 	public static boolean DONE = true;
 	private static int SELECTED_BLOCK = 1;
-        private static String OPENED_FILES = "";
+	private TabPane tabs;
 
 	private String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
@@ -226,18 +227,26 @@ public class Editor {
 			}
 		});
 		
-		TabPane tabs = new TabPane();
+		SplitPane splitpane = new SplitPane();
+		
+		this.tabs = new TabPane();
 		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> tabs.setPrefSize((double) newVal, this.stage.getHeight()));
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> tabs.setPrefSize(this.stage.getWidth(), (double) newVal));
-		Tab editTab = new Tab("editor");
+		Tab editTab = new Tab("editor"); //getFileName()
 		editTab.setClosable(false);
 		GridPane editorGrid = new GridPane();
 		editorGrid.add(scrollpane, 0, 0);
 		editorGrid.add(pointingOn, 0, 1, 2, 1);
 		editTab.setContent(editorGrid);
+
+		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
+			// TBD
+		});
+
+		tabs.getTabs().add(editTab);
+		splitpane.getItems().add(tabs);
 		
-		Tab blockTab = new Tab("blocks");
-		blockTab.setClosable(false);
+		
 		TilePane blockPane = new TilePane();
 		
 		ToggleGroup group = new ToggleGroup();
@@ -250,19 +259,17 @@ public class Editor {
 		nullBlock.setToggleGroup(group);
 		
 		blockPane.getChildren().addAll(toggleBlock, nullBlock);
-		blockTab.setContent(blockPane);
+		splitpane.getItems().add(blockPane);
 		
-		Tab infoTab = new Tab("level info");
-		infoTab.setClosable(false);
-		infoTab.setContent(new Label("Level info coming soon!"));
-		
-		tabs.getTabs().addAll(editTab, blockTab, infoTab);
+		// Set the divider on 80%
+		splitpane.setDividerPositions(0.8f);
+		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
+		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
 
 		layout.add(toolbar, 0, 0);
-		layout.add(tabs, 0, 1);
+		layout.add(splitpane, 0, 1);
 
-		this.stage.setScene(new Scene(layout, 705, 600));
-		//this.stage.setResizable(false)
+		this.stage.setScene(new Scene(layout, 775, 650));
 	}
 
 	public void start() {
@@ -304,15 +311,44 @@ public class Editor {
 
 			CURRENT_FILE_PATH = f.getAbsolutePath();
 			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
-                        if (java.util.Arrays.asList(OPENED_FILES.split(";")).contains(CURRENT_FILE_PATH)){
-                            Logger.warning("Exiting editor, file already opened");
-                            // TBD
-                        }
-                        OPENED_FILES = OPENED_FILES + CURRENT_FILE_PATH + ";";
-                        Logger.info("opened files: "+OPENED_FILES);
-                        Logger.info("opened files as list: "+java.util.Arrays.toString(OPENED_FILES.split(";")));
                         copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
-			edworld.changeToWorld(WORKING_FILE_PATH);
+                        
+                        if (false){ //(this.tabs != null){
+                        	/*Tab newTab = new Tab(f.getName());
+                        	
+                        	GridPane gpane = new GridPane();
+                        	ScrollPane scrollpane = new ScrollPane();
+				this.stage.widthProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize((double) newVal, this.stage.getHeight()));
+				this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
+				
+                        	EditableWorld editableworld = new EditableWorld(CURRENT_FILE_PATH);
+                        	Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
+				canvas.setFocusTraversable(true);
+				scrollpane.setContent(canvas);
+
+				GraphicsContext pen = canvas.getGraphicsContext2D();
+				editableworld.setPen(pen);
+				editableworld.setPlayer(new Player(editableworld.start[0], editableworld.start[1], editableworld));
+				editableworld.setCanvas(canvas);
+				editableworld.draw();
+				
+				final Label pointingOn = new Label("Mouse on Block: null");
+				canvas.setOnMouseMoved(new EventHandler<MouseEvent> () {
+					@Override
+					public void handle(MouseEvent event) {
+						Block block = editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
+						pointingOn.setText("Mouse on block: " + block + " " + ((block.isOnStart(editableworld)) ? "On start position" : ((block.isOnEnd(editableworld)) ? "On end position" : "Not on start or end position")));
+					}
+				});
+				
+				gpane.add(scrollpane, 0, 0);
+				gpane.add(pointingOn, 0, 1);
+				
+				newTab.setContent(gpane);
+                        	this.tabs.getTabs().add(newTab);*/
+                        } else {
+                        	edworld.changeToWorld(WORKING_FILE_PATH);
+                        }
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
 			saved();
