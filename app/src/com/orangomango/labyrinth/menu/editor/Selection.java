@@ -14,13 +14,13 @@ import java.io.*;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.DONE;
 
-public class Selection{
+public class Selection {
 
 	private EditableWorld edworld;
 	private Editor editor;
 	private Stage stage;
 
-	public Selection(EditableWorld ed, Editor editor){
+	public Selection(EditableWorld ed, Editor editor) {
 		this.edworld = ed;
 		this.editor = editor;
 
@@ -40,23 +40,23 @@ public class Selection{
 		layout.add(openBtn, 2, 0);
 
 		this.stage.setScene(new Scene(layout, 300, 100));
-                this.stage.setResizable(false);
+		this.stage.setResizable(false);
 		this.stage.setOnCloseRequest(event -> Platform.exit());
 		this.stage.show();
 	}
 
-	private void setupNewWidget(){
+	private void setupNewWidget() {
 		NewWidget wid = new NewWidget(true);
-    wid.setEDW(this.edworld);
-    wid.setEditor(this.editor);
+		wid.setEDW(this.edworld);
+		wid.setEditor(this.editor);
 		this.stage.hide();
-		
+
 	}
 
-	private void setupEditor(){
+	private void setupEditor() {
 		try {
 			FileChooser chooser = new FileChooser();
-			chooser.setInitialDirectory(new File(PATH+".labyrinthgame"+File.separator+"Editor"+File.separator+"Levels"+File.separator));
+			chooser.setInitialDirectory(new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator));
 			chooser.setTitle("Open world");
 			chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 			File f = chooser.showOpenDialog(this.stage);
@@ -64,7 +64,7 @@ public class Selection{
 			this.stage.hide();
 			this.editor.start();
 			this.editor.open(f);
-		} catch (Exception e){
+		} catch (Exception e) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setHeaderText("Error while parsing file");
 			alert.setTitle("Error");

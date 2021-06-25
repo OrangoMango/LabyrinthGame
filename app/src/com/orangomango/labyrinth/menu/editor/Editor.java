@@ -47,18 +47,18 @@ public class Editor {
 	public static boolean DONE = true;
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
-        
-        private static String[] WORKING_FILE_PATHS = new String[0];
-        private static String[] CURRENT_FILE_PATHS = new String[0];
-        private static int OPENED_TABS = 0;
-        private static boolean[] SAVES = new boolean[0];
-        private static EditableWorld[] WORLDS = new EditableWorld[0];
+
+	private static String[] WORKING_FILE_PATHS = new String[0];
+	private static String[] CURRENT_FILE_PATHS = new String[0];
+	private static int OPENED_TABS = 0;
+	private static boolean[] SAVES = new boolean[0];
+	private static EditableWorld[] WORLDS = new EditableWorld[0];
 
 	private String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
-                if (input.contains("\\")){
-                    output.append("/");
-                }
+		if (input.contains("\\")) {
+			output.append("/");
+		}
 		for (char c: input.toCharArray()) {
 			if (Character.toString(c).equals("\\")) {
 				output.append("/");
@@ -68,87 +68,95 @@ public class Editor {
 		}
 		return output.toString();
 	}
-        
-        private GridPane getEditorTabContent(){
-            GridPane layout = new GridPane();
-            
-            ScrollPane scrollpane = new ScrollPane();
 
-            EditableWorld editableworld = new EditableWorld(WORKING_FILE_PATH);
-            System.out.println(CURRENT_FILE_PATH+" "+WORKING_FILE_PATH);
-            Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
-            canvas.setFocusTraversable(true);
-            
-            canvas.setOnMousePressed(new EventHandler<MouseEvent> () {
-                @Override
-                public void handle(MouseEvent event) {
-                        EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
-                        if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
-                                Logger.warning("Could not place block on start or end position");
-                                Alert alert = new Alert(Alert.AlertType.ERROR);
-                                alert.setHeaderText("Could not place block on start or end position");
-                                alert.setTitle("SSE Error");
-                                alert.setContentText(null);
-                                alert.showAndWait();
-                                return;
-                        }
-                        switch (SELECTED_BLOCK){
-                                case 1:
-                                        edblock.toggleType();
-                                        break;
-                                case 2:
-                                        edblock.setType(EditableWorld.NULL);
-                                        break;
-                        }
-                        editableworld.setBlockOn(edblock);
-                        editableworld.updateOnFile();
-                        unsaved();
-                }
-            });
-            
-            scrollpane.setContent(canvas);
+	private GridPane getEditorTabContent() {
+		GridPane layout = new GridPane();
 
-            GraphicsContext pen = canvas.getGraphicsContext2D();
-            editableworld.setPen(pen);
-            editableworld.setPlayer(new Player(editableworld.start[0], editableworld.start[1], editableworld));
-            editableworld.setCanvas(canvas);
-            editableworld.draw();
+		ScrollPane scrollpane = new ScrollPane();
 
-            final Label pointingOn = new Label("Mouse on Block: null");
-            canvas.setOnMouseMoved(new EventHandler<MouseEvent> () {
-                    @Override
-                    public void handle(MouseEvent event) {
-                            Block block = editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
-                            pointingOn.setText("Mouse on block: " + block + " " + ((block.isOnStart(editableworld)) ? "On start position" : ((block.isOnEnd(editableworld)) ? "On end position" : "Not on start or end position")));
-                    }
-            });
-            
-            scrollpane.setPrefSize(this.stage.getWidth(), this.stage.getHeight());
-            
-            this.stage.widthProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize((double) newVal, this.stage.getHeight()));
-            this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
-            
-            layout.add(scrollpane, 0, 0);
-            layout.add(pointingOn, 0, 1, 2, 1);
-            this.edworld = editableworld;
-            WORLDS = Arrays.copyOf(WORLDS, OPENED_TABS);
-            WORLDS[OPENED_TABS-1] = editableworld;
-            System.out.println(WORLDS.length);
-            
-            return layout;
-        }
+		EditableWorld editableworld;
+
+		if (!WORKING_FILE_PATH.equals("")) {
+			editableworld = new EditableWorld(WORKING_FILE_PATH);
+		} else {
+			editableworld = this.edworld;
+		}
+
+		Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
+		canvas.setFocusTraversable(true);
+
+		canvas.setOnMousePressed(new EventHandler<MouseEvent> () {
+			@Override
+			public void handle(MouseEvent event) {
+				EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
+				if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
+					Logger.warning("Could not place block on start or end position");
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setHeaderText("Could not place block on start or end position");
+					alert.setTitle("SSE Error");
+					alert.setContentText(null);
+					alert.showAndWait();
+					return;
+				}
+				switch (SELECTED_BLOCK) {
+					case 1:
+						edblock.toggleType();
+						break;
+					case 2:
+						edblock.setType(EditableWorld.NULL);
+						break;
+				}
+				editableworld.setBlockOn(edblock);
+				editableworld.updateOnFile();
+				unsaved();
+			}
+		});
+
+		scrollpane.setContent(canvas);
+
+		GraphicsContext pen = canvas.getGraphicsContext2D();
+		editableworld.setPen(pen);
+		editableworld.setPlayer(new Player(editableworld.start[0], editableworld.start[1], editableworld));
+		editableworld.setCanvas(canvas);
+		editableworld.draw();
+
+		final Label pointingOn = new Label("Mouse on Block: null");
+		canvas.setOnMouseMoved(new EventHandler<MouseEvent> () {
+			@Override
+			public void handle(MouseEvent event) {
+				Block block = editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
+				pointingOn.setText("Mouse on block: " + block + " " + ((block.isOnStart(editableworld)) ? "On start position" : ((block.isOnEnd(editableworld)) ? "On end position" : "Not on start or end position")));
+			}
+		});
+
+		scrollpane.setPrefSize(this.stage.getWidth(), this.stage.getHeight());
+
+		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize((double) newVal, this.stage.getHeight()));
+		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
+
+		layout.add(scrollpane, 0, 0);
+		layout.add(pointingOn, 0, 1, 2, 1);
+		this.edworld = editableworld;
+		if (OPENED_TABS > 0) {
+			WORLDS = Arrays.copyOf(WORLDS, OPENED_TABS);
+			WORLDS[OPENED_TABS - 1] = editableworld;
+		}
+		System.out.println(WORLDS.length);
+
+		return layout;
+	}
 
 	public Editor(String editorFilePath) {
 		worldList = new CreatedWorldFiles();
 		this.stage = new Stage();
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 		this.stage.setOnCloseRequest(event -> {
-                    EDITOR = false;
-                    WORKING_FILE_PATHS = new String[1];
-                    CURRENT_FILE_PATHS = new String[1];
-                    SAVES = new boolean[1];
-                    OPENED_TABS = 0;
-                });
+			EDITOR = false;
+			WORKING_FILE_PATHS = new String[1];
+			CURRENT_FILE_PATHS = new String[1];
+			SAVES = new boolean[1];
+			OPENED_TABS = 0;
+		});
 
 		GridPane layout = new GridPane();
 
@@ -194,7 +202,7 @@ public class Editor {
 				chooser.setTitle("Open world");
 				chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 				File f = chooser.showOpenDialog(this.stage);
-				if (f.equals(null)){
+				if (f.equals(null)) {
 					throw new Exception("Null file opened");
 				}
 				open(f);
@@ -261,10 +269,9 @@ public class Editor {
 			Logger.info("Last file: " + getCurrentFilePath());
 			open(new File(getCurrentFilePath()));
 		}
-	
-		
+
 		SplitPane splitpane = new SplitPane();
-		
+
 		this.tabs = new TabPane();
 		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> tabs.setPrefSize((double) newVal, this.stage.getHeight()));
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> tabs.setPrefSize(this.stage.getWidth(), (double) newVal));
@@ -273,22 +280,21 @@ public class Editor {
 		editTab.setContent(getEditorTabContent());
 
 		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
-                        if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0){
-                            int index = this.tabs.getSelectionModel().getSelectedIndex();
-                            CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
-                            WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
-                            saved = SAVES[index];
-                            edworld = WORLDS[index];
-                            this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
-                        }
+			if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0) {
+				int index = this.tabs.getSelectionModel().getSelectedIndex();
+				CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
+				WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
+				saved = SAVES[index];
+				edworld = WORLDS[index];
+				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
+			}
 		});
 
 		tabs.getTabs().add(editTab);
 		splitpane.getItems().add(tabs);
-		
-		
+
 		TilePane blockPane = new TilePane();
-		
+
 		ToggleGroup group = new ToggleGroup();
 		ToggleButton toggleBlock = new ToggleButton("Toggle type");
 		toggleBlock.setToggleGroup(group);
@@ -297,10 +303,10 @@ public class Editor {
 		ToggleButton nullBlock = new ToggleButton("Null block");
 		nullBlock.setOnAction(event -> SELECTED_BLOCK = 2);
 		nullBlock.setToggleGroup(group);
-		
+
 		blockPane.getChildren().addAll(toggleBlock, nullBlock);
 		splitpane.getItems().add(blockPane);
-		
+
 		// Set the divider on 80%
 		splitpane.setDividerPositions(0.8f);
 		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
@@ -348,39 +354,39 @@ public class Editor {
 		try {
 			Random r = new Random();
 			int number = r.nextInt();
-                        
-                        if (Arrays.asList(CURRENT_FILE_PATHS).contains(f.getAbsolutePath())){
-                            this.tabs.getSelectionModel().select(Arrays.asList(CURRENT_FILE_PATHS).indexOf(f.getAbsolutePath()));
-                            return;
-                        }
-                        
+
+			if (Arrays.asList(CURRENT_FILE_PATHS).contains(f.getAbsolutePath())) {
+				this.tabs.getSelectionModel().select(Arrays.asList(CURRENT_FILE_PATHS).indexOf(f.getAbsolutePath()));
+				return;
+			}
+
 			CURRENT_FILE_PATH = f.getAbsolutePath();
 			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
-                        
-                        CURRENT_FILE_PATHS = Arrays.copyOf(CURRENT_FILE_PATHS, OPENED_TABS+1);
-                        WORKING_FILE_PATHS = Arrays.copyOf(WORKING_FILE_PATHS, OPENED_TABS+1);
-                        SAVES = Arrays.copyOf(SAVES, OPENED_TABS+1);
-                        CURRENT_FILE_PATHS[OPENED_TABS] = CURRENT_FILE_PATH;
-                        WORKING_FILE_PATHS[OPENED_TABS] = WORKING_FILE_PATH;
-                        SAVES[OPENED_TABS] = true;
-                        OPENED_TABS++;
-                        
-                        Logger.info(Arrays.toString(CURRENT_FILE_PATHS)+" "+Arrays.toString(WORKING_FILE_PATHS));
-                        
-                        copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
-                        if (this.tabs != null && getCurrentFilePath() != null){
-                        	Tab newTab = new Tab(f.getName());
-                                newTab.setClosable(false);
-                                newTab.setContent(getEditorTabContent());
-                        	
-                        	this.tabs.getTabs().add(newTab);
-                                this.tabs.getSelectionModel().select(newTab);
-                        } else {
-                                if (this.tabs != null){
-                                    this.tabs.getSelectionModel().getSelectedItem().setText(getFileName());
-                                }
-                        	edworld.changeToWorld(WORKING_FILE_PATH);
-                        }
+
+			CURRENT_FILE_PATHS = Arrays.copyOf(CURRENT_FILE_PATHS, OPENED_TABS + 1);
+			WORKING_FILE_PATHS = Arrays.copyOf(WORKING_FILE_PATHS, OPENED_TABS + 1);
+			SAVES = Arrays.copyOf(SAVES, OPENED_TABS + 1);
+			CURRENT_FILE_PATHS[OPENED_TABS] = CURRENT_FILE_PATH;
+			WORKING_FILE_PATHS[OPENED_TABS] = WORKING_FILE_PATH;
+			SAVES[OPENED_TABS] = true;
+			OPENED_TABS++;
+
+			Logger.info(Arrays.toString(CURRENT_FILE_PATHS) + " " + Arrays.toString(WORKING_FILE_PATHS));
+
+			copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
+			if (this.tabs != null && getCurrentFilePath() != null) {
+				Tab newTab = new Tab(f.getName());
+				newTab.setClosable(false);
+				newTab.setContent(getEditorTabContent());
+
+				this.tabs.getTabs().add(newTab);
+				this.tabs.getSelectionModel().select(newTab);
+			} else {
+				if (this.tabs != null) {
+					this.tabs.getSelectionModel().getSelectedItem().setText(getFileName());
+				}
+				edworld.changeToWorld(WORKING_FILE_PATH);
+			}
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
 			saved();
@@ -429,23 +435,23 @@ public class Editor {
 
 	private void unsaved() {
 		this.saved = false;
-                try {
-                    SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
-                    this.tabs.getSelectionModel().getSelectedItem().setText(getFileName() + ((saved) ? "" : "*"));
-                } catch (NullPointerException e){
-                    SAVES[0] = saved;
-                }
+		try {
+			SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
+			this.tabs.getSelectionModel().getSelectedItem().setText(getFileName() + ((saved) ? "" : "*"));
+		} catch (NullPointerException e) {
+			SAVES[0] = saved;
+		}
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 	}
 
 	private void saved() {
 		this.saved = true;
-                try {
-                    SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
-                    this.tabs.getSelectionModel().getSelectedItem().setText(getFileName() + ((saved) ? "" : "*"));
-                } catch (NullPointerException e){
-                    SAVES[0] = saved;
-                }
+		try {
+			SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
+			this.tabs.getSelectionModel().getSelectedItem().setText(getFileName() + ((saved) ? "" : "*"));
+		} catch (NullPointerException e) {
+			SAVES[0] = saved;
+		}
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 	}
 
@@ -487,8 +493,8 @@ public class Editor {
 				second.delete();
 			}
 			Files.copy(new File(path1).toPath(), new File(path2).toPath());
-                        System.out.println("COPY: "+path1+" "+path2);
-                        Logger.info("World copied from cache to file");
+			System.out.println("COPY: " + path1 + " " + path2);
+			Logger.info("World copied from cache to file");
 		} catch (IOException e) {
 			Logger.warning("Unable to copy world from cache to file");
 		}
