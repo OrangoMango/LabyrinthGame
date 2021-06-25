@@ -34,14 +34,14 @@ public class SESetup {
     Label y = new Label("Y:");
     Label endX = new Label("End X:");
     Label y1 = new Label("Y:");
-    Spinner spinner1 = new Spinner(0, width, start[0]);
-    Spinner spinner2 = new Spinner(0, height, start[1]);
-    Spinner spinner3 = new Spinner(0, width, end[0]);
-    Spinner spinner4 = new Spinner(0, height, end[1]);
+    Spinner spinner1 = new Spinner(0, width-1, start[0]);
+    Spinner spinner2 = new Spinner(0, height-1, start[1]);
+    Spinner spinner3 = new Spinner(0, width-1, end[0]);
+    Spinner spinner4 = new Spinner(0, height-1, end[1]);
     Button ok = new Button("Save changes");
-    ok.setOnAction(event -> change((int) spinner1.getValue(), (int) spinner2.getValue(), (int) spinner3.getValue(), (int) spinner4.getValue()));
+    ok.setOnAction(event -> {change((int) spinner1.getValue(), (int) spinner2.getValue(), (int) spinner3.getValue(), (int) spinner4.getValue()); OPEN = false;});
     Button cancel = new Button("Cancel");
-    cancel.setOnAction(event -> this.stage.hide());
+    cancel.setOnAction(event -> {OPEN = false; this.stage.hide();});
 
     layout.add(label, 0, 0, 4, 1);
     layout.add(startX, 0, 1);
@@ -72,10 +72,10 @@ public class SESetup {
       alert.showAndWait();
       return;
     }
-    if (this.world.getBlockAt(sX, sY).getType() == EditableWorld.WALL || this.world.getBlockAt(eX, eY).getType() == EditableWorld.WALL) {
+    if (this.world.getBlockAt(sX, sY).getType() != EditableWorld.AIR || this.world.getBlockAt(eX, eY).getType() != EditableWorld.AIR) {
       System.out.println("SSE Error (2)");
       Alert alert = new Alert(Alert.AlertType.ERROR);
-      alert.setHeaderText("Start or end position is on a block");
+      alert.setHeaderText("Start or end position is on a block different from air");
       alert.setTitle("SSE Error");
       alert.setContentText(null);
       alert.showAndWait();

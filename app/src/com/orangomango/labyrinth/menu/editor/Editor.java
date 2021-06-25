@@ -38,7 +38,7 @@ import com.orangomango.labyrinth.Logger;
 
 public class Editor {
 	private Stage stage;
-	private final EditableWorld edworld;
+	private EditableWorld edworld;
 	public final static String PATH = System.getProperty("user.home") + File.separator;
 	private static String WORKING_FILE_PATH = "";
 	private static String CURRENT_FILE_PATH = "";
@@ -52,6 +52,7 @@ public class Editor {
         private static String[] CURRENT_FILE_PATHS = new String[0];
         private static int OPENED_TABS = 0;
         private static boolean[] SAVES = new boolean[0];
+        private static EditableWorld[] WORLDS = new EditableWorld[0];
 
 	private String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
@@ -129,7 +130,10 @@ public class Editor {
             
             layout.add(scrollpane, 0, 0);
             layout.add(pointingOn, 0, 1, 2, 1);
-				
+            this.edworld = editableworld;
+            WORLDS = Arrays.copyOf(WORLDS, OPENED_TABS);
+            WORLDS[OPENED_TABS-1] = editableworld;
+            System.out.println(WORLDS.length);
             
             return layout;
         }
@@ -257,53 +261,7 @@ public class Editor {
 			Logger.info("Last file: " + getCurrentFilePath());
 			open(new File(getCurrentFilePath()));
 		}
-
-		Canvas canvas = new Canvas(edworld.width * EditableWorld.BLOCK_WIDTH, edworld.height * EditableWorld.BLOCK_WIDTH);
-		canvas.setFocusTraversable(true);
-		scrollpane.setContent(canvas);
-
-		GraphicsContext pen = canvas.getGraphicsContext2D();
-		edworld.setPen(pen);
-		edworld.setPlayer(new Player(edworld.start[0], edworld.start[1], edworld));
-		edworld.setCanvas(canvas);
-		edworld.draw();
-
-		canvas.setOnMousePressed(new EventHandler<MouseEvent> () {
-			@Override
-			public void handle(MouseEvent event) {
-				EditableBlock edblock = EditableBlock.fromBlock(edworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
-				if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(edworld) || edblock.isOnEnd(edworld))) {
-					Logger.warning("Could not place block on start or end position");
-					Alert alert = new Alert(Alert.AlertType.ERROR);
-					alert.setHeaderText("Could not place block on start or end position");
-					alert.setTitle("SSE Error");
-					alert.setContentText(null);
-					alert.showAndWait();
-					return;
-				}
-				switch (SELECTED_BLOCK){
-					case 1:
-						edblock.toggleType();
-						break;
-					case 2:
-						edblock.setType(EditableWorld.NULL);
-						break;
-				}
-				edworld.setBlockOn(edblock);
-				edworld.updateOnFile();
-				unsaved();
-			}
-		});
-
-		final Label pointingOn = new Label("Mouse on Block: null");
-
-		canvas.setOnMouseMoved(new EventHandler<MouseEvent> () {
-			@Override
-			public void handle(MouseEvent event) {
-				Block block = edworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
-				pointingOn.setText("Mouse on block: " + block + " " + ((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position")));
-			}
-		});
+	
 		
 		SplitPane splitpane = new SplitPane();
 		
@@ -312,10 +270,7 @@ public class Editor {
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> tabs.setPrefSize(this.stage.getWidth(), (double) newVal));
 		Tab editTab = new Tab(getFileName());
 		editTab.setClosable(false);
-		GridPane editorGrid = new GridPane();
-		editorGrid.add(scrollpane, 0, 0);
-		editorGrid.add(pointingOn, 0, 1, 2, 1);
-		editTab.setContent(editorGrid);
+		editTab.setContent(getEditorTabContent());
 
 		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
                         if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0){
@@ -323,6 +278,7 @@ public class Editor {
                             CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
                             WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
                             saved = SAVES[index];
+                            edworld = WORLDS[index];
                             this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
                         }
 		});
@@ -412,7 +368,6 @@ public class Editor {
                         Logger.info(Arrays.toString(CURRENT_FILE_PATHS)+" "+Arrays.toString(WORKING_FILE_PATHS));
                         
                         copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
-                        System.out.println(OPENED_TABS);
                         if (this.tabs != null && getCurrentFilePath() != null){
                         	Tab newTab = new Tab(f.getName());
                                 newTab.setClosable(false);
