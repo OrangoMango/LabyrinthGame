@@ -48,10 +48,10 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
         
-        private static String[] WORKING_FILE_PATHS = new String[1];
-        private static String[] CURRENT_FILE_PATHS = new String[1];
+        private static String[] WORKING_FILE_PATHS = new String[0];
+        private static String[] CURRENT_FILE_PATHS = new String[0];
         private static int OPENED_TABS = 0;
-        private static boolean[] SAVES = new boolean[1];
+        private static boolean[] SAVES = new boolean[0];
 
 	private String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
@@ -73,7 +73,8 @@ public class Editor {
             
             ScrollPane scrollpane = new ScrollPane();
 
-            EditableWorld editableworld = new EditableWorld(CURRENT_FILE_PATH);
+            EditableWorld editableworld = new EditableWorld(WORKING_FILE_PATH);
+            System.out.println(CURRENT_FILE_PATH+" "+WORKING_FILE_PATH);
             Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
             canvas.setFocusTraversable(true);
             
@@ -102,7 +103,7 @@ public class Editor {
                         editableworld.updateOnFile();
                         unsaved();
                 }
-        });
+            });
             
             scrollpane.setContent(canvas);
 
@@ -317,14 +318,13 @@ public class Editor {
 		editTab.setContent(editorGrid);
 
 		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
-			int index = this.tabs.getSelectionModel().getSelectedIndex();
-                        CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
-                        WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
-                        saved = SAVES[index];
-                        this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
-                        Logger.info("Switched current to "+CURRENT_FILE_PATH);
-                        Logger.info("Switched working to "+WORKING_FILE_PATH);
-                        Logger.info("Switched saves to "+saved);
+                        if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0){
+                            int index = this.tabs.getSelectionModel().getSelectedIndex();
+                            CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
+                            WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
+                            saved = SAVES[index];
+                            this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
+                        }
 		});
 
 		tabs.getTabs().add(editTab);
@@ -392,28 +392,38 @@ public class Editor {
 		try {
 			Random r = new Random();
 			int number = r.nextInt();
-
+                        
+                        if (Arrays.asList(CURRENT_FILE_PATHS).contains(f.getAbsolutePath())){
+                            this.tabs.getSelectionModel().select(Arrays.asList(CURRENT_FILE_PATHS).indexOf(f.getAbsolutePath()));
+                            return;
+                        }
+                        
 			CURRENT_FILE_PATH = f.getAbsolutePath();
 			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
                         
+                        CURRENT_FILE_PATHS = Arrays.copyOf(CURRENT_FILE_PATHS, OPENED_TABS+1);
+                        WORKING_FILE_PATHS = Arrays.copyOf(WORKING_FILE_PATHS, OPENED_TABS+1);
+                        SAVES = Arrays.copyOf(SAVES, OPENED_TABS+1);
                         CURRENT_FILE_PATHS[OPENED_TABS] = CURRENT_FILE_PATH;
                         WORKING_FILE_PATHS[OPENED_TABS] = WORKING_FILE_PATH;
                         SAVES[OPENED_TABS] = true;
                         OPENED_TABS++;
-                        CURRENT_FILE_PATHS = Arrays.copyOf(CURRENT_FILE_PATHS, OPENED_TABS+1);
-                        WORKING_FILE_PATHS = Arrays.copyOf(WORKING_FILE_PATHS, OPENED_TABS+1);
-                        SAVES = Arrays.copyOf(SAVES, OPENED_TABS+1);
                         
                         Logger.info(Arrays.toString(CURRENT_FILE_PATHS)+" "+Arrays.toString(WORKING_FILE_PATHS));
                         
                         copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
-                        
-                        if (this.tabs != null){
+                        System.out.println(OPENED_TABS);
+                        if (this.tabs != null && getCurrentFilePath() != null){
                         	Tab newTab = new Tab(f.getName());
+                                newTab.setClosable(false);
                                 newTab.setContent(getEditorTabContent());
                         	
                         	this.tabs.getTabs().add(newTab);
+                                this.tabs.getSelectionModel().select(newTab);
                         } else {
+                                if (this.tabs != null){
+                                    this.tabs.getSelectionModel().getSelectedItem().setText(getFileName());
+                                }
                         	edworld.changeToWorld(WORKING_FILE_PATH);
                         }
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
@@ -466,6 +476,7 @@ public class Editor {
 		this.saved = false;
                 try {
                     SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
+                    this.tabs.getSelectionModel().getSelectedItem().setText(getFileName() + ((saved) ? "" : "*"));
                 } catch (NullPointerException e){
                     SAVES[0] = saved;
                 }
@@ -476,6 +487,7 @@ public class Editor {
 		this.saved = true;
                 try {
                     SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
+                    this.tabs.getSelectionModel().getSelectedItem().setText(getFileName() + ((saved) ? "" : "*"));
                 } catch (NullPointerException e){
                     SAVES[0] = saved;
                 }
@@ -520,8 +532,10 @@ public class Editor {
 				second.delete();
 			}
 			Files.copy(new File(path1).toPath(), new File(path2).toPath());
+                        System.out.println("COPY: "+path1+" "+path2);
+                        Logger.info("World copied from cache to file");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.warning("Unable to copy world from cache to file");
 		}
 	}
 
