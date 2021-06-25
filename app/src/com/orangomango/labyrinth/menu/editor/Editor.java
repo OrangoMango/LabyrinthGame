@@ -322,7 +322,7 @@ public class Editor {
 	}
 
 	public void start() {
-		if (DONE) {
+		if (DONE && this.stage != null) {
 			this.stage.show();
 		}
 	}
