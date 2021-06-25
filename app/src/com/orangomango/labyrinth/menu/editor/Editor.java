@@ -141,7 +141,6 @@ public class Editor {
 			WORLDS = Arrays.copyOf(WORLDS, OPENED_TABS);
 			WORLDS[OPENED_TABS - 1] = editableworld;
 		}
-		System.out.println(WORLDS.length);
 
 		return layout;
 	}
@@ -493,7 +492,6 @@ public class Editor {
 				second.delete();
 			}
 			Files.copy(new File(path1).toPath(), new File(path2).toPath());
-			System.out.println("COPY: " + path1 + " " + path2);
 			Logger.info("World copied from cache to file");
 		} catch (IOException e) {
 			Logger.warning("Unable to copy world from cache to file");
