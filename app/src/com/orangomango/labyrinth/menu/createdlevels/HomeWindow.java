@@ -14,7 +14,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 
 import static com.orangomango.labyrinth.menu.Menu.MYLEVELS;
-import static com.orangomango.labyrinth.menu.Menu.EDITOR;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import com.orangomango.labyrinth.World;

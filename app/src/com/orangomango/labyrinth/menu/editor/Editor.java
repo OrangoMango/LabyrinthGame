@@ -33,7 +33,6 @@ import java.util.Arrays;
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
-import static com.orangomango.labyrinth.menu.Menu.EDITOR;
 import com.orangomango.labyrinth.Logger;
 
 public class Editor {
@@ -47,6 +46,7 @@ public class Editor {
 	public static boolean DONE = true;
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
+	private static boolean EDITOR = false;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -146,6 +146,10 @@ public class Editor {
 	}
 
 	public Editor(String editorFilePath) {
+		if (EDITOR){
+			return;
+		}
+		EDITOR = true;
 		worldList = new CreatedWorldFiles();
 		this.stage = new Stage();
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
