@@ -74,13 +74,6 @@ public class World {
 		}
 	}
 
-	private void drawPoints() {
-		this.pen.setStroke(Color.GREEN);
-		this.pen.setFont(new Font("Arial", 35));
-		this.pen.strokeText("S", start[0] * BLOCK_WIDTH + 5, start[1] * BLOCK_WIDTH + 35);
-		this.pen.strokeText("E", end[0] * BLOCK_WIDTH + 5, end[1] * BLOCK_WIDTH + 35);
-	}
-
 	private Block[][] readWorld(String path) {
 		File file = new File(path);
 		try {
@@ -162,6 +155,29 @@ public class World {
 		}
 		this.player.draw(this.pen);
 		drawPoints();
+	}
+	
+	public void draw(int x, int y, int x1, int y1){
+		for (Block[] blocks: world) {
+			for (Block block: blocks) {
+				if (block.getX() >= x && block.getX() <= x1){
+					if (block.getY() >= y && block.getY() <= y1){
+						block.draw(this.pen, block.getX()-x, block.getY()-y);
+					}
+				}
+			}
+		}
+		if ((start[0] >= x && start[0] <= x1) && (start[1] >= y && start[1] <= y1) && (end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
+			this.player.draw(this.pen);
+			drawPoints();
+		}
+	}
+
+	private void drawPoints() {
+		this.pen.setStroke(Color.GREEN);
+		this.pen.setFont(new Font("Arial", 35));
+		this.pen.strokeText("S", start[0] * BLOCK_WIDTH + 5, start[1] * BLOCK_WIDTH + 35);
+		this.pen.strokeText("E", end[0] * BLOCK_WIDTH + 5, end[1] * BLOCK_WIDTH + 35);
 	}
 
 	public Block getBlockAt(int x, int y) {

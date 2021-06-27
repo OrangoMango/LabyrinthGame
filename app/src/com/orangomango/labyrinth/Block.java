@@ -77,6 +77,26 @@ public class Block {
 		pen.fillRect(this.x * World.BLOCK_WIDTH, this.y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
+	public void draw(GraphicsContext pen, int px, int py) {
+		pen.setStroke(Color.BLACK);
+		pen.setLineWidth(1);
+		switch (getType()){
+			case World.WALL:
+				pen.setFill(Color.BLACK);
+				break;
+			case World.AIR:
+				pen.setFill(Color.WHITE);
+				break;
+			case World.NULL:
+				pen.setFill(Color.GRAY);
+				break;
+                        default:
+                            pen.setFill(Color.RED);
+                            break;
+		}
+		pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+	}
+	
 	public Integer toInt(){
 		switch (getType()){
 				case World.WALL:

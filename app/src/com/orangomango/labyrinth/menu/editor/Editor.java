@@ -237,18 +237,21 @@ public class Editor {
 		Button rmCBtn = new Button();
 		rmCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/rc.png")));
 		rmCBtn.setOnAction(event -> {
-			checkValidity(edworld.removeColumn());unsaved();
+			checkValidity(edworld.removeColumn());
+			unsaved();
 		});
 		Button rmRBtn = new Button();
 		rmRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/rr.png")));
 		rmRBtn.setOnAction(event -> {
-			checkValidity(edworld.removeRow());unsaved();
+			checkValidity(edworld.removeRow());
+			unsaved();
 		});
 
 		Button runBtn = new Button("Run");
 		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/run.png")));
 		runBtn.setOnAction(event -> {
-			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);LevelExe.setOnFinish(null);
+			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
+			LevelExe.setOnFinish(null);
 		});
 
 		Button sseBtn = new Button();
