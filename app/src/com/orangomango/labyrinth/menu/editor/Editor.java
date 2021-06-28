@@ -21,6 +21,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.*;
 import javafx.stage.FileChooser;
 
@@ -312,7 +314,10 @@ public class Editor {
 		tabs.getTabs().add(editTab);
 		splitpane.getItems().add(tabs);
 
-		TilePane blockPane = new TilePane();
+                Accordion blockSelect = new Accordion();
+                TitledPane defaultBlocks = new TitledPane("Default blocks", new Label());
+                TitledPane decorationBlocks = new TitledPane("Decoration blocks", new Label());
+		/*TilePane blockPane = new TilePane();
 
 		ToggleGroup group = new ToggleGroup();
 		ToggleButton toggleBlock = new ToggleButton("Toggle type");
@@ -323,8 +328,9 @@ public class Editor {
 		nullBlock.setOnAction(event -> SELECTED_BLOCK = 2);
 		nullBlock.setToggleGroup(group);
 
-		blockPane.getChildren().addAll(toggleBlock, nullBlock);
-		splitpane.getItems().add(blockPane);
+		blockPane.getChildren().addAll(toggleBlock, nullBlock);*/
+                blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks);
+		splitpane.getItems().add(blockSelect);
 
 		// Set the divider on 80%
 		splitpane.setDividerPositions(0.8f);
