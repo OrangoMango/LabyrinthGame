@@ -62,10 +62,6 @@ public class LevelExe {
 		canvas.setOnKeyPressed(new EventHandler<KeyEvent> () {
 			@Override
 			public void handle(KeyEvent event) {
-				int currentx, currenty = 0;
-				// Save old x and y position
-				currentx = player.getX();
-				currenty = player.getY();
 				try {
 					if (event.getCode() == KeyCode.UP) {
 						player.moveOn(player.Y, player.NEGATIVE);
@@ -79,9 +75,8 @@ public class LevelExe {
 						System.out.println(event.getCode());
 					}
 				} catch (ArrayIndexOutOfBoundsException ex) {
-					onVoidAlert();
-					player.setX(currentx);
-					player.setY(currenty);
+                                    // Player went into void so it must stay on edge
+                                    world.update();
 				}
 				if (player.isOnEnd()) {
 					try {
@@ -109,13 +104,5 @@ public class LevelExe {
 
 	public static void setOnFinish(Stage stage) {
 		exStage = stage;
-	}
-
-	private void onVoidAlert() {
-		Alert alert = new Alert(Alert.AlertType.ERROR);
-		alert.setHeaderText("Player went into void!");
-		alert.setTitle("Player out of world");
-		alert.setContentText(null);
-		alert.showAndWait();
 	}
 }

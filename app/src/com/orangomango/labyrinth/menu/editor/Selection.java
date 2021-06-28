@@ -76,6 +76,7 @@ public class Selection {
 			alert.setTitle("Error");
 			alert.setContentText("Could not open world file!");
 			alert.showAndWait();
+                        Platform.exit();
 		}
 		OPENED = false;
 	}

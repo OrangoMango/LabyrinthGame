@@ -20,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.*;
 import javafx.stage.FileChooser;
 
@@ -47,6 +48,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
+        public static Editor EDITOR_INSTANCE = null;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -100,10 +102,10 @@ public class Editor {
 				}
 				switch (SELECTED_BLOCK) {
 					case 1:
-						edblock.toggleType();
+						edblock.toggleType(EditableWorld.WALL);
 						break;
 					case 2:
-						edblock.setType(EditableWorld.NULL);
+						edblock.toggleType(EditableWorld.NULL);
 						break;
 				}
 				editableworld.setBlockOn(edblock);
@@ -149,6 +151,7 @@ public class Editor {
 		if (EDITOR){
 			return;
 		}
+                EDITOR_INSTANCE = this;
 		EDITOR = true;
 		worldList = new CreatedWorldFiles();
 		this.stage = new Stage();
@@ -159,6 +162,7 @@ public class Editor {
 			CURRENT_FILE_PATHS = new String[1];
 			SAVES = new boolean[1];
 			OPENED_TABS = 0;
+                        EDITOR_INSTANCE = null;
 		});
 
 		GridPane layout = new GridPane();
@@ -171,6 +175,7 @@ public class Editor {
 		edworld = new EditableWorld(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator + "testSystemWorld-DefaultName_NoCopy.wld.sys");
 		Button newBtn = new Button("New");
 		newBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/new.png")));
+                newBtn.setTooltip(new Tooltip("Create a new world file"));
 		newBtn.setOnAction(event -> {
 			NewWidget wid = new NewWidget(false);
 			wid.setEDW(edworld);
@@ -178,6 +183,7 @@ public class Editor {
 		});
 		Button saveBtn = new Button("Save");
 		saveBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/save.png")));
+                saveBtn.setTooltip(new Tooltip("Save file"));
 		saveBtn.setOnAction(event -> {
 			try {
 				saved();
@@ -198,6 +204,7 @@ public class Editor {
 		});
 		Button openBtn = new Button("Open");
 		openBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/open.png")));
+                openBtn.setTooltip(new Tooltip("Open a world file"));
 		openBtn.setOnAction(event -> {
 			try {
 				FileChooser chooser = new FileChooser();
@@ -219,6 +226,7 @@ public class Editor {
 		});
 
 		Button addCBtn = new Button();
+                addCBtn.setTooltip(new Tooltip("Add column to world"));
 		addCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/ac.png")));
 		addCBtn.setOnAction(event -> {
 			if (checkValidityMax("w")) {
@@ -227,6 +235,7 @@ public class Editor {
 			}
 		});
 		Button addRBtn = new Button();
+                addRBtn.setTooltip(new Tooltip("Add row to world"));
 		addRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/ar.png")));
 		addRBtn.setOnAction(event -> {
 			if (checkValidityMax("h")) {
@@ -235,12 +244,14 @@ public class Editor {
 			}
 		});
 		Button rmCBtn = new Button();
+                rmCBtn.setTooltip(new Tooltip("Remove column from world"));
 		rmCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/rc.png")));
 		rmCBtn.setOnAction(event -> {
 			checkValidity(edworld.removeColumn());
 			unsaved();
 		});
 		Button rmRBtn = new Button();
+                rmRBtn.setTooltip(new Tooltip("Remove row from world"));
 		rmRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/rr.png")));
 		rmRBtn.setOnAction(event -> {
 			checkValidity(edworld.removeRow());
@@ -248,6 +259,7 @@ public class Editor {
 		});
 
 		Button runBtn = new Button("Run");
+                runBtn.setTooltip(new Tooltip("Run current level"));
 		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/run.png")));
 		runBtn.setOnAction(event -> {
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
@@ -255,6 +267,7 @@ public class Editor {
 		});
 
 		Button sseBtn = new Button();
+                sseBtn.setTooltip(new Tooltip("Chnage start and end position"));
 		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/sse.png")));
 		sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
 

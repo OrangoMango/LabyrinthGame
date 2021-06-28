@@ -158,15 +158,16 @@ public class World {
 	}
 	
 	public void draw(int x, int y, int x1, int y1){
-		for (Block[] blocks: world) {
-			for (Block block: blocks) {
-				if (block.getX() >= x && block.getX() <= x1){
-					if (block.getY() >= y && block.getY() <= y1){
-						block.draw(this.pen, block.getX()-x, block.getY()-y);
-					}
-				}
-			}
-		}
+                int coux = 0;
+                int couy = 0;
+                for (int cy = y; cy <= y1; cy++){
+                    for (int cx = x; cx <= x1; cx++){
+                        getBlockAt(cx, cy).draw(this.pen, coux, couy);
+                        coux++;
+                    }
+                    coux = 0;
+                    couy++;
+                }
 		if ((start[0] >= x && start[0] <= x1) && (start[1] >= y && start[1] <= y1) && (end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
 			this.player.draw(this.pen);
 			drawPoints();

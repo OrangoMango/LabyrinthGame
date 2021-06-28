@@ -15,9 +15,9 @@ public class EditableBlock extends Block {
 		return new EditableBlock(bl.getType(), bl.getX(), bl.getY());
 	}
 
-	public void toggleType() {
+	public void toggleType(String blockType) {
 		if (getType() == EditableWorld.AIR) {
-			setType(EditableWorld.WALL);
+			setType(blockType);
 		} else {
 			setType(EditableWorld.AIR);
 		}

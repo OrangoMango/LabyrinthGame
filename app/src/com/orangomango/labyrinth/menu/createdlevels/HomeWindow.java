@@ -47,8 +47,12 @@ public class HomeWindow{
 				Label plabel = new Label(p);
 				Button edit = new Button("Edit");
 				edit.setOnAction(event -> {
-					Editor editor = new Editor(p);
-					editor.start();
+                                        if (Editor.EDITOR_INSTANCE == null){
+                                            Editor editor = new Editor(p);
+                                            editor.start();
+                                        } else {
+                                            Editor.EDITOR_INSTANCE.open(new File(p));
+                                        }
 				});
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				Label mod = new Label("Last modified: "+format.format(file.lastModified()));
