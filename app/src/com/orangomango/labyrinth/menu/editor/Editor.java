@@ -107,7 +107,7 @@ public class Editor {
 						edblock.toggleType(EditableWorld.WALL);
 						break;
 					case 2:
-						edblock.toggleType(EditableWorld.NULL);
+						edblock.toggleType(EditableWorld.VOID);
 						break;
 				}
 				editableworld.setBlockOn(edblock);

@@ -33,12 +33,16 @@ public class Player {
 	}
 
 	public void draw(GraphicsContext pen) {
+		draw(pen, getX(), getY());
+	}
+	
+	public void draw(GraphicsContext pen, int x, int y) {
 		pen.setFill(Color.RED);
 		pen.setLineWidth(1);
-		pen.fillRect(getX() * World.BLOCK_WIDTH + 5, getY() * World.BLOCK_WIDTH + 5, 40, 40);
+		pen.fillRect(x * World.BLOCK_WIDTH + 5, y * World.BLOCK_WIDTH + 5, 40, 40);
 	}
 
-	public void moveOn(String direction, int m) {
+	public void moveOn(String direction, int m, int[] rec) {
 		if (direction == X) {
 			Block[] xrow = this.world.getXRow(getY());
 			while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL) {
@@ -53,7 +57,11 @@ public class Player {
 		} else {
 			Logger.error("Unknow direction found");
 		}
-		this.world.update();
+		if (rec == null){
+			this.world.update(0, 0, 0, 0);
+		} else {
+			this.world.update(rec[0], rec[1], rec[2], rec[3]);
+		}
 	}
 
 	public boolean isOnEnd() {

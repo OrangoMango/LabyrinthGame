@@ -47,7 +47,7 @@ public class Block {
 			case 1:
 				return new Block(World.WALL, x1, y1);
 			case 2:
-				return new Block(World.NULL, x1, y1);
+				return new Block(World.VOID, x1, y1);
 			default:
 				return null;
 		}
@@ -58,23 +58,7 @@ public class Block {
 	  @param pen - canvas pen
 	*/
 	public void draw(GraphicsContext pen) {
-		pen.setStroke(Color.BLACK);
-		pen.setLineWidth(1);
-		switch (getType()){
-			case World.WALL:
-				pen.setFill(Color.BLACK);
-				break;
-			case World.AIR:
-				pen.setFill(Color.WHITE);
-				break;
-			case World.NULL:
-				pen.setFill(Color.GRAY);
-				break;
-                        default:
-                            pen.setFill(Color.RED);
-                            break;
-		}
-		pen.fillRect(this.x * World.BLOCK_WIDTH, this.y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+		draw(pen, this.x, this.y);
 	}
 	
 	public void draw(GraphicsContext pen, int px, int py) {
@@ -87,7 +71,7 @@ public class Block {
 			case World.AIR:
 				pen.setFill(Color.WHITE);
 				break;
-			case World.NULL:
+			case World.VOID:
 				pen.setFill(Color.GRAY);
 				break;
                         default:
@@ -103,7 +87,7 @@ public class Block {
 					return 1;
 				case World.AIR:
 					return 0;
-				case World.NULL:
+				case World.VOID:
 					return 2;
 				default:
 					return null;

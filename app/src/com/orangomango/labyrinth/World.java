@@ -25,7 +25,7 @@ public class World {
 
 	public final static String WALL = "wall";
 	public final static String AIR = "air";
-	public final static String NULL = "null";
+	public final static String VOID = "void";
 
 	public final static int BLOCK_WIDTH = 50;
 
@@ -61,14 +61,19 @@ public class World {
 		} catch (NullPointerException e) {
 			Logger.warning("World player is null");
 		}
-		update();
+		update(0, 0, 0, 0);
 	}
 
-	public void update() {
+	public void update(int x, int y, int x1, int y1) {
 		try {
 			this.pen.setFill(Color.WHITE);
-			this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
-			draw();
+			if (x == 0 && y == 0 && x1 == 0 && y1 == 0){
+				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
+				draw();
+			} else {
+				this.pen.fillRect(0, 0, (x+y) * BLOCK_WIDTH, (x+y) * BLOCK_WIDTH);
+				draw(x, y, x1, y1);
+			}
 		} catch (NullPointerException e) {
 			Logger.warning("World pen is null");
 		}
@@ -154,7 +159,7 @@ public class World {
 			}
 		}
 		this.player.draw(this.pen);
-		drawPoints();
+		drawPoints(0, 0);
 	}
 	
 	public void draw(int x, int y, int x1, int y1){
@@ -162,28 +167,39 @@ public class World {
                 int couy = 0;
                 for (int cy = y; cy <= y1; cy++){
                     for (int cx = x; cx <= x1; cx++){
-                        getBlockAt(cx, cy).draw(this.pen, coux, couy);
+                        Block b = getBlockAt(cx, cy);
+                        if (b != null){
+                        	b.draw(this.pen, coux, couy);
+                        } else {
+                        	new Block(VOID, coux, couy).draw(this.pen);
+                        }
                         coux++;
                     }
                     coux = 0;
                     couy++;
                 }
 		if ((start[0] >= x && start[0] <= x1) && (start[1] >= y && start[1] <= y1) && (end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
-			this.player.draw(this.pen);
-			drawPoints();
+			drawPoints(x, y);
+		}
+		if ((this.player.getX() >= x && this.player.getX() <= x1) && (this.player.getY() >= y && this.player.getY() <= y1)){
+			this.player.draw(this.pen, this.player.getX()-x, this.player.getY()-y);
 		}
 	}
 
-	private void drawPoints() {
+	private void drawPoints(int x, int y) {
 		this.pen.setStroke(Color.GREEN);
 		this.pen.setFont(new Font("Arial", 35));
-		this.pen.strokeText("S", start[0] * BLOCK_WIDTH + 5, start[1] * BLOCK_WIDTH + 35);
-		this.pen.strokeText("E", end[0] * BLOCK_WIDTH + 5, end[1] * BLOCK_WIDTH + 35);
+		this.pen.strokeText("S", (start[0] - x) * BLOCK_WIDTH + 5, (start[1] - y) * BLOCK_WIDTH + 35);
+		this.pen.strokeText("E", (end[0] - x) * BLOCK_WIDTH + 5, (end[1] - y) * BLOCK_WIDTH + 35);
 	}
 
 	public Block getBlockAt(int x, int y) {
-		Block item = world[y][x];
-		return item;
+		try {
+			Block item = world[y][x];
+			return item;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
 	public Block[] getXRow(int y) {

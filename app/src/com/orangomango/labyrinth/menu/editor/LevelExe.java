@@ -56,7 +56,7 @@ public class LevelExe {
 		player.draw(pen);
 		world.setPlayer(player);
 
-		world.draw();
+		world.draw(); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
 
 		// Handle movement
 		canvas.setOnKeyPressed(new EventHandler<KeyEvent> () {
@@ -64,19 +64,19 @@ public class LevelExe {
 			public void handle(KeyEvent event) {
 				try {
 					if (event.getCode() == KeyCode.UP) {
-						player.moveOn(player.Y, player.NEGATIVE);
+						player.moveOn(Player.Y, Player.NEGATIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 					} else if (event.getCode() == KeyCode.DOWN) {
-						player.moveOn(player.Y, player.POSITIVE);
+						player.moveOn(Player.Y, Player.POSITIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 					} else if (event.getCode() == KeyCode.RIGHT) {
-						player.moveOn(player.X, player.POSITIVE);
+						player.moveOn(Player.X, Player.POSITIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 					} else if (event.getCode() == KeyCode.LEFT) {
-						player.moveOn(player.X, player.NEGATIVE);
+						player.moveOn(Player.X, Player.NEGATIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 					} else {
 						System.out.println(event.getCode());
 					}
 				} catch (ArrayIndexOutOfBoundsException ex) {
                                     // Player went into void so it must stay on edge
-                                    world.update();
+                                    world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
 				}
 				if (player.isOnEnd()) {
 					try {
