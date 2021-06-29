@@ -176,7 +176,7 @@ public class Editor {
 		createNewWorld("testSystemWorld-DefaultName_NoCopy");
 		edworld = new EditableWorld(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator + "testSystemWorld-DefaultName_NoCopy.wld.sys");
 		Button newBtn = new Button("New");
-		newBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/new.png")));
+		newBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/new.png")));
                 newBtn.setTooltip(new Tooltip("Create a new world file"));
 		newBtn.setOnAction(event -> {
 			NewWidget wid = new NewWidget(false);
@@ -184,7 +184,7 @@ public class Editor {
 			wid.setEditor(this);
 		});
 		Button saveBtn = new Button("Save");
-		saveBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/save.png")));
+		saveBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/save.png")));
                 saveBtn.setTooltip(new Tooltip("Save file"));
 		saveBtn.setOnAction(event -> {
 			try {
@@ -205,7 +205,7 @@ public class Editor {
 
 		});
 		Button openBtn = new Button("Open");
-		openBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/open.png")));
+		openBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/open.png")));
                 openBtn.setTooltip(new Tooltip("Open a world file"));
 		openBtn.setOnAction(event -> {
 			try {
@@ -229,7 +229,7 @@ public class Editor {
 
 		Button addCBtn = new Button();
                 addCBtn.setTooltip(new Tooltip("Add column to world"));
-		addCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/ac.png")));
+		addCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ac.png")));
 		addCBtn.setOnAction(event -> {
 			if (checkValidityMax("w")) {
 				edworld.addColumn();
@@ -238,7 +238,7 @@ public class Editor {
 		});
 		Button addRBtn = new Button();
                 addRBtn.setTooltip(new Tooltip("Add row to world"));
-		addRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/ar.png")));
+		addRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ar.png")));
 		addRBtn.setOnAction(event -> {
 			if (checkValidityMax("h")) {
 				edworld.addRow();
@@ -247,14 +247,14 @@ public class Editor {
 		});
 		Button rmCBtn = new Button();
                 rmCBtn.setTooltip(new Tooltip("Remove column from world"));
-		rmCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/rc.png")));
+		rmCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rc.png")));
 		rmCBtn.setOnAction(event -> {
 			checkValidity(edworld.removeColumn());
 			unsaved();
 		});
 		Button rmRBtn = new Button();
                 rmRBtn.setTooltip(new Tooltip("Remove row from world"));
-		rmRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/rr.png")));
+		rmRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rr.png")));
 		rmRBtn.setOnAction(event -> {
 			checkValidity(edworld.removeRow());
 			unsaved();
@@ -262,7 +262,7 @@ public class Editor {
 
 		Button runBtn = new Button("Run");
                 runBtn.setTooltip(new Tooltip("Run current level"));
-		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/run.png")));
+		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/run.png")));
 		runBtn.setOnAction(event -> {
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
 			LevelExe.setOnFinish(null);
@@ -270,7 +270,7 @@ public class Editor {
 
 		Button sseBtn = new Button();
                 sseBtn.setTooltip(new Tooltip("Chnage start and end position"));
-		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/sse.png")));
+		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/sse.png")));
 		sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
 
 		toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn);
@@ -317,6 +317,7 @@ public class Editor {
                 Accordion blockSelect = new Accordion();
                 TitledPane defaultBlocks = new TitledPane("Default blocks", new Label());
                 TitledPane decorationBlocks = new TitledPane("Decoration blocks", new Label());
+                TitledPane damageBlocks = new TitledPane("Damage blocks", new Label());
 		/*TilePane blockPane = new TilePane();
 
 		ToggleGroup group = new ToggleGroup();
@@ -329,7 +330,7 @@ public class Editor {
 		nullBlock.setToggleGroup(group);
 
 		blockPane.getChildren().addAll(toggleBlock, nullBlock);*/
-                blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks);
+                blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks, damageBlocks);
 		splitpane.getItems().add(blockSelect);
 
 		// Set the divider on 80%
@@ -506,10 +507,11 @@ public class Editor {
 		checkAndCreateDir(PATH + ".labyrinthgame");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "SystemLevels");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor");
-		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "editor");
-		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "editor");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");
 	}
 
 	private void copyWorld(String path1, String path2) {
