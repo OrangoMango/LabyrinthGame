@@ -26,8 +26,9 @@ public class World {
 	public final static String WALL = "wall";
 	public final static String AIR = "air";
 	public final static String VOID = "void";
+	public final static String SPIKE = "spike";
 
-	public final static int BLOCK_WIDTH = 50;
+	public final static int BLOCK_WIDTH = 32;
 
 	public World(String path) {
 		filePath = path;
@@ -159,7 +160,8 @@ public class World {
 			}
 		}
 		this.player.draw(this.pen);
-		drawPoints(0, 0);
+		drawStart(0, 0);
+		drawEnd(0, 0);
 	}
 	
 	public void draw(int x, int y, int x1, int y1){
@@ -179,18 +181,24 @@ public class World {
                     couy++;
                 }
 		if ((start[0] >= x && start[0] <= x1) && (start[1] >= y && start[1] <= y1) && (end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
-			drawPoints(x, y);
+			drawStart(x, y);
+			drawEnd(x, y);
 		}
 		if ((this.player.getX() >= x && this.player.getX() <= x1) && (this.player.getY() >= y && this.player.getY() <= y1)){
 			this.player.draw(this.pen, this.player.getX()-x, this.player.getY()-y);
 		}
 	}
-
-	private void drawPoints(int x, int y) {
+	
+	private void drawStart(int x, int y){
 		this.pen.setStroke(Color.GREEN);
-		this.pen.setFont(new Font("Arial", 35));
-		this.pen.strokeText("S", (start[0] - x) * BLOCK_WIDTH + 5, (start[1] - y) * BLOCK_WIDTH + 35);
-		this.pen.strokeText("E", (end[0] - x) * BLOCK_WIDTH + 5, (end[1] - y) * BLOCK_WIDTH + 35);
+		this.pen.setFont(new Font("Arial", 25));
+		this.pen.strokeText("S", (start[0] - x) * BLOCK_WIDTH + 2, (start[1] - y) * BLOCK_WIDTH + 25);
+	}
+	
+	private void drawEnd(int x, int y){
+		this.pen.setStroke(Color.GREEN);
+		this.pen.setFont(new Font("Arial", 25));
+		this.pen.strokeText("E", (end[0] - x) * BLOCK_WIDTH + 2, (end[1] - y) * BLOCK_WIDTH + 25);
 	}
 
 	public Block getBlockAt(int x, int y) {

@@ -39,7 +39,7 @@ public class Player {
 	public void draw(GraphicsContext pen, int x, int y) {
 		pen.setFill(Color.RED);
 		pen.setLineWidth(1);
-		pen.fillRect(x * World.BLOCK_WIDTH + 5, y * World.BLOCK_WIDTH + 5, 40, 40);
+		pen.fillRect(x * World.BLOCK_WIDTH + 2, y * World.BLOCK_WIDTH + 2, 25, 25);
 	}
 
 	public void moveOn(String direction, int m, int[] rec) {

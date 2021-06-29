@@ -58,7 +58,7 @@ public class Editor {
 	private static boolean[] SAVES = new boolean[0];
 	private static EditableWorld[] WORLDS = new EditableWorld[0];
 
-	private String changeSlash(String input) {
+	public static String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
 		if (input.contains("\\")) {
 			output.append("/");
@@ -506,7 +506,8 @@ public class Editor {
 		checkAndCreateDir(PATH + ".labyrinthgame");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "SystemLevels");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor");
-		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "editor");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels");
 	}

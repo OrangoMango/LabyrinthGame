@@ -1,7 +1,11 @@
 package com.orangomango.labyrinth;
 
 import javafx.scene.canvas.*;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+
+import com.orangomango.labyrinth.menu.editor.Editor;
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class Block {
 	protected String type;
@@ -48,6 +52,8 @@ public class Block {
 				return new Block(World.WALL, x1, y1);
 			case 2:
 				return new Block(World.VOID, x1, y1);
+			case 3:
+				return new Block(World.SPIKE, x1, y1);
 			default:
 				return null;
 		}
@@ -67,18 +73,24 @@ public class Block {
 		switch (getType()){
 			case World.WALL:
 				pen.setFill(Color.BLACK);
+				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.AIR:
 				pen.setFill(Color.WHITE);
+				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.VOID:
 				pen.setFill(Color.GRAY);
+				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case World.SPIKE:
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
                         default:
-                            pen.setFill(Color.RED);
+                        	pen.setFill(Color.RED);
+				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
                             break;
 		}
-		pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
 	public Integer toInt(){
@@ -89,6 +101,8 @@ public class Block {
 					return 0;
 				case World.VOID:
 					return 2;
+				case World.SPIKE:
+					return 3;
 				default:
 					return null;
 		}

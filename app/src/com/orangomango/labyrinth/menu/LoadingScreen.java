@@ -25,20 +25,33 @@ import com.orangomango.labyrinth.Logger;
 public class LoadingScreen {
 	public static final int LEVELS = 4;
 	private static final String[] IMGNAMES = new String[] {
-		"ac",
-		"ar",
-		"rr",
-		"rc",
-		"run",
-		"new",
-		"open",
-		"save",
-		"sse"
+		"editor" + File.separator + "ac",
+		"editor" + File.separator + "ar",
+		"editor" + File.separator + "rr",
+		"editor" + File.separator + "rc",
+		"editor" + File.separator + "run",
+		"editor" + File.separator + "new",
+		"editor" + File.separator + "open",
+		"editor" + File.separator + "save",
+		"editor" + File.separator + "sse",
+		"blocks" + File.separator + "block_spike"
 	};
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;
 	private Menu menu;
 	private static int ALERTS = 0;
+
+	private String convertSlash(String input){
+		StringBuilder out = new StringBuilder();
+		for (char c : input.toCharArray()){
+			if (Character.toString(c) == "\\"){
+				out.append("/");
+			} else {
+				out.append(c);
+			}
+		}
+		return out.toString();
+	}
 
 	private void downloadFile(String link, String path) {
 		try (InputStream in = new URL(link).openStream()) {
@@ -92,7 +105,7 @@ public class LoadingScreen {
 					for (int x = 0; x<IMAGES; x++) {
 						updateProgress(progress, total);
 						updateMessage("Downloading image " + IMGNAMES[x] + ".png");
-						downloadFile(String.format("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/%s.png", IMGNAMES[x]), String.format(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "%s.png", IMGNAMES[x]));
+						downloadFile(String.format("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/%s.png", convertSlash(IMGNAMES[x])), String.format(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "%s.png", IMGNAMES[x]));
 						progress++;
 					}
 					updateMessage("Download finished.");
