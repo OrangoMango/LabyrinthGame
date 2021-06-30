@@ -109,6 +109,9 @@ public class Editor {
 					case 2:
 						edblock.toggleType(EditableWorld.VOID);
 						break;
+					case 3:
+						edblock.toggleType(EditableWorld.SPIKE);
+						break;
 				}
 				editableworld.setBlockOn(edblock);
 				editableworld.updateOnFile();
@@ -269,7 +272,7 @@ public class Editor {
 		});
 
 		Button sseBtn = new Button();
-                sseBtn.setTooltip(new Tooltip("Chnage start and end position"));
+                sseBtn.setTooltip(new Tooltip("Change start and end position"));
 		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/sse.png")));
 		sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
 
@@ -315,23 +318,40 @@ public class Editor {
 		splitpane.getItems().add(tabs);
 
                 Accordion blockSelect = new Accordion();
-                TitledPane defaultBlocks = new TitledPane("Default blocks", new Label());
-                TitledPane decorationBlocks = new TitledPane("Decoration blocks", new Label());
-                TitledPane damageBlocks = new TitledPane("Damage blocks", new Label());
-		/*TilePane blockPane = new TilePane();
-
-		ToggleGroup group = new ToggleGroup();
-		ToggleButton toggleBlock = new ToggleButton("Toggle type");
-		toggleBlock.setToggleGroup(group);
-		toggleBlock.setSelected(true);
-		toggleBlock.setOnAction(event -> SELECTED_BLOCK = 1);
-		ToggleButton nullBlock = new ToggleButton("Null block");
-		nullBlock.setOnAction(event -> SELECTED_BLOCK = 2);
-		nullBlock.setToggleGroup(group);
-
-		blockPane.getChildren().addAll(toggleBlock, nullBlock);*/
+                ToggleGroup tg = new ToggleGroup();
+                
+                // Default blocks
+                TilePane db = new TilePane();
+                ToggleButton wallB = new ToggleButton();
+                wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png")));
+                wallB.setTooltip(new Tooltip("Wall block"));
+                wallB.setToggleGroup(tg);
+                wallB.setOnAction(event -> SELECTED_BLOCK = 1);
+                db.getChildren().add(wallB);
+                TitledPane defaultBlocks = new TitledPane("Default blocks", db);
+                
+                // Decoration blocks
+                TilePane deb = new TilePane();
+                ToggleButton voidB = new ToggleButton("VOID");
+                voidB.setToggleGroup(tg);
+                voidB.setOnAction(event -> SELECTED_BLOCK = 2);
+                deb.getChildren().add(voidB);
+                TitledPane decorationBlocks = new TitledPane("Decoration blocks", deb);
+                
+                // Damage blocksTilePane deb = new TilePane();
+                TilePane dab = new TilePane();
+                ToggleButton spikeB = new ToggleButton();
+                spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
+                spikeB.setTooltip(new Tooltip("Spike block"));
+                spikeB.setToggleGroup(tg);
+                spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
+                dab.getChildren().add(spikeB);
+                TitledPane damageBlocks = new TitledPane("Damage blocks", dab);
+                
                 blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks, damageBlocks);
-		splitpane.getItems().add(blockSelect);
+                blockSelect.setExpandedPane(defaultBlocks);
+                ScrollPane blockSelector = new ScrollPane(blockSelect);
+		splitpane.getItems().add(blockSelector);
 
 		// Set the divider on 80%
 		splitpane.setDividerPositions(0.8f);
@@ -341,7 +361,7 @@ public class Editor {
 		layout.add(toolbar, 0, 0);
 		layout.add(splitpane, 0, 1);
 
-		this.stage.setScene(new Scene(layout, 775, 650));
+		this.stage.setScene(new Scene(layout, 800, 650));
 	}
 
 	public void start() {

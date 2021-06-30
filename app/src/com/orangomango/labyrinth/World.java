@@ -180,8 +180,10 @@ public class World {
                     coux = 0;
                     couy++;
                 }
-		if ((start[0] >= x && start[0] <= x1) && (start[1] >= y && start[1] <= y1) && (end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
+		if ((start[0] >= x && start[0] <= x1) && (start[1] >= y && start[1] <= y1)){
 			drawStart(x, y);
+		}
+		if  ((end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
 			drawEnd(x, y);
 		}
 		if ((this.player.getX() >= x && this.player.getX() <= x1) && (this.player.getY() >= y && this.player.getY() <= y1)){
@@ -191,14 +193,14 @@ public class World {
 	
 	private void drawStart(int x, int y){
 		this.pen.setStroke(Color.GREEN);
-		this.pen.setFont(new Font("Arial", 25));
-		this.pen.strokeText("S", (start[0] - x) * BLOCK_WIDTH + 2, (start[1] - y) * BLOCK_WIDTH + 25);
+		this.pen.setFont(new Font("Arial", 23));
+		this.pen.strokeText("S", (start[0] - x) * BLOCK_WIDTH + 2, (start[1] - y) * BLOCK_WIDTH + 22);
 	}
 	
 	private void drawEnd(int x, int y){
 		this.pen.setStroke(Color.GREEN);
-		this.pen.setFont(new Font("Arial", 25));
-		this.pen.strokeText("E", (end[0] - x) * BLOCK_WIDTH + 2, (end[1] - y) * BLOCK_WIDTH + 25);
+		this.pen.setFont(new Font("Arial", 23));
+		this.pen.strokeText("E", (end[0] - x) * BLOCK_WIDTH + 2, (end[1] - y) * BLOCK_WIDTH + 22);
 	}
 
 	public Block getBlockAt(int x, int y) {

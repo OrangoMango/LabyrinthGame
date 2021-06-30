@@ -37,6 +37,7 @@ public class LevelExe {
 
 		Canvas canvas = new Canvas(World.BLOCK_WIDTH * world.width, World.BLOCK_WIDTH * world.height);
 		Label label = new Label(filename + ((saved) ? " (Level is currently synchronized)" : " (Level not synchronized, unsaved)"));
+		label.setWrapText(true);
 		world.setCanvas(canvas);
 
 		canvas.setFocusTraversable(true);
@@ -74,16 +75,11 @@ public class LevelExe {
 					} else {
 						System.out.println(event.getCode());
 					}
-				} catch (ArrayIndexOutOfBoundsException ex) {
+				} catch (Exception ex) {
                                     // Player went into void so it must stay on edge
                                     world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
 				}
 				if (player.isOnEnd()) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException ex) {
-						ex.printStackTrace();
-					}
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setHeaderText("You completed the level!");
 					alert.setTitle("Level complete");
@@ -93,6 +89,10 @@ public class LevelExe {
 					stage.hide();
 					if (LevelExe.exStage != null)
 						LevelExe.exStage.show();
+				} else if (player.isOnSpike()){
+					player.setX(world.start[0]);
+					player.setY(world.start[1]);
+					world.update(0, 0, 0, 0);
 				}
 			}
 		});

@@ -34,7 +34,8 @@ public class LoadingScreen {
 		"editor" + File.separator + "open",
 		"editor" + File.separator + "save",
 		"editor" + File.separator + "sse",
-		"blocks" + File.separator + "block_spike"
+		"blocks" + File.separator + "block_spike",
+		"blocks" + File.separator + "block_wall",
 	};
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;
@@ -120,7 +121,7 @@ public class LoadingScreen {
 			new Thread(dwlworker).start();
 		});
 
-		this.stage.setScene(new Scene(pane, 300, 250));
+		this.stage.setScene(new Scene(pane, 380, 250));
 		this.stage.setResizable(false);
 		this.stage.show();
 	}
