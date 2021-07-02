@@ -10,6 +10,7 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 public class Block {
 	protected String type;
 	private int x, y;
+	private String info = null;
 
 	/**
 	  Block class constructor
@@ -17,10 +18,11 @@ public class Block {
 	  @param x - X coord of Block
 	  @param y - Y coord of Block
 	*/
-	public Block(String t, int x, int y) {
+	public Block(String t, int x, int y, String i) {
 		this.type = t;
 		this.x = x;
 		this.y = y;
+		this.info = i;
 	}
 
 	/**
@@ -37,6 +39,9 @@ public class Block {
 	public int getY() {
 		return y;
 	}
+	
+	public void setInfo(String i){this.info = i;}
+	public String getInfo(){return this.info;}
 
 	/**
 	  Create a block instance from a given int (0 or 1)
@@ -44,16 +49,18 @@ public class Block {
 	  @param x1 - X coord of block
 	  @param y1 - Y coord of block
 	*/
-	public static Block fromInt(int x, int x1, int y1) {
+	public static Block fromInt(int x, int x1, int y1, String i) {
 		switch(x){
 			case 0:
-				return new Block(World.AIR, x1, y1);
+				return new Block(World.AIR, x1, y1, i);
 			case 1:
-				return new Block(World.WALL, x1, y1);
+				return new Block(World.WALL, x1, y1, i);
 			case 2:
-				return new Block(World.VOID, x1, y1);
+				return new Block(World.VOID, x1, y1, i);
 			case 3:
-				return new Block(World.SPIKE, x1, y1);
+				return new Block(World.SPIKE, x1, y1, i);
+			case 4:
+				return new Block(World.PORTAL, x1, y1, i);
 			default:
 				return null;
 		}
@@ -87,6 +94,11 @@ public class Block {
 				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
+			case World.PORTAL:
+				pen.setFill(Color.WHITE);
+				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
                         default:
                         	pen.setFill(Color.RED);
 				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -104,6 +116,8 @@ public class Block {
 					return 2;
 				case World.SPIKE:
 					return 3;
+				case World.PORTAL:
+					return 4;
 				default:
 					return null;
 		}
@@ -129,6 +143,6 @@ public class Block {
 	*/
 	@Override
 	public String toString() {
-		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y;
+		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : this.info);
 	}
 }

@@ -8,21 +8,9 @@ import javafx.scene.layout.TilePane;
 import javafx.geometry.Orientation;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.canvas.*;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Button;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Separator;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.stage.FileChooser;
 
@@ -89,33 +77,49 @@ public class Editor {
 		Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
 		canvas.setFocusTraversable(true);
 
+
+		ContextMenu contextMenu = new ContextMenu();
+		MenuItem item1 = new MenuItem("Portal preferences...");
+		item1.setOnAction(event -> System.out.println("Portal preferences clicked"));
+		contextMenu.getItems().add(item1);
+
 		canvas.setOnMousePressed(new EventHandler<MouseEvent> () {
 			@Override
 			public void handle(MouseEvent event) {
 				EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
-				if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
-					Logger.warning("Could not place block on start or end position");
-					Alert alert = new Alert(Alert.AlertType.ERROR);
-					alert.setHeaderText("Could not place block on start or end position");
-					alert.setTitle("SSE Error");
-					alert.setContentText(null);
-					alert.showAndWait();
-					return;
+				if (event.getButton() == MouseButton.SECONDARY && edblock.getType() == EditableWorld.PORTAL){
+					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
+				} else if (event.getButton() == MouseButton.PRIMARY){
+					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
+						Logger.warning("Could not place block on start or end position");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setHeaderText("Could not place block on start or end position");
+						alert.setTitle("SSE Error");
+						alert.setContentText(null);
+						alert.showAndWait();
+						return;
+					}
+					switch (SELECTED_BLOCK) {
+						case 1:
+							edblock.toggleType(EditableWorld.WALL);
+							break;
+						case 2:
+							edblock.toggleType(EditableWorld.VOID);
+							break;
+						case 3:
+							edblock.toggleType(EditableWorld.SPIKE);
+							break;
+						case 4:
+							if (edblock.getType() == EditableWorld.AIR){
+								edblock.setInfo("Portal info");
+							}
+							edblock.toggleType(EditableWorld.PORTAL);
+							break;
+					}
+					editableworld.setBlockOn(edblock);
+					editableworld.updateOnFile();
+					unsaved();
 				}
-				switch (SELECTED_BLOCK) {
-					case 1:
-						edblock.toggleType(EditableWorld.WALL);
-						break;
-					case 2:
-						edblock.toggleType(EditableWorld.VOID);
-						break;
-					case 3:
-						edblock.toggleType(EditableWorld.SPIKE);
-						break;
-				}
-				editableworld.setBlockOn(edblock);
-				editableworld.updateOnFile();
-				unsaved();
 			}
 		});
 
@@ -132,7 +136,7 @@ public class Editor {
 			@Override
 			public void handle(MouseEvent event) {
 				Block block = editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
-				pointingOn.setText("Mouse on block: " + block + " " + ((block.isOnStart(editableworld)) ? "On start position" : ((block.isOnEnd(editableworld)) ? "On end position" : "Not on start or end position")));
+				pointingOn.setText("Mouse on block: " + block + " | " + ((block.isOnStart(editableworld)) ? "On start position" : ((block.isOnEnd(editableworld)) ? "On end position" : "Not on start or end position")));
 			}
 		});
 
@@ -322,12 +326,20 @@ public class Editor {
                 
                 // Default blocks
                 TilePane db = new TilePane();
+                db.setHgap(5);
+                db.setVgap(2);
                 ToggleButton wallB = new ToggleButton();
                 wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png")));
                 wallB.setTooltip(new Tooltip("Wall block"));
                 wallB.setToggleGroup(tg);
                 wallB.setOnAction(event -> SELECTED_BLOCK = 1);
-                db.getChildren().add(wallB);
+                wallB.setSelected(true);
+                ToggleButton portalB = new ToggleButton();
+                portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
+                portalB.setTooltip(new Tooltip("Portal block"));
+                portalB.setToggleGroup(tg);
+                portalB.setOnAction(event -> SELECTED_BLOCK = 4);
+                db.getChildren().addAll(wallB, portalB);
                 TitledPane defaultBlocks = new TitledPane("Default blocks", db);
                 
                 // Decoration blocks

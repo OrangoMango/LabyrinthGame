@@ -36,7 +36,6 @@ public class HomeWindow{
 			pane.setContent(new Label("You did not create any levels yet :(\n Create one in the editor"));
 		} else {
 			Accordion acc = new Accordion();
-			acc.setMaxWidth(450);
 			for (String p : cwf.getPaths()){
 				File file = new File(p);
 				World temp = new World(p);

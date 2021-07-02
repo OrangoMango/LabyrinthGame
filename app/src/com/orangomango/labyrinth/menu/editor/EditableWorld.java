@@ -26,7 +26,7 @@ public class EditableWorld extends World {
 			int counter = 0;
 			for (Block[] bArr: this.world) {
 				for (Block block: bArr) {
-					writer.write(Integer.toString(block.toInt()));
+					writer.write(Integer.toString(block.toInt())+"$"+block.getInfo());
 					if (counter + 1 != this.height * this.width) {
 						writer.write(",");
 					}
@@ -44,7 +44,7 @@ public class EditableWorld extends World {
 	}
 
 	public void setBlockOn(EditableBlock block) {
-		this.world[block.getY()][block.getX()] = new Block(block.getType(), block.getX(), block.getY());
+		this.world[block.getY()][block.getX()] = new Block(block.getType(), block.getX(), block.getY(), block.getInfo());
 	}
 
 	public void addRow() {
@@ -56,7 +56,7 @@ public class EditableWorld extends World {
 		}
 		Block[] newRow = new Block[this.width];
 		for (int i = 0; i<this.width; i++) {
-			newRow[i] = Block.fromInt(0, i, counter);
+			newRow[i] = Block.fromInt(0, i, counter, null);
 		}
 		newArray[counter] = newRow;
 		this.world = newArray;
@@ -74,7 +74,7 @@ public class EditableWorld extends World {
 				newRow[c] = b;
 				c++;
 			}
-			newRow[c] = Block.fromInt(0, this.width + 1, counter);
+			newRow[c] = Block.fromInt(0, this.width + 1, counter, null);
 			newArray[counter] = newRow;
 			counter++;
 		}

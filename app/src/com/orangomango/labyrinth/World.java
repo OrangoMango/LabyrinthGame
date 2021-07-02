@@ -27,6 +27,7 @@ public class World {
 	public final static String AIR = "air";
 	public final static String VOID = "void";
 	public final static String SPIKE = "spike";
+	public final static String PORTAL = "portal";
 
 	public final static int BLOCK_WIDTH = 32;
 
@@ -142,8 +143,8 @@ public class World {
 				break;
 			}
 
-			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) { // Parse every array range in "width" length parts
-				x[it2] = Block.fromInt(Integer.parseInt(v), it2, counter);
+			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
+				x[it2] = Block.fromInt(Integer.parseInt(v.split("$")[0]), it2, counter, v.split("$").length > 1 ? v.split("$")[1] : null);
 				it2++;
 			}
 			output[counter] = x;
@@ -173,7 +174,7 @@ public class World {
                         if (b != null){
                         	b.draw(this.pen, coux, couy);
                         } else {
-                        	new Block(VOID, coux, couy).draw(this.pen);
+                        	new Block(VOID, coux, couy, null).draw(this.pen);
                         }
                         coux++;
                     }
