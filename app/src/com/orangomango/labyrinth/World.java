@@ -1,6 +1,7 @@
 /**
    Labirinth game - world class
    @author OrangoMango
+   @version 3.2
 */
 
 package com.orangomango.labyrinth;
@@ -124,10 +125,10 @@ public class World {
 	}
 
 	/**
-	  Parse give string from file and return an array
-	  @param data - string with all file data
-	  @param h - world height
-	  @param w - world width
+	 * Parse give string from file and return an array
+	 * @param data - string with all file data
+	 * @param h - world height
+	 * @param w - world width
 	*/
 	private Block[][] parseWorldData(String data, int h, int w) {
 		String[] current = data.split(",");

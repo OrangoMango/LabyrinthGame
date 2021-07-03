@@ -38,14 +38,19 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-        public static Editor EDITOR_INSTANCE = null;
+    public static Editor EDITOR_INSTANCE = null;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
 	private static int OPENED_TABS = 0;
 	private static boolean[] SAVES = new boolean[0];
 	private static EditableWorld[] WORLDS = new EditableWorld[0];
-
+    
+    /**
+     * Change the slash of the path from \ to / to make a valid URL under windows.
+     * @param input the Path String
+     * @return the converted path
+    */
 	public static String changeSlash(String input) {
 		StringBuilder output = new StringBuilder();
 		if (input.contains("\\")) {
@@ -60,7 +65,11 @@ public class Editor {
 		}
 		return output.toString();
 	}
-
+    
+    /**
+     * Function that creates the editable world inside a tabs
+     * @return the GridPane containing the canvas with the world
+    */
 	private GridPane getEditorTabContent() {
 		GridPane layout = new GridPane();
 
@@ -156,11 +165,15 @@ public class Editor {
 		return layout;
 	}
 
+    /**
+     * Editor class constructor. Setups all editor window (toolbar, canvas, tabs, ...)
+     * @param editorFilePath the file path to open
+    */
 	public Editor(String editorFilePath) {
 		if (EDITOR){
 			return;
 		}
-                EDITOR_INSTANCE = this;
+        EDITOR_INSTANCE = this;
 		EDITOR = true;
 		worldList = new CreatedWorldFiles();
 		this.stage = new Stage();
@@ -171,7 +184,7 @@ public class Editor {
 			CURRENT_FILE_PATHS = new String[1];
 			SAVES = new boolean[1];
 			OPENED_TABS = 0;
-                        EDITOR_INSTANCE = null;
+            EDITOR_INSTANCE = null;
 		});
 
 		GridPane layout = new GridPane();
@@ -213,7 +226,7 @@ public class Editor {
 		});
 		Button openBtn = new Button("Open");
 		openBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/open.png")));
-                openBtn.setTooltip(new Tooltip("Open a world file"));
+        openBtn.setTooltip(new Tooltip("Open a world file"));
 		openBtn.setOnAction(event -> {
 			try {
 				FileChooser chooser = new FileChooser();
@@ -235,7 +248,7 @@ public class Editor {
 		});
 
 		Button addCBtn = new Button();
-                addCBtn.setTooltip(new Tooltip("Add column to world"));
+        addCBtn.setTooltip(new Tooltip("Add column to world"));
 		addCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ac.png")));
 		addCBtn.setOnAction(event -> {
 			if (checkValidityMax("w")) {
@@ -244,7 +257,7 @@ public class Editor {
 			}
 		});
 		Button addRBtn = new Button();
-                addRBtn.setTooltip(new Tooltip("Add row to world"));
+        addRBtn.setTooltip(new Tooltip("Add row to world"));
 		addRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ar.png")));
 		addRBtn.setOnAction(event -> {
 			if (checkValidityMax("h")) {
@@ -253,14 +266,14 @@ public class Editor {
 			}
 		});
 		Button rmCBtn = new Button();
-                rmCBtn.setTooltip(new Tooltip("Remove column from world"));
+        rmCBtn.setTooltip(new Tooltip("Remove column from world"));
 		rmCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rc.png")));
 		rmCBtn.setOnAction(event -> {
 			checkValidity(edworld.removeColumn());
 			unsaved();
 		});
 		Button rmRBtn = new Button();
-                rmRBtn.setTooltip(new Tooltip("Remove row from world"));
+        rmRBtn.setTooltip(new Tooltip("Remove row from world"));
 		rmRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rr.png")));
 		rmRBtn.setOnAction(event -> {
 			checkValidity(edworld.removeRow());
@@ -268,7 +281,7 @@ public class Editor {
 		});
 
 		Button runBtn = new Button("Run");
-                runBtn.setTooltip(new Tooltip("Run current level"));
+        runBtn.setTooltip(new Tooltip("Run current level"));
 		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/run.png")));
 		runBtn.setOnAction(event -> {
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
@@ -276,7 +289,7 @@ public class Editor {
 		});
 
 		Button sseBtn = new Button();
-                sseBtn.setTooltip(new Tooltip("Change start and end position"));
+        sseBtn.setTooltip(new Tooltip("Change start and end position"));
 		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/sse.png")));
 		sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
 
@@ -350,7 +363,7 @@ public class Editor {
                 deb.getChildren().add(voidB);
                 TitledPane decorationBlocks = new TitledPane("Decoration blocks", deb);
                 
-                // Damage blocksTilePane deb = new TilePane();
+                // Damage blocks
                 TilePane dab = new TilePane();
                 ToggleButton spikeB = new ToggleButton();
                 spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
@@ -375,13 +388,20 @@ public class Editor {
 
 		this.stage.setScene(new Scene(layout, 800, 650));
 	}
-
+    
+    /**
+     * Show the window
+    */
 	public void start() {
 		if (DONE && this.stage != null) {
 			this.stage.show();
 		}
 	}
 
+    /**
+     * Update the file that contains last opened world
+     * @param currentPath String to write into the file
+    */
 	public static void updateCurrentWorldFile(String currentPath) {
 		File f = new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "currentFile.data");
 		try {
@@ -393,7 +413,11 @@ public class Editor {
 			writer.close();
 		} catch (IOException e) {}
 	}
-
+    
+    /**
+     * get last opened file path
+     * @return the file path as a String
+    */
 	public static String getCurrentFilePath() {
 		File f = new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "currentFile.data");
 		if (!f.exists()) {
@@ -407,7 +431,11 @@ public class Editor {
 		} catch (IOException e) {}
 		return null;
 	}
-
+    
+    /**
+     * Open a world file by opening a new tab containing the opened world. Will be created a copy of the world file in the cache folder. When the user saves the cache file (where the user edits the world) will be replaced with the original file.
+     * @param f the world File
+    */
 	public void open(File f) {
 		try {
 			Random r = new Random();
@@ -458,7 +486,10 @@ public class Editor {
 			e.printStackTrace();
 		}
 	}
-
+    
+    /**
+     * Check if it's possible to remove a column or a row.
+    */
 	private void checkValidity(boolean value) {
 		if (!value) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -470,7 +501,11 @@ public class Editor {
 			alert.showAndWait();
 		}
 	}
-
+    
+    /**
+     * Check if it's possible to add a row/column. A row or a column can only be added if the world size is not bigger than @link MAX_WORLD_SIZE .
+     * @return true or false
+    */
 	private boolean checkValidityMax(String s) {
 		if (this.edworld.width + 1 > NewWidget.MAX_WORLD_SIZE && s == "w") {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -490,7 +525,10 @@ public class Editor {
 			return true;
 		}
 	}
-
+    
+    /**
+     * When something is edited this method is called and the tab/window title is modified
+    */
 	private void unsaved() {
 		this.saved = false;
 		try {
@@ -502,6 +540,9 @@ public class Editor {
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 	}
 
+    /**
+     * When the user clicks the <pre>Save</pre> button, this method is called and updates the window and the tab title
+    */
 	private void saved() {
 		this.saved = true;
 		try {
@@ -513,6 +554,9 @@ public class Editor {
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 	}
 
+    /**
+     * This method creates a default world 2x2
+    */
 	private void createNewWorld(String name) {
 		File f = new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator + "" + name + ".wld" + ((name == "testSystemWorld-DefaultName_NoCopy") ? ".sys" : ""));
 		try {
@@ -528,6 +572,10 @@ public class Editor {
 		}
 	}
 
+    /**
+     * Creates a directory if it does not exists
+     * @param path the directory path
+    */
 	private static void checkAndCreateDir(String path) {
 		File f = new File(path);
 		if (!f.exists()) {
@@ -535,6 +583,9 @@ public class Editor {
 		}
 	}
 
+    /**
+     * Creates the necessary application directories
+    */
 	public static void setupDirectory() {
 		checkAndCreateDir(PATH + ".labyrinthgame");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "SystemLevels");
@@ -546,6 +597,11 @@ public class Editor {
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");
 	}
 
+    /**
+     * Copies a world to a given path
+     * @param path1 the original world file path
+     * @param path2 the destination path
+    */
 	private void copyWorld(String path1, String path2) {
 		try {
 			File second = new File(path2); // Delete second file if exists for replacement
@@ -558,7 +614,11 @@ public class Editor {
 			Logger.warning("Unable to copy world from cache to file");
 		}
 	}
-
+    
+    /**
+     * Get the current file path where the user is editing
+     * @return the file path
+    */
 	private String getFileName() {
 		Path path = Paths.get(CURRENT_FILE_PATH);
 		Path fileName = path.getFileName();
