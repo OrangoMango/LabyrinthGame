@@ -144,7 +144,7 @@ public class World {
 			}
 
 			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
-				x[it2] = Block.fromInt(Integer.parseInt(v.split("$")[0]), it2, counter, v.split("$").length > 1 ? v.split("$")[1] : null);
+				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
 				it2++;
 			}
 			output[counter] = x;

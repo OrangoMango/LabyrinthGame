@@ -27,6 +27,7 @@ public class PlayScreen {
 
   public PlayScreen(LabyrinthMain main) {
     final Stage stage = new Stage();
+    stage.setTitle("Play");
     stage.setOnCloseRequest(event -> {
         PLAY = false;
         LEVELS_OPEN = new int[LEVELS];

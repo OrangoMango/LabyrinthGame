@@ -2,6 +2,11 @@ package com.orangomango.labyrinth;
 
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
+import javafx.scene.image.*;
+
+import com.orangomango.labyrinth.menu.editor.Editor;
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+
 
 public class Player {
 	private World world;
@@ -37,9 +42,7 @@ public class Player {
 	}
 	
 	public void draw(GraphicsContext pen, int x, int y) {
-		pen.setFill(Color.RED);
-		pen.setLineWidth(1);
-		pen.fillRect(x * World.BLOCK_WIDTH + 2, y * World.BLOCK_WIDTH + 2, 25, 25);
+		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/player.png"), x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 
 	public void moveOn(String direction, int m, int[] rec) {

@@ -26,7 +26,7 @@ public class EditableWorld extends World {
 			int counter = 0;
 			for (Block[] bArr: this.world) {
 				for (Block block: bArr) {
-					writer.write(Integer.toString(block.toInt())+"$"+block.getInfo());
+					writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
 					if (counter + 1 != this.height * this.width) {
 						writer.write(",");
 					}

@@ -36,7 +36,8 @@ public class LoadingScreen {
 		"editor" + File.separator + "sse",
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_wall",
-		"blocks" + File.separator + "block_portal"
+		"blocks" + File.separator + "block_portal",
+		"blocks" + File.separator + "player"
 	};
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;
