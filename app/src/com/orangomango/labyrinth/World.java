@@ -14,6 +14,10 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.image.Image;
+
+import com.orangomango.labyrinth.menu.editor.Editor;
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class World {
 	protected Block[][] world;
@@ -161,9 +165,9 @@ public class World {
 				block.draw(this.pen);
 			}
 		}
-		this.player.draw(this.pen);
 		drawStart(0, 0);
 		drawEnd(0, 0);
+		this.player.draw(this.pen);
 	}
 	
 	public void draw(int x, int y, int x1, int y1){
@@ -200,9 +204,7 @@ public class World {
 	}
 	
 	private void drawEnd(int x, int y){
-		this.pen.setStroke(Color.GREEN);
-		this.pen.setFont(new Font("Arial", 23));
-		this.pen.strokeText("E", (end[0] - x) * BLOCK_WIDTH + 2, (end[1] - y) * BLOCK_WIDTH + 22);
+		this.pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/end.png"), (end[0] - x) * BLOCK_WIDTH, (end[1] - y) * BLOCK_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH);
 	}
 
 	public Block getBlockAt(int x, int y) {

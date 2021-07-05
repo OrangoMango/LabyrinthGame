@@ -38,7 +38,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-    public static Editor EDITOR_INSTANCE = null;
+    	public static Editor EDITOR_INSTANCE = null;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -74,6 +74,7 @@ public class Editor {
 		GridPane layout = new GridPane();
 
 		ScrollPane scrollpane = new ScrollPane();
+		scrollpane.requestFocus();
 
 		EditableWorld editableworld;
 
@@ -86,17 +87,30 @@ public class Editor {
 		Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
 		canvas.setFocusTraversable(true);
 
-
-		ContextMenu contextMenu = new ContextMenu();
-		MenuItem item1 = new MenuItem("Portal preferences...");
-		item1.setOnAction(event -> System.out.println("Portal preferences clicked"));
-		contextMenu.getItems().add(item1);
-
 		canvas.setOnMousePressed(new EventHandler<MouseEvent> () {
 			@Override
 			public void handle(MouseEvent event) {
 				EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
 				if (event.getButton() == MouseButton.SECONDARY && edblock.getType() == EditableWorld.PORTAL){
+					ContextMenu contextMenu = new ContextMenu();
+					Menu item1 = new Menu("Portal preferences...");
+					for (int y = 0; y<editableworld.height; y++){
+						for (int x = 0; x<editableworld.width; x++){
+							Block b = editableworld.getBlockAt(x, y);
+							if (b.getType()  == EditableWorld.PORTAL){
+								MenuItem menuitem = new MenuItem(b.toString());
+								menuitem.setOnAction(itemEvent -> {
+									editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo(String.format("point:%s %s", b.getX(), b.getY()));
+									b.setInfo(String.format("point:%s %s", edblock.getX(), edblock.getY()));
+								});
+								if (b.getX() == edblock.getX() && b.getY() == edblock.getY() && b.getX() == edblock.getX()){
+									menuitem.setDisable(true);
+								}
+								item1.getItems().add(menuitem);
+							}
+						}
+					}
+					contextMenu.getItems().add(item1);
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
