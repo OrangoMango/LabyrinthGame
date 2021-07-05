@@ -81,8 +81,8 @@ public class Player {
 		return false;
 	}
 	
-	public boolean isOnSpike(){
-		if (this.world.getBlockAt(getX(), getY()).getType() == World.SPIKE){
+	public boolean isOnBlock(String block){
+		if (this.world.getBlockAt(getX(), getY()).getType() == block){
 			return true;
 		}
 		return false;

@@ -89,10 +89,12 @@ public class LevelExe {
 					stage.hide();
 					if (LevelExe.exStage != null)
 						LevelExe.exStage.show();
-				} else if (player.isOnSpike()){
+				} else if (player.isOnBlock(World.SPIKE)){
 					player.setX(world.start[0]);
 					player.setY(world.start[1]);
 					world.update(0, 0, 0, 0);
+				} else if (player.isOnBlock(World.PORTAL)){
+					System.out.println("Teleport: "+world.getBlockAt(player.getX(), player.getY()).getInfo());
 				}
 			}
 		});
