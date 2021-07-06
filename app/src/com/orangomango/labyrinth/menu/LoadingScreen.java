@@ -23,7 +23,7 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.Logger;
 
 public class LoadingScreen {
-	public static final int LEVELS = 4;
+	public static final int LEVELS = 5;
 	private static final String[] IMGNAMES = new String[] {
 		"editor" + File.separator + "ac",
 		"editor" + File.separator + "ar",
