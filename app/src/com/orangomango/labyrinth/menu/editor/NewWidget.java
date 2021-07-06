@@ -159,7 +159,7 @@ public class NewWidget {
 		l3.setVgap(10);
 		CheckBox allow = new CheckBox("Set start and end pos");
 		Label lab1 = new Label("Start X:");
-		Label lab2 = new Label("Start Y:");
+		Label lab2 = new Label("Start X:");
 		Label lab3 = new Label("Y:");
 		Label lab4 = new Label("Y:");
 		this.spinner1 = new Spinner(0, MAX_WORLD_SIZE, 0);
@@ -263,7 +263,7 @@ public class NewWidget {
 			this.sY = (int) this.spinner2.getValue();
 			this.eX = (int) this.spinner3.getValue();
 			this.eY = (int) this.spinner4.getValue();
-			if (sX == 0 || sY == 0 || eX == 0 || eY == 0) {
+			if (sX == 0 && sY == 0 && eX == 0 && eY == 0) {
 				sX = 1;
 				eX = 1;
 				eY = 1;

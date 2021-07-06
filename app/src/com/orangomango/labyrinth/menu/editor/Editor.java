@@ -407,7 +407,7 @@ public class Editor {
 		layout.add(toolbar, 0, 0);
 		layout.add(splitpane, 0, 1);
 
-		this.stage.setScene(new Scene(layout, 800, 650));
+		this.stage.setScene(new Scene(layout, 800, 550));
 	}
     
     /**

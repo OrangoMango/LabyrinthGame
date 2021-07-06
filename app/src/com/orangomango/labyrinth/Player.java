@@ -50,12 +50,18 @@ public class Player {
 			Block[] xrow = this.world.getXRow(getY());
 			while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL) {
 				setX(getX() + m);
+				if (this.world.getBlockAt(getX(), getY()).getType() != this.world.AIR){
+					break;
+				}
 			}
 
 		} else if (direction == Y) {
 			Block[] yrow = this.world.getYRow(getX());
 			while (this.world.getBlockAt(getX(), getY() + m).getType() != this.world.WALL) {
 				setY(getY() + m);
+				if (this.world.getBlockAt(getX(), getY()).getType() != this.world.AIR){
+					break;
+				}
 			}
 		} else {
 			Logger.error("Unknow direction found");
