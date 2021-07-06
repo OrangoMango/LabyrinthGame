@@ -94,7 +94,16 @@ public class LevelExe {
 					player.setY(world.start[1]);
 					world.update(0, 0, 0, 0);
 				} else if (player.isOnBlock(World.PORTAL)){
-					System.out.println("Teleport: "+world.getBlockAt(player.getX(), player.getY()).getInfo());
+					if (world.getBlockAt(player.getX(), player.getY()).getInfo().equals("NoPointSet")){
+						return;
+					}
+					String[] coord = world.getBlockAt(player.getX(), player.getY()).getInfo().split("#");
+					String[] numbers = coord[1].split(" ");
+					int tx = Integer.parseInt(numbers[0]);
+					int ty = Integer.parseInt(numbers[1]);
+					player.setX(tx);
+					player.setY(ty);
+					world.update(0, 0, 0, 0);
 				}
 			}
 		});

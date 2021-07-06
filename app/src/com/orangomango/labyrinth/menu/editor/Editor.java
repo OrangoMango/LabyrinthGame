@@ -93,15 +93,24 @@ public class Editor {
 				EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
 				if (event.getButton() == MouseButton.SECONDARY && edblock.getType() == EditableWorld.PORTAL){
 					ContextMenu contextMenu = new ContextMenu();
-					Menu item1 = new Menu("Portal preferences...");
+					Menu item1 = new Menu("Set other portal end...");
+					MenuItem rmPoint = new MenuItem("Remove pointing");
+					rmPoint.setOnAction(rmEvent -> {
+						editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo("NoPointSet");
+						editableworld.updateOnFile();
+						unsaved();
+					});
+					item1.getItems().add(rmPoint);
 					for (int y = 0; y<editableworld.height; y++){
 						for (int x = 0; x<editableworld.width; x++){
 							Block b = editableworld.getBlockAt(x, y);
 							if (b.getType()  == EditableWorld.PORTAL){
 								MenuItem menuitem = new MenuItem(b.toString());
 								menuitem.setOnAction(itemEvent -> {
-									editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo(String.format("point:%s %s", b.getX(), b.getY()));
-									b.setInfo(String.format("point:%s %s", edblock.getX(), edblock.getY()));
+									editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo(String.format("point#%s %s", b.getX(), b.getY()));
+									b.setInfo(String.format("point#%s %s", edblock.getX(), edblock.getY()));
+									editableworld.updateOnFile();
+									unsaved();
 								});
 								if (b.getX() == edblock.getX() && b.getY() == edblock.getY() && b.getX() == edblock.getX()){
 									menuitem.setDisable(true);
@@ -133,10 +142,8 @@ public class Editor {
 							edblock.toggleType(EditableWorld.SPIKE);
 							break;
 						case 4:
-							if (edblock.getType() == EditableWorld.AIR){
-								edblock.setInfo("Portal info");
-							}
 							edblock.toggleType(EditableWorld.PORTAL);
+							edblock.setInfo("NoPointSet");
 							break;
 					}
 					editableworld.setBlockOn(edblock);
