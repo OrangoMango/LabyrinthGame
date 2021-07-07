@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import com.orangomango.labyrinth.menu.play.entity.Entity;
 
 public class World {
 	protected Block[][] world;
@@ -27,6 +28,7 @@ public class World {
 	private GraphicsContext pen;
 	private Player player;
 	protected Canvas canvas;
+	private Entity[] ents = new Entity[0];
 
 	public final static String WALL = "wall";
 	public final static String AIR = "air";
@@ -51,6 +53,10 @@ public class World {
 
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
+	}
+	
+	public void setEnts(Entity... e){
+		ents = e;
 	}
 
 	public void changeToWorld(String path) {
@@ -168,9 +174,12 @@ public class World {
 		drawStart(0, 0);
 		drawEnd(0, 0);
 		this.player.draw(this.pen);
+		for (Entity e : this.ents){
+			e.draw(this.pen);
+		}
 	}
 	
-	public void draw(int x, int y, int x1, int y1){
+	public void draw(int x, int y, int x1, int y1){	
                 int coux = 0;
                 int couy = 0;
                 for (int cy = y; cy <= y1; cy++){

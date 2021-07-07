@@ -14,6 +14,7 @@ import javafx.scene.control.Alert;
 
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Player;
+import com.orangomango.labyrinth.menu.play.entity.Bat;
 
 public class LevelExe {
 	private static Stage exStage = null;
@@ -57,6 +58,9 @@ public class LevelExe {
 		player.draw(pen);
 		world.setPlayer(player);
 
+		//Bat bat = new Bat(world, 2, 2);
+		//world.setEnts(bat);
+		
 		world.draw(); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
 
 		// Handle movement
