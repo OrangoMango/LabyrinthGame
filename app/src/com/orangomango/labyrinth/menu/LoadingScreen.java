@@ -23,7 +23,7 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.Logger;
 
 public class LoadingScreen {
-	public static final int LEVELS = 5;
+	public static final int LEVELS = 4;
 	private static final String[] IMGNAMES = new String[] {
 		"editor" + File.separator + "ac",
 		"editor" + File.separator + "ar",
@@ -37,12 +37,7 @@ public class LoadingScreen {
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_wall",
 		"blocks" + File.separator + "block_portal",
-		"blocks" + File.separator + "block_air",
-		"blocks" + File.separator + "block_shooter",
-		"blocks" + File.separator + "end",
-		"entities" + File.separator + "player",
-		"entities" + File.separator + "bat_side_1",
-		"entities" + File.separator + "bat_side_2",
+		"blocks" + File.separator + "player"
 	};
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;

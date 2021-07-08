@@ -3,8 +3,8 @@ package com.orangomango.labyrinth.menu.editor;
 import com.orangomango.labyrinth.Block;
 
 public class EditableBlock extends Block {
-	public EditableBlock(String type, int x, int y, String i) {
-		super(type, x, y, i);
+	public EditableBlock(String type, int x, int y) {
+		super(type, x, y);
 	}
 
 	public void setType(String type) {
@@ -12,7 +12,7 @@ public class EditableBlock extends Block {
 	}
 
 	public static EditableBlock fromBlock(Block bl) {
-		return new EditableBlock(bl.getType(), bl.getX(), bl.getY(), bl.getInfo());
+		return new EditableBlock(bl.getType(), bl.getX(), bl.getY());
 	}
 
 	public void toggleType(String blockType) {

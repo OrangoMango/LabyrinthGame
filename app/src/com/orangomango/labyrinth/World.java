@@ -19,6 +19,7 @@ import javafx.scene.image.Image;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.play.entity.Entity;
+import com.orangomango.labyrinth.menu.play.entity.Bat;
 
 public class World {
 	protected Block[][] world;
@@ -36,6 +37,7 @@ public class World {
 	public final static String SPIKE = "spike";
 	public final static String PORTAL = "portal";
 	public final static String SHOOTER = "shooter";
+	public final static String BAT_GEN = "bat_generator";
 
 	public final static int BLOCK_WIDTH = 32;
 
@@ -59,9 +61,20 @@ public class World {
 	public void setEnts(Entity... e){
 		ents = e;
 	}
+	
+	public void addEnt(Entity e){
+		this.ents = Arrays.copyOf(ents, ents.length+1);
+		this.ents[ents.length-1] = e;
+		System.out.println(Arrays.toString(this.ents));
+	}
+	
+	public Entity[] getEnts(){
+		return this.ents;
+	}
 
 	public void changeToWorld(String path) {
 		filePath = path;
+		this.ents = new Entity[0];
 		world = readWorld(filePath);
 		try {
 			this.canvas.setHeight(this.height * BLOCK_WIDTH);
@@ -154,9 +167,12 @@ public class World {
 			if (iterator + w > current.length) { // If itertor is bigger than the list length then stop
 				break;
 			}
-
-			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
+      for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
+				if (x[it2].getType() == BAT_GEN){
+				  String[] d = x[it2].getInfo().split("#")[1].split(" ");
+				  addEnt(new Bat(this, Double.parseDouble(d[0]), Double.parseDouble(d[1]), Integer.parseInt(d[2])));
+				}
 				it2++;
 			}
 			output[counter] = x;
@@ -169,7 +185,7 @@ public class World {
 	public void draw() {
 		for (Block[] blocks: world) {
 			for (Block block: blocks) {
-				block.draw(this.pen);
+				block.draw(this.pen, this);
 			}
 		}
 		drawStart(0, 0);
@@ -187,9 +203,9 @@ public class World {
                     for (int cx = x; cx <= x1; cx++){
                         Block b = getBlockAt(cx, cy);
                         if (b != null){
-                        	b.draw(this.pen, coux, couy);
+                        	b.draw(this.pen, coux, couy, this);
                         } else {
-                        	new Block(VOID, coux, couy, null).draw(this.pen);
+                        	new Block(VOID, coux, couy, null).draw(this.pen, this);
                         }
                         coux++;
                     }

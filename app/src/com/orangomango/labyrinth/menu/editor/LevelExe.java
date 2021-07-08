@@ -15,6 +15,7 @@ import javafx.scene.control.Alert;
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.menu.play.entity.Bat;
+import com.orangomango.labyrinth.menu.play.entity.Entity;
 
 public class LevelExe {
 	private static Stage exStage = null;
@@ -57,12 +58,12 @@ public class LevelExe {
 		final Player player = new Player(world.start[0], world.start[1], world);
 		player.draw(pen);
 		world.setPlayer(player);
-
-		//Bat bat = new Bat(world, 2, 2, 4);
-		//world.setEnts(bat);
 		
 		world.draw(); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
-
+		for (Entity e : world.getEnts()){
+			e.start();
+		}
+		
 		// Handle movement
 		canvas.setOnKeyPressed(new EventHandler<KeyEvent> () {
 			@Override

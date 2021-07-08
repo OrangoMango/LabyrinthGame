@@ -91,7 +91,7 @@ public class Editor {
 			@Override
 			public void handle(MouseEvent event) {
 				EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
-				if (event.getButton() == MouseButton.SECONDARY && edblock.getType() == EditableWorld.PORTAL){
+				if (event.getButton() == MouseButton.SECONDARY){
 					ContextMenu contextMenu = new ContextMenu();
 					Menu item1 = new Menu("Set other portal end...");
 					MenuItem rmPoint = new MenuItem("Remove pointing");
@@ -119,6 +119,7 @@ public class Editor {
 							}
 						}
 					}
+					item1.setDisable(edblock.getType() != EditableWorld.PORTAL);
 					contextMenu.getItems().add(item1);
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY){
@@ -147,6 +148,10 @@ public class Editor {
 							break;
 						case 5:
 							edblock.toggleType(EditableWorld.SHOOTER);
+							break;
+						case 6:
+							edblock.toggleType(EditableWorld.BAT_GEN);
+							edblock.setInfo("data#0 0 4");
 							break;
 					}
 					editableworld.setBlockOn(edblock);
@@ -402,7 +407,12 @@ public class Editor {
                 shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
                 shootB.setToggleGroup(tg);
                 shootB.setOnAction(event -> SELECTED_BLOCK = 5);
-                dab.getChildren().addAll(spikeB, shootB);
+                ToggleButton batB = new ToggleButton();
+                batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
+                batB.setTooltip(new Tooltip("Bat."));
+                batB.setToggleGroup(tg);
+                batB.setOnAction(event -> SELECTED_BLOCK = 6);
+                dab.getChildren().addAll(spikeB, shootB, batB);
                 TitledPane damageBlocks = new TitledPane("Damage blocks", dab);
                 
                 blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks, damageBlocks);

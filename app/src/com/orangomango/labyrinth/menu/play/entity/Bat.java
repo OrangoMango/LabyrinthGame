@@ -11,43 +11,53 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class Bat extends Entity{
 	private World world;
-	private int M = 0;
-	private int startX = 0;
-	private int startY = 0;
+	private int M = 1;
+	private double startX = 0;
+	private double startY = 0;
 	private int suff = 1;
 	private Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png");
+	private Timeline t;
+	private Timeline t2;
 	
-	public Bat(World w, int x, int y, int pl){
+	public Bat(World w, double x, double y, int pl){
 		setData(w);
 		setX(x);
 		setY(y);
 		startX = x;
 		startY = y;
-		Timeline t = new Timeline(new KeyFrame(Duration.millis(600), event -> {
+		t = new Timeline(new KeyFrame(Duration.millis(200), event -> {
 			if (getX() == startX){
 				M = 1;
 			}
 			if (getX() == startX+pl-1){
 				M = -1;
 			}
-			setX(getX()+M);
+			setX(getX()+0.25*M);
 		}));
 		t.setCycleCount(Animation.INDEFINITE);
-		t.play();
 		
-		Timeline t2 = new Timeline(new KeyFrame(Duration.millis(300), event -> {
+		t2 = new Timeline(new KeyFrame(Duration.millis(300), event -> {
 			this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_"+this.suff+".png");
 			this.suff = (this.suff == 1) ? 2 : 1;
 			w.update(0, 0, 0, 0);
 		}));
 		t2.setCycleCount(Animation.INDEFINITE);
-		t2.play();
+	}
+	
+	public void stop(){
+		this.t.stop();
+		this.t2.stop();
+	}
+	
+	public void start(){
+		this.t.play();
+		this.t2.play();
 	}
 	
 	@Override
 	public void draw(GraphicsContext p){
 		if (M == 1){
-			p.drawImage(this.image, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH, 0, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			p.drawImage(this.image, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+getX()*World.BLOCK_WIDTH, 0+getY()*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 		} else if (M == -1){
 			p.drawImage(this.image, getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 		}

@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import com.orangomango.labyrinth.menu.play.entity.Bat;
 
 public class Block {
 	protected String type;
@@ -63,6 +64,8 @@ public class Block {
 				return new Block(World.PORTAL, x1, y1, i);
 			case 5:
 				return new Block(World.SHOOTER, x1, y1, i);
+			case 6:
+				return new Block(World.BAT_GEN, x1, y1, i);
 			default:
 				return null;
 		}
@@ -72,15 +75,15 @@ public class Block {
 	  Draw the block on the screen
 	  @param pen - canvas pen
 	*/
-	public void draw(GraphicsContext pen) {
-		draw(pen, this.x, this.y);
+	public void draw(GraphicsContext pen, World w) {
+		draw(pen, this.x, this.y, w);
 	}
 	
 	private void drawAirBlock(GraphicsContext pen, int px, int py){
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_air.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
-	public void draw(GraphicsContext pen, int px, int py) {
+	public void draw(GraphicsContext pen, int px, int py, World w) {
 		pen.setStroke(Color.BLACK);
 		pen.setLineWidth(1);
 		switch (getType()){
@@ -105,10 +108,14 @@ public class Block {
 			case World.SHOOTER:
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
-                        default:
-                        	pen.setFill(Color.RED);
+			case World.BAT_GEN:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+      default:
+        pen.setFill(Color.RED);
 				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-                            break;
+        break;
 		}
 	}
 	
@@ -126,6 +133,8 @@ public class Block {
 					return 4;
 				case World.SHOOTER:
 					return 5;
+				case World.BAT_GEN:
+					return 6;
 				default:
 					return null;
 		}

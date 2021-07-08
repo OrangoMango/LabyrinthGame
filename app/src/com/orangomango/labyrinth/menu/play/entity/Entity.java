@@ -6,23 +6,23 @@ import javafx.scene.canvas.*;
 import com.orangomango.labyrinth.World;
 
 public abstract class Entity{
-	protected int x = 0;
-	protected int y = 0;
+	protected double x = 0;
+	protected double y = 0;
 	protected World world;
 
-	public int getX(){
+	public double getX(){
 		return x;
 	}
 	
-	public int getY(){
+	public double getY(){
 		return y;
 	}
 	
-	public void setX(int v){
+	public void setX(double v){
 		x = v;
 	}
 	
-	public void setY(int v){
+	public void setY(double v){
 		y = v;
 	}
 	
@@ -33,6 +33,9 @@ public abstract class Entity{
 	public void draw(GraphicsContext p){
 		p.setFill(Color.BLACK);
 		p.fillRect(x*World.BLOCK_WIDTH, y*World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+	}
+	
+	public void start(){
 	}
 
 }
