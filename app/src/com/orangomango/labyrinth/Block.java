@@ -61,6 +61,8 @@ public class Block {
 				return new Block(World.SPIKE, x1, y1, i);
 			case 4:
 				return new Block(World.PORTAL, x1, y1, i);
+			case 5:
+				return new Block(World.SHOOTER, x1, y1, i);
 			default:
 				return null;
 		}
@@ -100,6 +102,9 @@ public class Block {
 				drawAirBlock(pen, px, py);
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
+			case World.SHOOTER:
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
                         default:
                         	pen.setFill(Color.RED);
 				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -119,6 +124,8 @@ public class Block {
 					return 3;
 				case World.PORTAL:
 					return 4;
+				case World.SHOOTER:
+					return 5;
 				default:
 					return null;
 		}

@@ -35,6 +35,7 @@ public class World {
 	public final static String VOID = "void";
 	public final static String SPIKE = "spike";
 	public final static String PORTAL = "portal";
+	public final static String SHOOTER = "shooter";
 
 	public final static int BLOCK_WIDTH = 32;
 

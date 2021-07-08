@@ -58,7 +58,7 @@ public class LevelExe {
 		player.draw(pen);
 		world.setPlayer(player);
 
-		//Bat bat = new Bat(world, 2, 2);
+		//Bat bat = new Bat(world, 2, 2, 4);
 		//world.setEnts(bat);
 		
 		world.draw(); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);

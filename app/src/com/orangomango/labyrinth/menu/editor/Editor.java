@@ -145,6 +145,9 @@ public class Editor {
 							edblock.toggleType(EditableWorld.PORTAL);
 							edblock.setInfo("NoPointSet");
 							break;
+						case 5:
+							edblock.toggleType(EditableWorld.SHOOTER);
+							break;
 					}
 					editableworld.setBlockOn(edblock);
 					editableworld.updateOnFile();
@@ -364,13 +367,13 @@ public class Editor {
                 db.setVgap(2);
                 ToggleButton wallB = new ToggleButton();
                 wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png")));
-                wallB.setTooltip(new Tooltip("Wall block"));
+                wallB.setTooltip(new Tooltip("Wall block. ID:1"));
                 wallB.setToggleGroup(tg);
                 wallB.setOnAction(event -> SELECTED_BLOCK = 1);
                 wallB.setSelected(true);
                 ToggleButton portalB = new ToggleButton();
                 portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
-                portalB.setTooltip(new Tooltip("Portal block"));
+                portalB.setTooltip(new Tooltip("Portal block. ID:4"));
                 portalB.setToggleGroup(tg);
                 portalB.setOnAction(event -> SELECTED_BLOCK = 4);
                 db.getChildren().addAll(wallB, portalB);
@@ -379,6 +382,7 @@ public class Editor {
                 // Decoration blocks
                 TilePane deb = new TilePane();
                 ToggleButton voidB = new ToggleButton("VOID");
+                voidB.setTooltip(new Tooltip("VOID block. ID:2"));
                 voidB.setToggleGroup(tg);
                 voidB.setOnAction(event -> SELECTED_BLOCK = 2);
                 deb.getChildren().add(voidB);
@@ -386,12 +390,19 @@ public class Editor {
                 
                 // Damage blocks
                 TilePane dab = new TilePane();
+                dab.setHgap(5);
+                dab.setVgap(2);
                 ToggleButton spikeB = new ToggleButton();
                 spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
-                spikeB.setTooltip(new Tooltip("Spike block"));
+                spikeB.setTooltip(new Tooltip("Spike block. ID:3"));
                 spikeB.setToggleGroup(tg);
                 spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
-                dab.getChildren().add(spikeB);
+                ToggleButton shootB = new ToggleButton();
+                shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png")));
+                shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
+                shootB.setToggleGroup(tg);
+                shootB.setOnAction(event -> SELECTED_BLOCK = 5);
+                dab.getChildren().addAll(spikeB, shootB);
                 TitledPane damageBlocks = new TitledPane("Damage blocks", dab);
                 
                 blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks, damageBlocks);
@@ -616,6 +627,7 @@ public class Editor {
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "editor");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "entities");
 	}
 
     /**

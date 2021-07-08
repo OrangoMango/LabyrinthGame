@@ -37,9 +37,12 @@ public class LoadingScreen {
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_wall",
 		"blocks" + File.separator + "block_portal",
-		"blocks" + File.separator + "player",
 		"blocks" + File.separator + "block_air",
-		"blocks" + File.separator + "end"
+		"blocks" + File.separator + "block_shooter",
+		"blocks" + File.separator + "end",
+		"entities" + File.separator + "player",
+		"entities" + File.separator + "bat_side_1",
+		"entities" + File.separator + "bat_side_2",
 	};
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;
