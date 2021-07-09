@@ -59,10 +59,11 @@ public class LevelExe {
 		player.draw(pen);
 		world.setPlayer(player);
 		
-		world.draw(); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
 		for (Entity e : world.getEnts()){
 			e.start();
 		}
+		
+		world.draw(); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
 		
 		// Handle movement
 		canvas.setOnKeyPressed(new EventHandler<KeyEvent> () {

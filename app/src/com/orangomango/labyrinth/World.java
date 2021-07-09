@@ -29,6 +29,11 @@ public class World {
 	private Player player;
 	protected Canvas canvas;
 	private Entity[] ents = new Entity[0];
+	
+	public final static String NORTH = "n";
+	public final static String SOUTH = "s";
+	public final static String EST = "e";
+	public final static String WEST = "w";
 
 	public final static String WALL = "wall";
 	public final static String AIR = "air";
@@ -173,7 +178,8 @@ public class World {
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
 					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0])));
 				} else if (x[it2].getType() == SHOOTER){
-					addEnt(new Arrow(this, x[it2].getX()-1, x[it2].getY()));
+					String d = Character.toString(x[it2].getInfo().split("#")[1].charAt(0));
+					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), EST));
 				}
 				it2++;
 			}

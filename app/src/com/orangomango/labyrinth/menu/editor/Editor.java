@@ -38,7 +38,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-        public static Editor EDITOR_INSTANCE = null;
+  public static Editor EDITOR_INSTANCE = null;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -96,17 +96,28 @@ public class Editor {
 					Menu item1 = new Menu("Set other portal end...");
 					MenuItem rmPoint = new MenuItem("Remove pointing");
 					rmPoint.setOnAction(rmEvent -> {
+						String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
 						editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo("NoPointSet");
+						editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
 						editableworld.updateOnFile();
 						unsaved();
 					});
+					rmPoint.setDisable(edblock.getInfo().equals("NoPointSet"));
 					item1.getItems().add(rmPoint);
 					for (int y = 0; y<editableworld.height; y++){
 						for (int x = 0; x<editableworld.width; x++){
 							Block b = editableworld.getBlockAt(x, y);
-							if (b.getType()  == EditableWorld.PORTAL){
+							if (b.getType() == EditableWorld.PORTAL){
 								MenuItem menuitem = new MenuItem(b.toString());
 								menuitem.setOnAction(itemEvent -> {
+									if (!edblock.getInfo().equals("NoPointSet")){
+										String[] data = edblock.getInfo().split("#")[1].split(" ");
+										editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+									}
+									if (!b.getInfo().equals("NoPointSet")){
+										String[] data = b.getInfo().split("#")[1].split(" ");
+										editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+									}
 									editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo(String.format("point#%s %s", b.getX(), b.getY()));
 									b.setInfo(String.format("point#%s %s", edblock.getX(), edblock.getY()));
 									editableworld.updateOnFile();
@@ -182,6 +193,11 @@ public class Editor {
 							edblock.toggleType(EditableWorld.SPIKE);
 							break;
 						case 4:
+							if (edblock.getType() == EditableWorld.PORTAL && !edblock.getInfo().equals("NoPointSet")){
+								String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
+								editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+								
+							}
 							edblock.setInfo("NoPointSet");
 							edblock.toggleType(EditableWorld.PORTAL);
 							break;
