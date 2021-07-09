@@ -44,6 +44,7 @@ public class LoadingScreen {
 		"entities" + File.separator + "player",
 		"entities" + File.separator + "bat_side_1",
 		"entities" + File.separator + "bat_side_2",
+		"entities" + File.separator + "arrow"
 	};
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;

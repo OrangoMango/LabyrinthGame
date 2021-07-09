@@ -38,7 +38,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-  public static Editor EDITOR_INSTANCE = null;
+        public static Editor EDITOR_INSTANCE = null;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -186,6 +186,7 @@ public class Editor {
 							edblock.toggleType(EditableWorld.PORTAL);
 							break;
 						case 5:
+							edblock.setInfo("direction#w");
 							edblock.toggleType(EditableWorld.SHOOTER);
 							break;
 						case 6:
@@ -359,7 +360,7 @@ public class Editor {
 		Button sseBtn = new Button();
         sseBtn.setTooltip(new Tooltip("Change start and end position"));
 		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/sse.png")));
-		sseBtn.setOnAction(event -> new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end));
+		sseBtn.setOnAction(event -> {new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end); unsaved();});
 
 		toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn);
 

@@ -18,8 +18,7 @@ import javafx.scene.image.Image;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
-import com.orangomango.labyrinth.menu.play.entity.Entity;
-import com.orangomango.labyrinth.menu.play.entity.Bat;
+import com.orangomango.labyrinth.menu.play.entity.*;
 
 public class World {
 	protected Block[][] world;
@@ -171,8 +170,10 @@ public class World {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
 				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")){
 					System.out.println(x[it2].getInfo());
-				  String[] d = x[it2].getInfo().split("#")[1].split(" ");
-				  addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0])));
+					String[] d = x[it2].getInfo().split("#")[1].split(" ");
+					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0])));
+				} else if (x[it2].getType() == SHOOTER){
+					addEnt(new Arrow(this, x[it2].getX()-1, x[it2].getY()));
 				}
 				it2++;
 			}
