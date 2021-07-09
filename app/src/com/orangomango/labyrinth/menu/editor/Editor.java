@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
-import javafx.geometry.Orientation;
+import javafx.geometry.*;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
@@ -38,7 +38,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-    	public static Editor EDITOR_INSTANCE = null;
+  public static Editor EDITOR_INSTANCE = null;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -120,7 +120,46 @@ public class Editor {
 						}
 					}
 					item1.setDisable(edblock.getType() != EditableWorld.PORTAL);
-					contextMenu.getItems().add(item1);
+					MenuItem item2 = new Menu("Set bat data");
+					item2.setOnAction(batEvent -> {
+						Stage st = new Stage();
+						st.setTitle("Bat preferences");
+						GridPane pane = new GridPane();
+						pane.setPadding(new Insets(10,10,10,10));
+						pane.setHgap(20);
+						pane.setVgap(20);
+						Label l1 = new Label("Set path length: ");
+						Spinner sp = new Spinner(0,NewWidget.MAX_WORLD_SIZE,0);
+						Label l2 = new Label("Set direction:");
+						ToggleGroup gr = new ToggleGroup();
+						RadioButton b1 = new RadioButton("Vertical");
+						RadioButton b2 = new RadioButton("Horizontal");
+						b2.setSelected(true);
+						b1.setToggleGroup(gr);
+						b2.setToggleGroup(gr);
+						Button ok = new Button("Save changes");
+						ok.setOnAction(ev -> {
+							int pl = (int) sp.getValue();
+							edblock.setInfo(String.format("data#%s", pl));
+							editableworld.setBlockOn(edblock);
+							editableworld.updateOnFile();
+							unsaved();
+							st.hide();
+						});
+						Button canc = new Button("Cancel");
+						canc.setOnAction(e -> st.hide());
+						pane.add(l1, 0, 0);
+						pane.add(sp, 1, 0);
+						pane.add(l2, 0, 1);
+						pane.add(b1, 0, 2);
+						pane.add(b2, 0, 3);
+						pane.add(ok, 0, 4);
+						pane.add(canc, 1, 4);
+						st.setScene(new Scene(pane, 350, 250));
+						st.show();
+					});
+					item2.setDisable(edblock.getType() != EditableWorld.BAT_GEN);
+					contextMenu.getItems().addAll(item1, item2);
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
@@ -143,15 +182,15 @@ public class Editor {
 							edblock.toggleType(EditableWorld.SPIKE);
 							break;
 						case 4:
-							edblock.toggleType(EditableWorld.PORTAL);
 							edblock.setInfo("NoPointSet");
+							edblock.toggleType(EditableWorld.PORTAL);
 							break;
 						case 5:
 							edblock.toggleType(EditableWorld.SHOOTER);
 							break;
 						case 6:
+							edblock.setInfo("NoDataSet");
 							edblock.toggleType(EditableWorld.BAT_GEN);
-							edblock.setInfo("data#0 0 4");
 							break;
 					}
 					editableworld.setBlockOn(edblock);

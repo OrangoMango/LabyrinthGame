@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
+import com.orangomango.labyrinth.menu.editor.EditableWorld;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.play.entity.Bat;
 
@@ -83,6 +84,10 @@ public class Block {
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_air.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
+	private void drawWarningSign(GraphicsContext pen, int px, int py){
+		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/editor/warning.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+	}
+	
 	public void draw(GraphicsContext pen, int px, int py, World w) {
 		pen.setStroke(Color.BLACK);
 		pen.setLineWidth(1);
@@ -104,13 +109,21 @@ public class Block {
 			case World.PORTAL:
 				drawAirBlock(pen, px, py);
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+        if (this.info.equals("NoPointSet") && w instanceof EditableWorld){
+          drawWarningSign(pen, px, py);
+				}
 				break;
 			case World.SHOOTER:
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				if (w instanceof EditableWorld){
+				  pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				  if (this.info.equals("NoDataSet")){
+					  drawWarningSign(pen, px, py);
+				  }
+				}
 				break;
       default:
         pen.setFill(Color.RED);

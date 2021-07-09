@@ -11,7 +11,7 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class Bat extends Entity{
 	private World world;
-	private int M = 1;
+	private int M = 0;
 	private double startX = 0;
 	private double startY = 0;
 	private int suff = 1;
