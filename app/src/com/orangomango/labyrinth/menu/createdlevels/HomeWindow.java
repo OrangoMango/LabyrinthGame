@@ -36,7 +36,6 @@ public class HomeWindow{
 			pane.setContent(new Label("You did not create any levels yet :(\n Create one in the editor"));
 		} else {
 			Accordion acc = new Accordion();
-			acc.setMaxWidth(450);
 			for (String p : cwf.getPaths()){
 				File file = new File(p);
 				World temp = new World(p);
@@ -100,7 +99,7 @@ public class HomeWindow{
     layout.add(pane, 0, 0);
 
     stage.setOnCloseRequest(event -> MYLEVELS = false);
-    stage.setScene(new Scene(layout, 450, 300));
+    stage.setScene(new Scene(layout, 550, 300));
     
     stage.show();
   }  
