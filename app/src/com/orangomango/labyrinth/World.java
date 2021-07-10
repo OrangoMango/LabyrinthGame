@@ -179,7 +179,7 @@ public class World {
 					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0])));
 				} else if (x[it2].getType() == SHOOTER){
 					String d = Character.toString(x[it2].getInfo().split("#")[1].charAt(0));
-					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), EST));
+					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d));
 				}
 				it2++;
 			}

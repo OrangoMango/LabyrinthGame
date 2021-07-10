@@ -93,7 +93,7 @@ public class Editor {
 				EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
 				if (event.getButton() == MouseButton.SECONDARY){
 					ContextMenu contextMenu = new ContextMenu();
-					Menu item1 = new Menu("Set other portal end...");
+					Menu item1 = new Menu("Set other portal end");
 					MenuItem rmPoint = new MenuItem("Remove pointing");
 					rmPoint.setOnAction(rmEvent -> {
 						String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
@@ -102,7 +102,9 @@ public class Editor {
 						editableworld.updateOnFile();
 						unsaved();
 					});
-					rmPoint.setDisable(edblock.getInfo().equals("NoPointSet"));
+					if (edblock.getInfo() != null){
+					  rmPoint.setDisable(edblock.getInfo().equals("NoPointSet"));
+					}
 					item1.getItems().add(rmPoint);
 					for (int y = 0; y<editableworld.height; y++){
 						for (int x = 0; x<editableworld.width; x++){
@@ -131,7 +133,7 @@ public class Editor {
 						}
 					}
 					item1.setDisable(edblock.getType() != EditableWorld.PORTAL);
-					MenuItem item2 = new Menu("Set bat data");
+					MenuItem item2 = new MenuItem("Set bat data");
 					item2.setOnAction(batEvent -> {
 						Stage st = new Stage();
 						st.setTitle("Bat preferences");
@@ -170,7 +172,52 @@ public class Editor {
 						st.show();
 					});
 					item2.setDisable(edblock.getType() != EditableWorld.BAT_GEN);
-					contextMenu.getItems().addAll(item1, item2);
+					Menu item3 = new Menu("Rotate");
+					MenuItem r = new MenuItem("Rotate 90deg right");
+					r.setOnAction(rr -> {
+						String d = Character.toString(edblock.getInfo().split("#")[1].charAt(0));
+						switch (d) {
+							case EditableWorld.NORTH:
+								edblock.setInfo("direction#"+EditableWorld.EST);
+								break;
+							case EditableWorld.EST:
+								edblock.setInfo("direction#"+EditableWorld.SOUTH);
+								break;
+							case EditableWorld.SOUTH:
+								edblock.setInfo("direction#"+EditableWorld.WEST);
+								break;
+							case EditableWorld.WEST:
+								edblock.setInfo("direction#"+EditableWorld.NORTH);
+								break;
+						}
+						editableworld.setBlockOn(edblock);
+						editableworld.updateOnFile();
+						unsaved();
+					});
+					MenuItem l = new MenuItem("Rotate 90deg left");
+					l.setOnAction(rl -> {
+						String d = Character.toString(edblock.getInfo().split("#")[1].charAt(0));
+						switch (d){
+							case EditableWorld.NORTH:
+								edblock.setInfo("direction#"+EditableWorld.WEST);
+								break;
+							case EditableWorld.EST:
+								edblock.setInfo("direction#"+EditableWorld.NORTH);
+								break;
+							case EditableWorld.SOUTH:
+								edblock.setInfo("direction#"+EditableWorld.EST);
+								break;
+							case EditableWorld.WEST:
+								edblock.setInfo("direction#"+EditableWorld.SOUTH);
+								break;
+						}
+						editableworld.setBlockOn(edblock);
+						editableworld.updateOnFile();
+						unsaved();
+					});
+					item3.getItems().addAll(r, l);
+					item3.setDisable(edblock.getType() != EditableWorld.SHOOTER);
+					contextMenu.getItems().addAll(item1, item2, item3);
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
@@ -202,7 +249,7 @@ public class Editor {
 							edblock.toggleType(EditableWorld.PORTAL);
 							break;
 						case 5:
-							edblock.setInfo("direction#w");
+							edblock.setInfo("direction#"+EditableWorld.WEST);
 							edblock.toggleType(EditableWorld.SHOOTER);
 							break;
 						case 6:
@@ -459,7 +506,7 @@ public class Editor {
                 spikeB.setToggleGroup(tg);
                 spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
                 ToggleButton shootB = new ToggleButton();
-                shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png")));
+                shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png")));
                 shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
                 shootB.setToggleGroup(tg);
                 shootB.setOnAction(event -> SELECTED_BLOCK = 5);
