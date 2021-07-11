@@ -100,7 +100,6 @@ public class World {
 
 	public void update(int x, int y, int x1, int y1) {
 		try {
-			System.out.println("Updating...");
 			this.pen.setFill(Color.WHITE);
 			if (x == 0 && y == 0 && x1 == 0 && y1 == 0){
 				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
