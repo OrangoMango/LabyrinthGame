@@ -58,13 +58,16 @@ public class Arrow extends Entity{
 		}
 		w.update(0,0,0,0);
 			
-		t = new Timeline(new KeyFrame(Duration.millis(120), event -> {
+		t = new Timeline(new KeyFrame(Duration.millis(50), event -> {
 			if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)) != null){
-				if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getType() == World.AIR){
+				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getType() == World.AIR) && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
 					setX(getX()+stepX);
 					setY(getY()+stepY);
 					w.update(0,0,0,0);
 				} else {
+					if (isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
+						w.getPlayer().die();
+					}
 					setX(startX);
 					setY(startY);
 				}

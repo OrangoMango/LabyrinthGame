@@ -133,10 +133,10 @@ public class Block {
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
 				if (w instanceof EditableWorld){
-				  pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-				  if (this.info.equals("NoDataSet")){
-					  drawWarningSign(pen, px, py);
-				  }
+					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png"),  0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+					if (this.info.equals("NoDataSet")){
+						drawWarningSign(pen, px, py);
+					}
 				}
 				break;
       default:

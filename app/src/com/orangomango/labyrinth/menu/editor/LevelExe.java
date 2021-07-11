@@ -14,8 +14,7 @@ import javafx.scene.control.Alert;
 
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Player;
-import com.orangomango.labyrinth.menu.play.entity.Bat;
-import com.orangomango.labyrinth.menu.play.entity.Entity;
+import com.orangomango.labyrinth.menu.play.entity.*;
 
 public class LevelExe {
 	private static Stage exStage = null;
@@ -27,15 +26,19 @@ public class LevelExe {
 		}
 		Stage stage = new Stage();
 		stage.setTitle(filename);
+		OPEN = true;
+
+		final World world = new World(path);
+		
 		stage.setOnCloseRequest(event -> {
 			if (LevelExe.exStage != null) {
 				LevelExe.exStage.show();
 			}
+			for (Entity e : world.getEnts()){
+				e.stop();
+			}
 			OPEN = false;
 		});
-		OPEN = true;
-
-		final World world = new World(path);
 
 		Canvas canvas = new Canvas(World.BLOCK_WIDTH * world.width, World.BLOCK_WIDTH * world.height);
 		Label label = new Label(filename + ((saved) ? " (Level is currently synchronized)" : " (Level not synchronized, unsaved)"));
@@ -96,8 +99,7 @@ public class LevelExe {
 					if (LevelExe.exStage != null)
 						LevelExe.exStage.show();
 				} else if (player.isOnBlock(World.SPIKE)){
-					player.setX(world.start[0]);
-					player.setY(world.start[1]);
+					player.die();
 					world.update(0, 0, 0, 0);
 				} else if (player.isOnBlock(World.PORTAL)){
 					if (world.getBlockAt(player.getX(), player.getY()).getInfo().equals("NoPointSet")){

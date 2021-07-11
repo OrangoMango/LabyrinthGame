@@ -22,6 +22,11 @@ public class Player {
 		this.y = y;
 		world = w;
 	}
+	
+	public void die(){
+		setX(this.world.start[0]);
+		setY(this.world.start[1]);
+	}
 
 	public int getX() {
 		return x;
@@ -48,20 +53,14 @@ public class Player {
 	public void moveOn(String direction, int m, int[] rec) {
 		if (direction == X) {
 			Block[] xrow = this.world.getXRow(getY());
-			while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL) {
+			while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL && this.world.getBlockAt(getX() + m, getY()).getType() != this.world.SHOOTER) {
 				setX(getX() + m);
-				if (this.world.getBlockAt(getX(), getY()).getType() != this.world.AIR){
-					break;
-				}
 			}
 
 		} else if (direction == Y) {
 			Block[] yrow = this.world.getYRow(getX());
-			while (this.world.getBlockAt(getX(), getY() + m).getType() != this.world.WALL) {
+			while (this.world.getBlockAt(getX(), getY() + m).getType() != this.world.WALL && this.world.getBlockAt(getX(), getY() + m).getType() != this.world.SHOOTER) {
 				setY(getY() + m);
-				if (this.world.getBlockAt(getX(), getY()).getType() != this.world.AIR){
-					break;
-				}
 			}
 		} else {
 			Logger.error("Unknow direction found");

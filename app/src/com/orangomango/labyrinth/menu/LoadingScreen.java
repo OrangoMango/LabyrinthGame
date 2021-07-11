@@ -95,7 +95,7 @@ public class LoadingScreen {
 		Button end = new Button("Done");
 		end.setDisable(true);
 		end.setOnAction(event -> this.endWindow());
-		pane.add(label, 0, 0);
+		pane.add(label, 0, 0, 3, 1);
 		pane.add(bar, 1, 0);
 		pane.add(view, 0, 1, 2, 1);
 		pane.add(start, 0, 2);

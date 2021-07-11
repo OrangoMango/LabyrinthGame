@@ -57,6 +57,10 @@ public class World {
 	public void setPlayer(Player pl) {
 		this.player = pl;
 	}
+	
+	public Player getPlayer(){
+		return this.player;
+	}
 
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
@@ -69,7 +73,6 @@ public class World {
 	public void addEnt(Entity e){
 		this.ents = Arrays.copyOf(ents, ents.length+1);
 		this.ents[ents.length-1] = e;
-		System.out.println(Arrays.toString(this.ents));
 	}
 	
 	public Entity[] getEnts(){
@@ -97,6 +100,7 @@ public class World {
 
 	public void update(int x, int y, int x1, int y1) {
 		try {
+			System.out.println("Updating...");
 			this.pen.setFill(Color.WHITE);
 			if (x == 0 && y == 0 && x1 == 0 && y1 == 0){
 				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
@@ -171,10 +175,9 @@ public class World {
 			if (iterator + w > current.length) { // If itertor is bigger than the list length then stop
 				break;
 			}
-      for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
+      			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
 				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")){
-					System.out.println(x[it2].getInfo());
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
 					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0])));
 				} else if (x[it2].getType() == SHOOTER){
@@ -228,6 +231,9 @@ public class World {
 		}
 		if ((this.player.getX() >= x && this.player.getX() <= x1) && (this.player.getY() >= y && this.player.getY() <= y1)){
 			this.player.draw(this.pen, this.player.getX()-x, this.player.getY()-y);
+		}
+		for (Entity e : this.ents){
+			e.draw(this.pen);
 		}
 	}
 	

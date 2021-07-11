@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.canvas.*;
 
 import com.orangomango.labyrinth.World;
+import com.orangomango.labyrinth.Player;
 
 public abstract class Entity{
 	protected double x = 0;
@@ -35,7 +36,24 @@ public abstract class Entity{
 		p.fillRect(x*World.BLOCK_WIDTH, y*World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
+	public boolean isOnPlayer(Player pl, double px, double py){
+		if (pl.getX() == (int)Math.round(px) && pl.getY() == (int)Math.round(py)){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isOnPlayer(Player pl){
+		if ((int)Math.round(getX()) == pl.getX() && (int)Math.round(getY()) == pl.getY()){
+			return true;
+		}
+		return false;
+	}
+	
 	public void start(){
+	}
+	
+	public void stop(){
 	}
 
 }
