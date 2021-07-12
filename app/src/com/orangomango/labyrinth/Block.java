@@ -13,6 +13,7 @@ public class Block {
 	protected String type;
 	private int x, y;
 	private String info = null;
+	public String category = "";
 
 	/**
 	  Block class constructor
@@ -25,6 +26,19 @@ public class Block {
 		this.x = x;
 		this.y = y;
 		this.info = i;
+		switch (this.type){
+			case World.WALL:
+			case World.SHOOTER:
+			case World.PORTAL:
+			case World.SPIKE:
+				this.category = World.WALL;
+				break;
+			case World.AIR:
+			case World.VOID:
+			case World.BAT_GEN:
+				this.category = World.AIR;
+				break;
+		}
 	}
 
 	/**
@@ -33,6 +47,10 @@ public class Block {
 	*/
 	public String getType() {
 		return this.type;
+	}
+	
+	public String getCategory(){
+		return this.category;
 	}
 
 	public int getX() {
@@ -133,7 +151,13 @@ public class Block {
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
 				if (w instanceof EditableWorld){
-					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png"),  0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+					String dir;
+					if (!this.info.equals("NoDataSet")){
+						dir = this.info.split("#")[1].split(" ")[1];
+					} else {
+						dir = Bat.HORIZONTAL;
+					}
+					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Bat.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png")),  0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 					if (this.info.equals("NoDataSet")){
 						drawWarningSign(pen, px, py);
 					}

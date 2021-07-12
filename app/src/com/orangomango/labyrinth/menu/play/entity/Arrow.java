@@ -60,7 +60,7 @@ public class Arrow extends Entity{
 			
 		t = new Timeline(new KeyFrame(Duration.millis(50), event -> {
 			if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)) != null){
-				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getType() == World.AIR) && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
+				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getCategory() == World.AIR) && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
 					setX(getX()+stepX);
 					setY(getY()+stepY);
 					w.update(0,0,0,0);

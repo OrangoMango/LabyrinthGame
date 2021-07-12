@@ -18,21 +18,36 @@ public class Bat extends Entity{
 	private Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png");
 	private Timeline t;
 	private Timeline t2;
+	private String direction;
 	
-	public Bat(World w, double x, double y, int pl){
+	public static final String HORIZONTAL = "h";
+	public static final String VERTICAL = "v";
+	
+	public Bat(World w, double x, double y, int pl, String d){
 		setData(w);
+		this.direction = d;
 		setX(x);
 		setY(y);
 		startX = x;
 		startY = y;
 		t = new Timeline(new KeyFrame(Duration.millis(200), event -> {
-			if (getX() == startX){
-				M = 1;
+			if (this.direction.equals(HORIZONTAL)){
+			  if (getX() == startX){
+		  		M = 1;
+		  	}
+	  		if (getX() == startX+pl-1){
+	  			M = -1;
+  			}
+		  	setX(getX()+0.25*M);
+			} else if (this.direction.equals(VERTICAL)){
+				if (getY() == startY){
+					M = 1;
+				}
+				if (getY() == startY+pl-1){
+					M = -1;
+				}
+				setY(getY()+0.25*M);
 			}
-			if (getX() == startX+pl-1){
-				M = -1;
-			}
-			setX(getX()+0.25*M);
 			if (isOnPlayer(w.getPlayer())){
 				w.getPlayer().die();
 			}
@@ -40,8 +55,17 @@ public class Bat extends Entity{
 		t.setCycleCount(Animation.INDEFINITE);
 		
 		t2 = new Timeline(new KeyFrame(Duration.millis(300), event -> {
-			this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_"+this.suff+".png");
-			this.suff = (this.suff == 1) ? 2 : 1;
+      if (this.direction.equals(HORIZONTAL)){
+			  this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_"+this.suff+".png");
+			  this.suff = (this.suff == 1) ? 2 : 1;
+      } else if (this.direction.equals(VERTICAL)){
+      	this.image = this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_front_"+this.suff+".png");
+      	if (this.suff == 3){
+      		this.suff = 1;
+      	} else {
+      		this.suff++;
+      	}
+      }
 			w.update(0, 0, 0, 0);
 		}));
 		t2.setCycleCount(Animation.INDEFINITE);

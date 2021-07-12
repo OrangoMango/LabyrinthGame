@@ -53,13 +53,13 @@ public class Player {
 	public void moveOn(String direction, int m, int[] rec) {
 		if (direction == X) {
 			Block[] xrow = this.world.getXRow(getY());
-			while (this.world.getBlockAt(getX() + m, getY()).getType() != this.world.WALL && this.world.getBlockAt(getX() + m, getY()).getType() != this.world.SHOOTER) {
+			while (this.world.getBlockAt(getX() + m, getY()).getCategory() != this.world.WALL) {
 				setX(getX() + m);
 			}
 
 		} else if (direction == Y) {
 			Block[] yrow = this.world.getYRow(getX());
-			while (this.world.getBlockAt(getX(), getY() + m).getType() != this.world.WALL && this.world.getBlockAt(getX(), getY() + m).getType() != this.world.SHOOTER) {
+			while (this.world.getBlockAt(getX(), getY() + m).getCategory() != this.world.WALL) {
 				setY(getY() + m);
 			}
 		} else {

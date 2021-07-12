@@ -142,7 +142,7 @@ public class Editor {
 						pane.setHgap(20);
 						pane.setVgap(20);
 						Label l1 = new Label("Set path length: ");
-						Spinner sp = new Spinner(0,NewWidget.MAX_WORLD_SIZE,0);
+						Spinner sp = new Spinner(2,NewWidget.MAX_WORLD_SIZE,2);
 						Label l2 = new Label("Set direction:");
 						ToggleGroup gr = new ToggleGroup();
 						RadioButton b1 = new RadioButton("Vertical");
@@ -153,7 +153,8 @@ public class Editor {
 						Button ok = new Button("Save changes");
 						ok.setOnAction(ev -> {
 							int pl = (int) sp.getValue();
-							edblock.setInfo(String.format("data#%s", pl));
+							String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
+							edblock.setInfo(String.format("data#%s %s", pl, dir));
 							editableworld.setBlockOn(edblock);
 							editableworld.updateOnFile();
 							unsaved();
