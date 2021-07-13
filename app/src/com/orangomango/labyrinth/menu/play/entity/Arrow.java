@@ -58,7 +58,7 @@ public class Arrow extends Entity{
 		}
 		w.update(0,0,0,0);
 			
-		t = new Timeline(new KeyFrame(Duration.millis(50), event -> {
+		t = new Timeline(new KeyFrame(Duration.millis(40), event -> {
 			if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)) != null){
 				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getCategory() == World.AIR) && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
 					setX(getX()+stepX);

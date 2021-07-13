@@ -29,12 +29,12 @@ public class Block {
 		switch (this.type){
 			case World.WALL:
 			case World.SHOOTER:
-			case World.PORTAL:
+			case World.VOID:
 			case World.SPIKE:
 				this.category = World.WALL;
 				break;
 			case World.AIR:
-			case World.VOID:
+			case World.PORTAL:
 			case World.BAT_GEN:
 				this.category = World.AIR;
 				break;
