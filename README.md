@@ -2,7 +2,8 @@
 [TO BE CONTINUED] Easy java game
 
 # Run program
-Execute the `run.sh` file in the `app/` folder with the command:
+* Change the first line of the `run.sh` file according to your javafx path location
+* Execute the `run.sh` file in the `app/` folder with the command:
 ```bash
 sh run.sh
 ```
