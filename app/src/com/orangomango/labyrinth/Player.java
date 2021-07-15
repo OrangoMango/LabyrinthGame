@@ -88,7 +88,6 @@ public class Player {
 		}
 		int rep2 = rep;
 		Timeline tl = new Timeline(new KeyFrame(Duration.millis(30), event -> {
-			System.out.println(LevelExe.PLAYER_MOVEMENT);
 			if (rep2 == 0){
 				return;
 			}
