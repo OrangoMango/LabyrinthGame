@@ -3,14 +3,18 @@ package com.orangomango.labyrinth;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 import javafx.scene.image.*;
+import javafx.animation.*;
+import javafx.util.Duration;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import com.orangomango.labyrinth.menu.editor.LevelExe;
 
 
 public class Player {
 	private World world;
 	private int x, y;
+	private int repeat = 0;
 
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -51,20 +55,58 @@ public class Player {
 	}
 
 	public void moveOn(String direction, int m, int[] rec) {
-		if (direction == X) {
-			Block[] xrow = this.world.getXRow(getY());
-			while (this.world.getBlockAt(getX() + m, getY()).getCategory() != this.world.WALL) {
-				setX(getX() + m);
-			}
+		int x = getX();
+		int y = getY();
+		int rep = 0;
+		this.repeat = 0;
+		
+		try {
+			if (direction == X) {
+				Block[] xrow = this.world.getXRow(getY());
+				while (this.world.getBlockAt(getX() + m, getY()).getCategory() != this.world.WALL) {
+					setX(getX() + m);
+					rep++;
+				}
+				setX(x);
 
-		} else if (direction == Y) {
-			Block[] yrow = this.world.getYRow(getX());
-			while (this.world.getBlockAt(getX(), getY() + m).getCategory() != this.world.WALL) {
+			} else if (direction == Y) {
+				Block[] yrow = this.world.getYRow(getX());
+				while (this.world.getBlockAt(getX(), getY() + m).getCategory() != this.world.WALL) {
+					setY(getY() + m);
+					rep++;
+				}
+				setY(y);
+			} else {
+				Logger.error("Unknow direction found");
+				return;
+			}
+		} catch (Exception ex) {
+                    // Player went into void so it must stay on edge
+                    world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
+                    setX(x);
+                    setY(y);
+		}
+		int rep2 = rep;
+		Timeline tl = new Timeline(new KeyFrame(Duration.millis(30), event -> {
+			System.out.println(LevelExe.PLAYER_MOVEMENT);
+			if (rep2 == 0){
+				return;
+			}
+			if (direction == X){
+				setX(getX() + m);
+			} else if (direction == Y){
 				setY(getY() + m);
 			}
-		} else {
-			Logger.error("Unknow direction found");
-		}
+			this.world.update(0, 0, 0, 0);
+			if (++this.repeat == rep2){
+				LevelExe.PLAYER_MOVEMENT = true;
+			} else {
+				LevelExe.PLAYER_MOVEMENT = false;
+			}
+		}));
+		tl.setCycleCount(rep);
+		tl.play();
+		
 		if (rec == null){
 			this.world.update(0, 0, 0, 0);
 		} else {

@@ -19,6 +19,7 @@ import com.orangomango.labyrinth.menu.play.entity.*;
 public class LevelExe {
 	private static Stage exStage = null;
 	private static boolean OPEN = false;
+	public static boolean PLAYER_MOVEMENT = true;
 
 	public LevelExe(String path, String filename, boolean saved) {
 		if (OPEN) {
@@ -72,21 +73,19 @@ public class LevelExe {
 		canvas.setOnKeyPressed(new EventHandler<KeyEvent> () {
 			@Override
 			public void handle(KeyEvent event) {
-				try {
-					if (event.getCode() == KeyCode.UP) {
-						player.moveOn(Player.Y, Player.NEGATIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
-					} else if (event.getCode() == KeyCode.DOWN) {
-						player.moveOn(Player.Y, Player.POSITIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
-					} else if (event.getCode() == KeyCode.RIGHT) {
-						player.moveOn(Player.X, Player.POSITIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
-					} else if (event.getCode() == KeyCode.LEFT) {
-						player.moveOn(Player.X, Player.NEGATIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
-					} else {
-						System.out.println(event.getCode());
-					}
-				} catch (Exception ex) {
-                                    // Player went into void so it must stay on edge
-                                    world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
+				if (!PLAYER_MOVEMENT){
+					return;
+				}
+				if (event.getCode() == KeyCode.UP) {
+					player.moveOn(Player.Y, Player.NEGATIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+				} else if (event.getCode() == KeyCode.DOWN) {
+					player.moveOn(Player.Y, Player.POSITIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+				} else if (event.getCode() == KeyCode.RIGHT) {
+					player.moveOn(Player.X, Player.POSITIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+				} else if (event.getCode() == KeyCode.LEFT) {
+					player.moveOn(Player.X, Player.NEGATIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+				} else {
+					System.out.println(event.getCode());
 				}
 				if (player.isOnEnd()) {
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
