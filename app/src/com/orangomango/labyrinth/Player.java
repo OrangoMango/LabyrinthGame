@@ -3,7 +3,9 @@ package com.orangomango.labyrinth;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 import javafx.scene.image.*;
+import javafx.scene.control.Alert;
 import javafx.animation.*;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
@@ -54,7 +56,7 @@ public class Player {
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player.png"), x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 
-	public void moveOn(String direction, int m, int[] rec) {
+	public void moveOn(String direction, int m, Stage stage, int[] rec) {
 		int x = getX();
 		int y = getY();
 		int rep = 0;
@@ -83,34 +85,65 @@ public class Player {
 		} catch (Exception ex) {
                     // Player went into void so it must stay on edge
                     world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
+                    System.out.println("Player went into void "+x+" "+y+" "+rep);
                     setX(x);
                     setY(y);
 		}
 		int rep2 = rep;
 		Timeline tl = new Timeline(new KeyFrame(Duration.millis(30), event -> {
+			System.out.println(LevelExe.PLAYER_MOVEMENT+" - "+this.repeat+" - "+rep2);
 			if (rep2 == 0){
+				LevelExe.PLAYER_MOVEMENT = true;
 				return;
 			}
-			if (direction == X){
-				setX(getX() + m);
-			} else if (direction == Y){
-				setY(getY() + m);
-			}
-			this.world.update(0, 0, 0, 0);
-			if (++this.repeat == rep2){
+			if (this.repeat == rep2){
 				LevelExe.PLAYER_MOVEMENT = true;
+				System.out.println("On end");
+				if (rec == null){
+					this.world.update(0, 0, 0, 0);
+				} else {
+					this.world.update(rec[0], rec[1], rec[2], rec[3]);
+				}
+				return;
 			} else {
+				System.out.println("Ongoing");
 				LevelExe.PLAYER_MOVEMENT = false;
+				if (direction == X){
+					setX(getX() + m);
+				} else if (direction == Y){
+					setY(getY() + m);
+				}
 			}
-		}));
-		tl.setCycleCount(rep);
-		tl.play();
-		
-		if (rec == null){
 			this.world.update(0, 0, 0, 0);
-		} else {
-			this.world.update(rec[0], rec[1], rec[2], rec[3]);
-		}
+			if (this.isOnEnd()) {
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setHeaderText("You completed the level!");
+				alert.setTitle("Level complete");
+				alert.setContentText(null);
+				alert.showAndWait();
+				LevelExe.OPEN = false;
+				stage.hide();
+				if (LevelExe.exStage != null)
+					LevelExe.exStage.show();
+			} else if (this.isOnBlock(World.SPIKE)){
+				this.die();
+				this.world.update(0, 0, 0, 0);
+			} else if (this.isOnBlock(World.PORTAL)){
+				if (!this.world.getBlockAt(this.getX(), this.getY()).getInfo().equals("NoPointSet")){
+					String[] coord = world.getBlockAt(this.getX(), this.getY()).getInfo().split("#");
+					String[] numbers = coord[1].split(" ");
+					int tx = Integer.parseInt(numbers[0]);
+					int ty = Integer.parseInt(numbers[1]);
+					this.setX(tx);
+					this.setY(ty);
+					this.world.update(0, 0, 0, 0);
+					this.repeat = rep2;
+				}
+			}
+			this.repeat++;
+		}));
+		tl.setCycleCount(rep+1);
+		tl.play();
 	}
 
 	public boolean isOnEnd() {
