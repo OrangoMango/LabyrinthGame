@@ -218,7 +218,47 @@ public class Editor {
 					});
 					item3.getItems().addAll(r, l);
 					item3.setDisable(edblock.getType() != EditableWorld.SHOOTER);
-					contextMenu.getItems().addAll(item1, item2, item3);
+					MenuItem item4 = new MenuItem("Set movable block data");
+					item4.setOnAction(clickEv -> {
+						Stage st = new Stage();
+						st.setTitle("Movable block preferences");
+						GridPane pane = new GridPane();
+						pane.setPadding(new Insets(10,10,10,10));
+						pane.setHgap(20);
+						pane.setVgap(20);
+						Label l1 = new Label("Set path length: ");
+						Spinner sp = new Spinner(2,NewWidget.MAX_WORLD_SIZE,2);
+						Label l2 = new Label("Set direction:");
+						ToggleGroup gr = new ToggleGroup();
+						RadioButton b1 = new RadioButton("Vertical");
+						RadioButton b2 = new RadioButton("Horizontal");
+						b2.setSelected(true);
+						b1.setToggleGroup(gr);
+						b2.setToggleGroup(gr);
+						Button ok = new Button("Save changes");
+						ok.setOnAction(ev -> {
+							int pl = (int) sp.getValue();
+							String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
+							edblock.setInfo(String.format("data#%s %s", pl, dir));
+							editableworld.setBlockOn(edblock);
+							editableworld.updateOnFile();
+							unsaved();
+							st.hide();
+						});
+						Button canc = new Button("Cancel");
+						canc.setOnAction(e -> st.hide());
+						pane.add(l1, 0, 0);
+						pane.add(sp, 1, 0);
+						pane.add(l2, 0, 1);
+						pane.add(b1, 0, 2);
+						pane.add(b2, 0, 3);
+						pane.add(ok, 0, 4);
+						pane.add(canc, 1, 4);
+						st.setScene(new Scene(pane, 350, 250));
+						st.show();
+					});
+					item4.setDisable(edblock.getType() != EditableWorld.MOVABLE);
+					contextMenu.getItems().addAll(item1, item2, item3, item4);
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
@@ -256,6 +296,10 @@ public class Editor {
 						case 6:
 							edblock.setInfo("NoDataSet");
 							edblock.toggleType(EditableWorld.BAT_GEN);
+							break;
+						case 7:
+							edblock.setInfo("NoDataSet");
+							edblock.toggleType(EditableWorld.MOVABLE);
 							break;
 					}
 					editableworld.setBlockOn(edblock);
@@ -485,7 +529,12 @@ public class Editor {
                 portalB.setTooltip(new Tooltip("Portal block. ID:4"));
                 portalB.setToggleGroup(tg);
                 portalB.setOnAction(event -> SELECTED_BLOCK = 4);
-                db.getChildren().addAll(wallB, portalB);
+                ToggleButton moveB = new ToggleButton();
+                moveB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png")));
+                moveB.setTooltip(new Tooltip("Movable block. ID:7"));
+                moveB.setToggleGroup(tg);
+                moveB.setOnAction(event -> SELECTED_BLOCK = 7);
+                db.getChildren().addAll(wallB, portalB, moveB);
                 TitledPane defaultBlocks = new TitledPane("Default blocks", db);
                 
                 // Decoration blocks

@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.editor.EditableWorld;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
-import com.orangomango.labyrinth.menu.play.entity.Bat;
+import com.orangomango.labyrinth.menu.play.entity.*;
 
 public class Block {
 	protected String type;
@@ -36,6 +36,7 @@ public class Block {
 			case World.PORTAL:
 			case World.SPIKE:
 			case World.BAT_GEN:
+			case World.MOVABLE:
 				this.category = World.AIR;
 				break;
 		}
@@ -85,6 +86,8 @@ public class Block {
 				return new Block(World.SHOOTER, x1, y1, i);
 			case 6:
 				return new Block(World.BAT_GEN, x1, y1, i);
+			case 7:
+				return new Block(World.MOVABLE, x1, y1, i);
 			default:
 				return null;
 		}
@@ -155,11 +158,30 @@ public class Block {
 					if (!this.info.equals("NoDataSet")){
 						dir = this.info.split("#")[1].split(" ")[1];
 					} else {
-						dir = Bat.HORIZONTAL;
+						dir = Entity.HORIZONTAL;
 					}
-					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Bat.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png")),  0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Entity.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png")),  0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 					if (this.info.equals("NoDataSet")){
 						drawWarningSign(pen, px, py);
+					}
+				}
+				break;
+			case World.MOVABLE:
+				drawAirBlock(pen, px, py);
+				if (w instanceof EditableWorld){
+				  pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+					if (this.info.equals("NoDataSet")){
+				  	drawWarningSign(pen, px, py);
+					} else {
+						String direction = this.info.split("#")[1].split(" ")[1];
+						switch (direction){
+							case "h":
+								pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/editor/arrow_sign_h.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+								break;
+							case "v":
+								pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/editor/arrow_sign_v.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+								break;
+						}
 					}
 				}
 				break;
@@ -186,6 +208,8 @@ public class Block {
 					return 5;
 				case World.BAT_GEN:
 					return 6;
+				case World.MOVABLE:
+					return 7;
 				default:
 					return null;
 		}

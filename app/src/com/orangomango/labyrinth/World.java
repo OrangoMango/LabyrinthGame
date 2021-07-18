@@ -42,6 +42,7 @@ public class World {
 	public final static String PORTAL = "portal";
 	public final static String SHOOTER = "shooter";
 	public final static String BAT_GEN = "bat_generator";
+	public final static String MOVABLE = "move_block";
 
 	public final static int BLOCK_WIDTH = 32;
 
@@ -171,10 +172,10 @@ public class World {
 			Block[] x = new Block[w];
 			int it2 = 0;
 
-			if (iterator + w > current.length) { // If itertor is bigger than the list length then stop
+			if (iterator + w > current.length) { // If iterator is bigger than the list length then stop
 				break;
 			}
-      			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
+      for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
 				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")){
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
@@ -182,6 +183,9 @@ public class World {
 				} else if (x[it2].getType() == SHOOTER){
 					String d = Character.toString(x[it2].getInfo().split("#")[1].charAt(0));
 					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d));
+				} else if (x[it2].getType() == MOVABLE && !x[it2].getInfo().equals("NoDataSet")){
+					String[] d = x[it2].getInfo().split("#")[1].split(" ");
+					addEnt(new MBlock(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
 				}
 				it2++;
 			}

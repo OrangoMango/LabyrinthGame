@@ -10,7 +10,6 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class Bat extends Entity{
-	private World world;
 	private int M = 0;
 	private double startX = 0;
 	private double startY = 0;
@@ -19,9 +18,6 @@ public class Bat extends Entity{
 	private Timeline t;
 	private Timeline t2;
 	private String direction;
-	
-	public static final String HORIZONTAL = "h";
-	public static final String VERTICAL = "v";
 	
 	public Bat(World w, double x, double y, int pl, String d){
 		setData(w);
