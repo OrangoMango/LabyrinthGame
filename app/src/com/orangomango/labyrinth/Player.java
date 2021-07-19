@@ -84,7 +84,7 @@ public class Player {
 			}
 		} catch (Exception ex) {
                     // Player went into void so it must stay on edge
-                    world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
+                    //world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
                     System.out.println("Player went into void "+x+" "+y+" "+rep);
                     setX(x);
                     setY(y);

@@ -149,18 +149,19 @@ public class LoadingScreen {
 		if (ALERTS > 1) {
 			return;
 		}
+		if (delete) {
+			File f = new File(PATH + ".labyrinthgame" + File.separator + "SystemLevels");
+			for (String file: f.list()) {
+				File f2 = new File(file);
+				f2.delete();
+			}
+		}
 		Platform.runLater(() -> {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setHeaderText("Internet error, please check your connection");
 			alert.setTitle("Internet Error");
 			alert.setContentText("ERROR: " + errormsg);
 			alert.showAndWait();
-			if (delete) {
-				File f = new File(PATH + ".labyrinthgame" + File.separator + "SystemLevels");
-				for (String file: f.list()) {
-					new File(file).delete();
-				}
-			}
 			Platform.exit();
 		});
 	}
