@@ -88,6 +88,8 @@ public class Block {
 				return new Block(World.BAT_GEN, x1, y1, i);
 			case 7:
 				return new Block(World.MOVABLE, x1, y1, i);
+			case 8:
+				return new Block(World.C_SPIKE, x1, y1, i);
 			default:
 				return null;
 		}
@@ -185,6 +187,10 @@ public class Block {
 					}
 				}
 				break;
+			case World.C_SPIKE:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
       default:
         pen.setFill(Color.RED);
 				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -210,6 +216,8 @@ public class Block {
 					return 6;
 				case World.MOVABLE:
 					return 7;
+				case World.C_SPIKE:
+					return 8;
 				default:
 					return null;
 		}

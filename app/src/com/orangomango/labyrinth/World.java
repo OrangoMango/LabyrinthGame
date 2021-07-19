@@ -39,10 +39,11 @@ public class World {
 	public final static String AIR = "air";
 	public final static String VOID = "void";
 	public final static String SPIKE = "spike";
+	public final static String C_SPIKE = "closable_spike";
 	public final static String PORTAL = "portal";
 	public final static String SHOOTER = "shooter";
 	public final static String BAT_GEN = "bat_generator";
-	public final static String MOVABLE = "move_block";
+	public final static String MOVABLE = "movable_block";
 
 	public final static int BLOCK_WIDTH = 32;
 

@@ -38,6 +38,7 @@ public class LoadingScreen {
 		"editor" + File.separator + "arrow_sign_h",
 		"editor" + File.separator + "arrow_sign_v",
 		"blocks" + File.separator + "block_spike",
+		"blocks" + File.separator + "block_spike_closed",
 		"blocks" + File.separator + "block_wall",
 		"blocks" + File.separator + "block_portal",
 		"blocks" + File.separator + "block_air",

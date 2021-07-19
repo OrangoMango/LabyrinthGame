@@ -301,6 +301,9 @@ public class Editor {
 							edblock.setInfo("NoDataSet");
 							edblock.toggleType(EditableWorld.MOVABLE);
 							break;
+						case 8:
+							edblock.toggleType(EditableWorld.C_SPIKE);
+							break;
 					}
 					editableworld.setBlockOn(edblock);
 					editableworld.updateOnFile();
@@ -562,10 +565,16 @@ public class Editor {
                 shootB.setOnAction(event -> SELECTED_BLOCK = 5);
                 ToggleButton batB = new ToggleButton();
                 batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
-                batB.setTooltip(new Tooltip("Bat."));
+                batB.setTooltip(new Tooltip("Bat. ID:6"));
                 batB.setToggleGroup(tg);
                 batB.setOnAction(event -> SELECTED_BLOCK = 6);
-                dab.getChildren().addAll(spikeB, shootB, batB);
+                ToggleButton cspikeB = new ToggleButton();
+                cspikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png")));
+                cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
+                cspikeB.setToggleGroup(tg);
+                cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
+                
+                dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
                 TitledPane damageBlocks = new TitledPane("Damage blocks", dab);
                 
                 blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks, damageBlocks);
