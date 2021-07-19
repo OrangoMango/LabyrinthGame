@@ -128,6 +128,8 @@ public class Player {
 			} else if (this.isOnBlock(World.SPIKE)){
 				this.die();
 				this.world.update(0, 0, 0, 0);
+				this.repeat = rep2;
+				return;
 			} else if (this.isOnBlock(World.PORTAL)){
 				if (!this.world.getBlockAt(this.getX(), this.getY()).getInfo().equals("NoPointSet")){
 					String[] coord = world.getBlockAt(this.getX(), this.getY()).getInfo().split("#");
@@ -138,6 +140,7 @@ public class Player {
 					this.setY(ty);
 					this.world.update(0, 0, 0, 0);
 					this.repeat = rep2;
+					return;
 				}
 			}
 			this.repeat++;
