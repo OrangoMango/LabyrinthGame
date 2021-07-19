@@ -150,11 +150,18 @@ public class Editor {
 						b2.setSelected(true);
 						b1.setToggleGroup(gr);
 						b2.setToggleGroup(gr);
+						Label l3 = new Label("Set speed (ms) [200]:");
+						Slider slider = new Slider(80, 300, 200);
+						slider.setPrefWidth(180);
+						slider.setShowTickLabels(true);
+						slider.setShowTickMarks(true);
+						slider.setOnMouseDragged(evt -> l3.setText("Set speed (ms) ["+Math.round((int)slider.getValue())+"]"));
 						Button ok = new Button("Save changes");
 						ok.setOnAction(ev -> {
 							int pl = (int) sp.getValue();
 							String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
-							edblock.setInfo(String.format("data#%s %s", pl, dir));
+							int speed = (int)slider.getValue();
+							edblock.setInfo(String.format("data#%s %s %s", pl, dir, speed));
 							editableworld.setBlockOn(edblock);
 							editableworld.updateOnFile();
 							unsaved();
@@ -167,9 +174,11 @@ public class Editor {
 						pane.add(l2, 0, 1);
 						pane.add(b1, 0, 2);
 						pane.add(b2, 0, 3);
-						pane.add(ok, 0, 4);
-						pane.add(canc, 1, 4);
-						st.setScene(new Scene(pane, 350, 250));
+						pane.add(l3, 0, 4);
+						pane.add(slider, 1, 4);
+						pane.add(ok, 0, 5);
+						pane.add(canc, 1, 5);
+						st.setScene(new Scene(pane, 420, 300));
 						st.show();
 					});
 					item2.setDisable(edblock.getType() != EditableWorld.BAT_GEN);
@@ -590,7 +599,7 @@ public class Editor {
 		layout.add(toolbar, 0, 0);
 		layout.add(splitpane, 0, 1);
 
-		this.stage.setScene(new Scene(layout, 800, 550));
+		this.stage.setScene(new Scene(layout, 850, 550));
 	}
     
     /**

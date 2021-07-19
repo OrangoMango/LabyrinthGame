@@ -18,15 +18,17 @@ public class Bat extends Entity{
 	private Timeline t;
 	private Timeline t2;
 	private String direction;
+	private int speed;
 	
-	public Bat(World w, double x, double y, int pl, String d){
+	public Bat(World w, double x, double y, int pl, String d, int s){
 		setData(w);
 		this.direction = d;
 		setX(x);
 		setY(y);
 		startX = x;
 		startY = y;
-		t = new Timeline(new KeyFrame(Duration.millis(200), event -> {
+		speed = s;
+		t = new Timeline(new KeyFrame(Duration.millis(this.speed), event -> {
 			if (this.direction.equals(HORIZONTAL)){
 			  if (getX() == startX){
 		  		M = 1;
@@ -50,7 +52,7 @@ public class Bat extends Entity{
 		}));
 		t.setCycleCount(Animation.INDEFINITE);
 		
-		t2 = new Timeline(new KeyFrame(Duration.millis(300), event -> {
+		t2 = new Timeline(new KeyFrame(Duration.millis(this.speed/2*3), event -> {
       if (this.direction.equals(HORIZONTAL)){
 			  this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_"+this.suff+".png");
 			  this.suff = (this.suff == 1) ? 2 : 1;
