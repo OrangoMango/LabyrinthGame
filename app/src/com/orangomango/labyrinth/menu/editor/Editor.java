@@ -38,7 +38,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-  public static Editor EDITOR_INSTANCE = null;
+        public static Editor EDITOR_INSTANCE = null;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -437,7 +437,7 @@ public class Editor {
 		});
 
 		Button addCBtn = new Button();
-        addCBtn.setTooltip(new Tooltip("Add column to world"));
+                addCBtn.setTooltip(new Tooltip("Add column to world"));
 		addCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ac.png")));
 		addCBtn.setOnAction(event -> {
 			if (checkValidityMax("w")) {
@@ -523,13 +523,15 @@ public class Editor {
 		tabs.getTabs().add(editTab);
 		splitpane.getItems().add(tabs);
 
+		int AW = 160; // Accordion width
+
                 Accordion blockSelect = new Accordion();
                 ToggleGroup tg = new ToggleGroup();
                 
                 // Default blocks
                 TilePane db = new TilePane();
                 db.setHgap(5);
-                db.setVgap(2);
+                db.setVgap(5);
                 ToggleButton wallB = new ToggleButton();
                 wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png")));
                 wallB.setTooltip(new Tooltip("Wall block. ID:1"));
@@ -548,6 +550,8 @@ public class Editor {
                 moveB.setOnAction(event -> SELECTED_BLOCK = 7);
                 db.getChildren().addAll(wallB, portalB, moveB);
                 TitledPane defaultBlocks = new TitledPane("Default blocks", db);
+                defaultBlocks.setPrefWidth(AW);
+                this.stage.widthProperty().addListener((ob, ov, nv) -> defaultBlocks.setPrefWidth(((double)nv)*0.195));
                 
                 // Decoration blocks
                 TilePane deb = new TilePane();
@@ -557,11 +561,12 @@ public class Editor {
                 voidB.setOnAction(event -> SELECTED_BLOCK = 2);
                 deb.getChildren().add(voidB);
                 TitledPane decorationBlocks = new TitledPane("Decoration blocks", deb);
+                decorationBlocks.setPrefWidth(AW);
                 
                 // Damage blocks
                 TilePane dab = new TilePane();
                 dab.setHgap(5);
-                dab.setVgap(2);
+                dab.setVgap(5);
                 ToggleButton spikeB = new ToggleButton();
                 spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
                 spikeB.setTooltip(new Tooltip("Spike block. ID:3"));
@@ -585,6 +590,7 @@ public class Editor {
                 
                 dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
                 TitledPane damageBlocks = new TitledPane("Damage blocks", dab);
+                damageBlocks.setPrefWidth(AW);
                 
                 blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks, damageBlocks);
                 blockSelect.setExpandedPane(defaultBlocks);
