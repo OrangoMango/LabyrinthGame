@@ -601,6 +601,7 @@ public class Editor {
 		splitpane.setDividerPositions(0.8f);
 		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
+		splitpane.getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> splitpane.setDividerPositions(0.8f));
 
 		layout.add(toolbar, 0, 0);
 		layout.add(splitpane, 0, 1);
