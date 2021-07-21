@@ -30,15 +30,20 @@ public class Block {
 			case World.WALL:
 			case World.SHOOTER:
 			case World.VOID:
+			case World.MOVABLE:
 				this.category = World.WALL;
 				break;
 			case World.AIR:
 			case World.PORTAL:
 			case World.SPIKE:
 			case World.BAT_GEN:
-			case World.MOVABLE:
 				this.category = World.AIR;
 				break;
+		}
+		if (this.info != null){
+			if (this.info.equals("NoDataSet") || this.info.equals("NoPointSet")){
+				this.category = World.AIR;
+			}
 		}
 	}
 

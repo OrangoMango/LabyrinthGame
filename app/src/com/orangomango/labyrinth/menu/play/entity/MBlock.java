@@ -33,15 +33,24 @@ public class MBlock extends Entity{
 	  			M = -1;
   			}
 		  	setX(getX()+0.25*M);
-			} else if (this.direction.equals(VERTICAL)){
-				if (getY() == startY){
-					M = 1;
-				}
-				if (getY() == startY+pl-1){
-					M = -1;
-				}
-				setY(getY()+0.25*M);
+		} else if (this.direction.equals(VERTICAL)){
+			if (getY() == startY){
+				M = 1;
 			}
+			if (getY() == startY+pl-1){
+				M = -1;
+			}
+			setY(getY()+0.25*M);
+		}
+		if ((isOnPlayer(w.getPlayer(), getX()+1, getY()) || isOnPlayer(w.getPlayer(), getX()-1, getY()) || isOnPlayer(w.getPlayer(), getX(), getY()+1) || isOnPlayer(w.getPlayer(), getX(), getY()-1)) || (w.getPlayer().psx != null && w.getPlayer().psy != null)){
+			/*if (this.direction.equals(VERTICAL)){
+				w.getPlayer().psy = getY()+0.25*M;
+				w.getPlayer().psx = w.getPlayer().getX()/1.0;
+			} else if (this.direction.equals(HORIZONTAL)){
+				w.getPlayer().psx = getX()+0.25*M;
+				w.getPlayer().psy = w.getPlayer().getY()/1.0;
+			}*/
+		}
   		w.update(0,0,0,0);
   	}));
   	this.t.setCycleCount(Animation.INDEFINITE);
