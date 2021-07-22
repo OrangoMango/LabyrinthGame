@@ -78,37 +78,15 @@ public class LevelExe {
 					return;
 				}
 				if (event.getCode() == KeyCode.UP) {
-					player.moveOn(Player.Y, Player.NEGATIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.Y, Player.NEGATIVE, stage, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 				} else if (event.getCode() == KeyCode.DOWN) {
-					player.moveOn(Player.Y, Player.POSITIVE, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.Y, Player.POSITIVE, stage, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 				} else if (event.getCode() == KeyCode.RIGHT) {
-					player.moveOn(Player.X, Player.POSITIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.X, Player.POSITIVE, stage, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 				} else if (event.getCode() == KeyCode.LEFT) {
-					player.moveOn(Player.X, Player.NEGATIVE, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.X, Player.NEGATIVE, stage, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 				} else {
 					System.out.println(event.getCode());
-				}
-				if (player.isOnEnd()) {
-					Alert alert = new Alert(Alert.AlertType.INFORMATION);
-					alert.setHeaderText("You completed the level!");
-					alert.setTitle("Level complete");
-					alert.setContentText(null);
-					alert.showAndWait();
-					LevelExe.OPEN = false;
-					stage.hide();
-					if (LevelExe.exStage != null)
-						LevelExe.exStage.show();
-					return;
-				} else if (player.isOnBlock(World.PORTAL)){
-					if (!world.getBlockAt(player.getX(), player.getY()).getInfo().equals("NoPointSet")){
-						String[] coord = world.getBlockAt(player.getX(), player.getY()).getInfo().split("#");
-						String[] numbers = coord[1].split(" ");
-						int tx = Integer.parseInt(numbers[0]);
-						int ty = Integer.parseInt(numbers[1]);
-						player.setX(tx);
-						player.setY(ty);
-						world.update(0, 0, 0, 0);
-					}
 				}
 			}
 		});

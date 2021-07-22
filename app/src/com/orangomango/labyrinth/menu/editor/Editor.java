@@ -86,6 +86,7 @@ public class Editor {
 
 		Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
 		canvas.setFocusTraversable(true);
+		final Label pointingOn = new Label("Mouse on Block: null");
 
 		canvas.setOnMousePressed(new EventHandler<MouseEvent> () {
 			@Override
@@ -279,22 +280,25 @@ public class Editor {
 						alert.showAndWait();
 						return;
 					}
+					if (edblock.getType() == EditableWorld.PORTAL && !edblock.getInfo().equals("NoPointSet")){
+						String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
+						editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+								
+					}
 					switch (SELECTED_BLOCK) {
 						case 1:
+							edblock.setInfo(null);
 							edblock.toggleType(EditableWorld.WALL);
 							break;
 						case 2:
+							edblock.setInfo(null);
 							edblock.toggleType(EditableWorld.VOID);
 							break;
 						case 3:
+							edblock.setInfo(null);
 							edblock.toggleType(EditableWorld.SPIKE);
 							break;
 						case 4:
-							if (edblock.getType() == EditableWorld.PORTAL && !edblock.getInfo().equals("NoPointSet")){
-								String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
-								editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
-								
-							}
 							edblock.setInfo("NoPointSet");
 							edblock.toggleType(EditableWorld.PORTAL);
 							break;
@@ -311,6 +315,7 @@ public class Editor {
 							edblock.toggleType(EditableWorld.MOVABLE);
 							break;
 						case 8:
+							edblock.setInfo(null);
 							edblock.toggleType(EditableWorld.C_SPIKE);
 							break;
 					}
@@ -328,13 +333,12 @@ public class Editor {
 		editableworld.setPlayer(new Player(editableworld.start[0], editableworld.start[1], editableworld));
 		editableworld.setCanvas(canvas);
 		editableworld.draw();
-
-		final Label pointingOn = new Label("Mouse on Block: null");
-		canvas.setOnMouseMoved(new EventHandler<MouseEvent> () {
+		
+		canvas.setOnMouseMoved(new EventHandler<MouseEvent>(){
 			@Override
-			public void handle(MouseEvent event) {
-				Block block = editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
-				pointingOn.setText("Mouse on block: " + block + " | " + ((block.isOnStart(editableworld)) ? "On start position" : ((block.isOnEnd(editableworld)) ? "On end position" : "Not on start or end position")));
+			public void handle(MouseEvent event){
+				Block block = edworld.getBlockAtCoord((int)event.getX(), (int)event.getY());
+				pointingOn.setText("Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position")));
 			}
 		});
 

@@ -1,6 +1,8 @@
 package com.orangomango.labyrinth;
 
 import javafx.scene.canvas.*;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.scene.image.*;
 import javafx.scene.control.Alert;
@@ -62,7 +64,7 @@ public class Player {
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player.png"), x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 
-	public void moveOn(String direction, int m, int[] rec) {
+	public void moveOn(String direction, int m, Stage stage, int[] rec) {
 		int x = getX();
 		int y = getY();
 		int rep = 0;
@@ -93,18 +95,43 @@ public class Player {
 		} catch (Exception ex) {
                     // Player went into void so it must stay on edge
                     //world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
+                    System.out.println("Void");
                     setX(x);
                     setY(y);
 		}
 		int rep2 = rep;
 		Timeline tl = new Timeline(new KeyFrame(Duration.millis(30), event -> {
-			System.out.println(this.repeat);
+			System.out.println(this.repeat+" "+rep2);
 			if (rep2 == 0){
 				LevelExe.PLAYER_MOVEMENT = true;
 				return;
 			}
 			if (this.repeat == rep2){
 				LevelExe.PLAYER_MOVEMENT = true;
+				if (this.isOnEnd()) {
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setHeaderText("You completed the level!");
+					alert.setTitle("Level complete");
+					alert.setContentText(null);
+					alert.setOnHidden(evt -> Platform.exit());
+					alert.show();
+					LevelExe.OPEN = false;
+					stage.hide();
+					if (LevelExe.exStage != null)
+						LevelExe.exStage.show();
+					return;
+				} else if (this.isOnBlock(World.PORTAL)){
+					System.out.println("On portal");
+					if (!world.getBlockAt(this.getX(), this.getY()).getInfo().equals("NoPointSet")){
+						String[] coord = world.getBlockAt(this.getX(), this.getY()).getInfo().split("#");
+						String[] numbers = coord[1].split(" ");
+						int tx = Integer.parseInt(numbers[0]);
+						int ty = Integer.parseInt(numbers[1]);
+						this.setX(tx);
+						this.setY(ty);
+						world.update(0, 0, 0, 0);
+					}
+				}
 				if (rec == null){
 					this.world.update(0, 0, 0, 0);
 				} else {
@@ -117,6 +144,7 @@ public class Player {
 				} else if (direction == Y){
 					setY(getY() + m);
 				}
+				this.world.update(0, 0, 0, 0);
 			}
 			if (this.isOnBlock(World.SPIKE)){
 				this.die();
