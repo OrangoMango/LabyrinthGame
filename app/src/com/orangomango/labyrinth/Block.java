@@ -30,12 +30,12 @@ public class Block {
 			case World.WALL:
 			case World.SHOOTER:
 			case World.VOID:
-			case World.MOVABLE:
 				this.category = World.WALL;
 				break;
 			case World.AIR:
 			case World.PORTAL:
 			case World.SPIKE:
+			case World.MOVABLE:
 			case World.BAT_GEN:
 				this.category = World.AIR;
 				break;

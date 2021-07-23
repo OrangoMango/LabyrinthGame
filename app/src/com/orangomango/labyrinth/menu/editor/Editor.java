@@ -552,6 +552,7 @@ public class Editor {
                 moveB.setTooltip(new Tooltip("Movable block. ID:7"));
                 moveB.setToggleGroup(tg);
                 moveB.setOnAction(event -> SELECTED_BLOCK = 7);
+                moveB.setDisable(true);
                 db.getChildren().addAll(wallB, portalB, moveB);
                 TitledPane defaultBlocks = new TitledPane("Default blocks", db);
                 defaultBlocks.setPrefWidth(AW);

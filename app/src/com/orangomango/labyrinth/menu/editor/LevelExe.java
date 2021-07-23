@@ -77,6 +77,11 @@ public class LevelExe {
 				if (!PLAYER_MOVEMENT){
 					return;
 				}
+				if (!(player.psx == null && player.psy == null)){
+					System.out.println("Out");
+					player.setX((int)Math.round(player.psx));
+					player.setY((int)Math.round(player.psy));
+				}
 				if (event.getCode() == KeyCode.UP) {
 					player.moveOn(Player.Y, Player.NEGATIVE, stage, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
 				} else if (event.getCode() == KeyCode.DOWN) {

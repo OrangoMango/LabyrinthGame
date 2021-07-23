@@ -42,14 +42,17 @@ public class MBlock extends Entity{
 			}
 			setY(getY()+0.25*M);
 		}
-		if ((isOnPlayer(w.getPlayer(), getX()+1, getY()) || isOnPlayer(w.getPlayer(), getX()-1, getY()) || isOnPlayer(w.getPlayer(), getX(), getY()+1) || isOnPlayer(w.getPlayer(), getX(), getY()-1)) || (w.getPlayer().psx != null && w.getPlayer().psy != null)){
-			/*if (this.direction.equals(VERTICAL)){
+		if (isOnPlayer(w.getPlayer())){
+			System.out.println(w.getPlayer().psx+" "+w.getPlayer().psy+" | "+w.getPlayer());
+		}
+		if (isOnPlayer(w.getPlayer()) || (w.getPlayer().psx != null && w.getPlayer().psy != null)){
+			if (this.direction.equals(VERTICAL)){
 				w.getPlayer().psy = getY()+0.25*M;
-				w.getPlayer().psx = w.getPlayer().getX()/1.0;
+				w.getPlayer().psx = (double)w.getPlayer().getX();
 			} else if (this.direction.equals(HORIZONTAL)){
 				w.getPlayer().psx = getX()+0.25*M;
-				w.getPlayer().psy = w.getPlayer().getY()/1.0;
-			}*/
+				w.getPlayer().psy = (double)w.getPlayer().getY();
+			}
 		}
   		w.update(0,0,0,0);
   	}));
@@ -58,6 +61,10 @@ public class MBlock extends Entity{
   
   public void start(){
   	this.t.play();
+  }
+  
+  public void stop(){
+  	this.t.stop();
   }
   
   @Override

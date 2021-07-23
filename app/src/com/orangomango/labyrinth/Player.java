@@ -95,13 +95,11 @@ public class Player {
 		} catch (Exception ex) {
                     // Player went into void so it must stay on edge
                     //world.update(0, 0, 0, 0); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
-                    System.out.println("Void");
                     setX(x);
                     setY(y);
 		}
 		int rep2 = rep;
 		Timeline tl = new Timeline(new KeyFrame(Duration.millis(30), event -> {
-			System.out.println(this.repeat+" "+rep2);
 			if (rep2 == 0){
 				LevelExe.PLAYER_MOVEMENT = true;
 				return;
@@ -113,7 +111,6 @@ public class Player {
 					alert.setHeaderText("You completed the level!");
 					alert.setTitle("Level complete");
 					alert.setContentText(null);
-					alert.setOnHidden(evt -> Platform.exit());
 					alert.show();
 					LevelExe.OPEN = false;
 					stage.hide();
@@ -121,7 +118,6 @@ public class Player {
 						LevelExe.exStage.show();
 					return;
 				} else if (this.isOnBlock(World.PORTAL)){
-					System.out.println("On portal");
 					if (!world.getBlockAt(this.getX(), this.getY()).getInfo().equals("NoPointSet")){
 						String[] coord = world.getBlockAt(this.getX(), this.getY()).getInfo().split("#");
 						String[] numbers = coord[1].split(" ");
@@ -158,8 +154,8 @@ public class Player {
 					this.repeat = rep2;
 					return;
 				} else if (ent.isOnPlayer(this) && ent instanceof MBlock){
-					/*this.repeat = rep2;
-					return;*/
+					this.repeat = rep2;
+					return;
 				}
 			}
 			this.repeat++;
