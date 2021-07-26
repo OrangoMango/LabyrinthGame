@@ -43,7 +43,7 @@ public class World {
 	public final static String PORTAL = "portal";
 	public final static String SHOOTER = "shooter";
 	public final static String BAT_GEN = "bat_generator";
-	public final static String MOVABLE = "movable_block";
+	public final static String ELEVATOR = "elevator";
 
 	public final static int BLOCK_WIDTH = 32;
 
@@ -184,9 +184,9 @@ public class World {
 				} else if (x[it2].getType() == SHOOTER){
 					String d = Character.toString(x[it2].getInfo().split("#")[1].charAt(0));
 					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d));
-				} else if (x[it2].getType() == MOVABLE && !x[it2].getInfo().equals("NoDataSet")){
+				} else if (x[it2].getType() == ELEVATOR && !x[it2].getInfo().equals("NoDataSet")){
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
-					addEnt(new MBlock(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
+					addEnt(new Elevator(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
 				}
 				it2++;
 			}

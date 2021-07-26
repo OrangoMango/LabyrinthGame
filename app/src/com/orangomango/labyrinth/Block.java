@@ -35,7 +35,7 @@ public class Block {
 			case World.AIR:
 			case World.PORTAL:
 			case World.SPIKE:
-			case World.MOVABLE:
+			case World.ELEVATOR:
 			case World.BAT_GEN:
 				this.category = World.AIR;
 				break;
@@ -92,7 +92,7 @@ public class Block {
 			case 6:
 				return new Block(World.BAT_GEN, x1, y1, i);
 			case 7:
-				return new Block(World.MOVABLE, x1, y1, i);
+				return new Block(World.ELEVATOR, x1, y1, i);
 			case 8:
 				return new Block(World.C_SPIKE, x1, y1, i);
 			default:
@@ -173,7 +173,7 @@ public class Block {
 					}
 				}
 				break;
-			case World.MOVABLE:
+			case World.ELEVATOR:
 				drawAirBlock(pen, px, py);
 				if (w instanceof EditableWorld){
 				  pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -219,7 +219,7 @@ public class Block {
 					return 5;
 				case World.BAT_GEN:
 					return 6;
-				case World.MOVABLE:
+				case World.ELEVATOR:
 					return 7;
 				case World.C_SPIKE:
 					return 8;

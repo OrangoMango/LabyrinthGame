@@ -267,7 +267,7 @@ public class Editor {
 						st.setScene(new Scene(pane, 350, 250));
 						st.show();
 					});
-					item4.setDisable(edblock.getType() != EditableWorld.MOVABLE);
+					item4.setDisable(edblock.getType() != EditableWorld.ELEVATOR);
 					contextMenu.getItems().addAll(item1, item2, item3, item4);
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY){
@@ -312,7 +312,7 @@ public class Editor {
 							break;
 						case 7:
 							edblock.setInfo("NoDataSet");
-							edblock.toggleType(EditableWorld.MOVABLE);
+							edblock.toggleType(EditableWorld.ELEVATOR);
 							break;
 						case 8:
 							edblock.setInfo(null);
@@ -549,10 +549,10 @@ public class Editor {
                 portalB.setOnAction(event -> SELECTED_BLOCK = 4);
                 ToggleButton moveB = new ToggleButton();
                 moveB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png")));
-                moveB.setTooltip(new Tooltip("Movable block. ID:7"));
+                moveB.setTooltip(new Tooltip("Elevator block. ID:7"));
                 moveB.setToggleGroup(tg);
                 moveB.setOnAction(event -> SELECTED_BLOCK = 7);
-                moveB.setDisable(true);
+                //moveB.setDisable(true);
                 db.getChildren().addAll(wallB, portalB, moveB);
                 TitledPane defaultBlocks = new TitledPane("Default blocks", db);
                 defaultBlocks.setPrefWidth(AW);
@@ -592,6 +592,7 @@ public class Editor {
                 cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
                 cspikeB.setToggleGroup(tg);
                 cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
+                cspikeB.setDisable(true);
                 
                 dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
                 TitledPane damageBlocks = new TitledPane("Damage blocks", dab);

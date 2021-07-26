@@ -153,7 +153,7 @@ public class Player {
 					this.die();
 					this.repeat = rep2;
 					return;
-				} else if (ent.isOnPlayer(this) && ent instanceof MBlock){
+				} else if (ent.isOnPlayer(this) && ent instanceof Elevator){
 					this.repeat = rep2;
 					return;
 				}
