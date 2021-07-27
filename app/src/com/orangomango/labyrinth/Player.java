@@ -133,6 +133,7 @@ public class Player {
 				} else {
 					this.world.update(rec[0], rec[1], rec[2], rec[3]);
 				}
+				return;
 			} else {
 				LevelExe.PLAYER_MOVEMENT = false;
 				if (direction == X){
@@ -156,6 +157,12 @@ public class Player {
 				} else if (ent.isOnPlayer(this) && ent instanceof Elevator){
 					this.repeat = rep2;
 					return;
+				} else if (ent.isOnPlayer(this) && ent instanceof CSpike){
+					if (((CSpike)ent).isOpened()){
+						this.die();
+						this.repeat = rep2;
+						return;
+					}
 				}
 			}
 			this.repeat++;

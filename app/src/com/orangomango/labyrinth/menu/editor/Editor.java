@@ -366,7 +366,7 @@ public class Editor {
 		if (EDITOR){
 			return;
 		}
-        EDITOR_INSTANCE = this;
+        	EDITOR_INSTANCE = this;
 		EDITOR = true;
 		worldList = new CreatedWorldFiles();
 		this.stage = new Stage();
@@ -377,7 +377,7 @@ public class Editor {
 			CURRENT_FILE_PATHS = new String[1];
 			SAVES = new boolean[1];
 			OPENED_TABS = 0;
-            EDITOR_INSTANCE = null;
+            		EDITOR_INSTANCE = null;
 		});
 
 		GridPane layout = new GridPane();
@@ -419,7 +419,7 @@ public class Editor {
 		});
 		Button openBtn = new Button("Open");
 		openBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/open.png")));
-        openBtn.setTooltip(new Tooltip("Open a world file"));
+        	openBtn.setTooltip(new Tooltip("Open a world file"));
 		openBtn.setOnAction(event -> {
 			try {
 				FileChooser chooser = new FileChooser();
@@ -592,7 +592,6 @@ public class Editor {
                 cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
                 cspikeB.setToggleGroup(tg);
                 cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
-                cspikeB.setDisable(true);
                 
                 dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
                 TitledPane damageBlocks = new TitledPane("Damage blocks", dab);

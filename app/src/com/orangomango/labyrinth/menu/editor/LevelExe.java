@@ -20,6 +20,8 @@ public class LevelExe {
 	public static Stage exStage = null;
 	public static boolean OPEN = false;
 	public static boolean PLAYER_MOVEMENT;
+	private int xGap = 0;
+	private int yGap = 0;
 
 	public LevelExe(String path, String filename, boolean saved) {
 		if (OPEN) {
@@ -78,9 +80,22 @@ public class LevelExe {
 					return;
 				}
 				if (!(player.psx == null && player.psy == null)){
-					System.out.println("Out");
-					player.setX((int)Math.round(player.psx));
-					player.setY((int)Math.round(player.psy));
+					if (event.getCode() == KeyCode.UP) {
+						yGap = -1;
+					} else if (event.getCode() == KeyCode.DOWN) {
+						yGap = 1;
+					} else if (event.getCode() == KeyCode.RIGHT) {
+						xGap = 1;
+					} else if (event.getCode() == KeyCode.LEFT) {
+						xGap = -1;
+					}
+					if (world.getBlockAt((int)Math.round(player.psx+xGap), (int)Math.round(player.psy+yGap)).getCategory() == World.WALL){
+						System.out.println("Next block is a wall");
+						xGap = 0;
+						yGap = 0;
+					}
+					player.setX((int)Math.round(player.psx+xGap));
+					player.setY((int)Math.round(player.psy+yGap));
 				}
 				if (event.getCode() == KeyCode.UP) {
 					player.moveOn(Player.Y, Player.NEGATIVE, stage, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});

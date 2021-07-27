@@ -187,6 +187,8 @@ public class World {
 				} else if (x[it2].getType() == ELEVATOR && !x[it2].getInfo().equals("NoDataSet")){
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
 					addEnt(new Elevator(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
+				} else if (x[it2].getType() == C_SPIKE){
+					addEnt(new CSpike(this, x[it2].getX(), x[it2].getY()));
 				}
 				it2++;
 			}
