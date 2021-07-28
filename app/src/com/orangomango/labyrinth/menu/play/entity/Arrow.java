@@ -8,6 +8,7 @@ import javafx.util.Duration;
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
 
 public class Arrow extends Entity{
 	private String direction = "";
@@ -56,14 +57,22 @@ public class Arrow extends Entity{
 				setX(startX);
 				break;
 		}
-		w.update(0,0,0,0);
+		if (w.getPlayerView()){
+			w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
+		} else {
+			w.update(0, 0, 0, 0);
+		}
 			
 		t = new Timeline(new KeyFrame(Duration.millis(40), event -> {
 			if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)) != null){
 				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getCategory() == World.AIR) && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
 					setX(getX()+stepX);
 					setY(getY()+stepY);
-					w.update(0,0,0,0);
+					if (w.getPlayerView()){
+						w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
+					} else {
+						w.update(0, 0, 0, 0);
+					}
 				} else {
 					if (isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
 						w.getPlayer().die();
@@ -92,19 +101,23 @@ public class Arrow extends Entity{
 	
 	@Override
 	public void draw(GraphicsContext pen){
+		draw(pen, getX(), getY());
+	}
+	
+	public void draw(GraphicsContext pen, double px, double py){
 		if (SHOW){
 			switch (this.direction){
 				case World.WEST:
-			    pen.drawImage(this.image, getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			    pen.drawImage(this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			    break;
 			  case World.EST:
-			  	pen.drawImage(this.image, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, getX() * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0 + getY() * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			  	pen.drawImage(this.image, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			  	break;
 			  case World.NORTH:
-			  	pen.drawImage(this.image2, getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			  	pen.drawImage(this.image2, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			    break;
 			  case World.SOUTH:
-			  	pen.drawImage(this.image2, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, getX() * World.BLOCK_WIDTH + 0, World.BLOCK_WIDTH + getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
+			  	pen.drawImage(this.image2, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, px * World.BLOCK_WIDTH + 0, World.BLOCK_WIDTH + py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
 			    break;
 			}
 		}

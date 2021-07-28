@@ -125,13 +125,10 @@ public class Player {
 						int ty = Integer.parseInt(numbers[1]);
 						this.setX(tx);
 						this.setY(ty);
-						world.update(0, 0, 0, 0);
 					}
 				}
-				if (rec == null){
-					this.world.update(0, 0, 0, 0);
-				} else {
-					this.world.update(rec[0], rec[1], rec[2], rec[3]);
+				if (rec[0] == 1){
+					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
 				}
 				return;
 			} else {
@@ -141,17 +138,23 @@ public class Player {
 				} else if (direction == Y){
 					setY(getY() + m);
 				}
-				this.world.update(0, 0, 0, 0);
+				if (rec[0] == 1){
+					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+				}
 			}
 			if (this.isOnBlock(World.SPIKE)){
 				this.die();
-				this.world.update(0, 0, 0, 0);
+				if (rec[0] == 1){
+					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+				}
 				this.repeat = rep2;
 				return;
 			}
 			for (Entity ent : this.world.getEnts()){
 				if (ent.isOnPlayer(this) && (ent instanceof Bat || ent instanceof Arrow)){
-					this.die();
+					if (rec[0] == 1){
+						this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+					}
 					this.repeat = rep2;
 					return;
 				} else if (ent.isOnPlayer(this) && ent instanceof Elevator){

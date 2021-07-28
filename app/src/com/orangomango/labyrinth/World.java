@@ -29,6 +29,7 @@ public class World {
 	private Player player;
 	protected Canvas canvas;
 	private Entity[] ents = new Entity[0];
+	private boolean playerView = false;
 	
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -50,6 +51,14 @@ public class World {
 	public World(String path) {
 		filePath = path;
 		world = readWorld(filePath);
+	}
+	
+	public void setPlayerView(boolean value){
+		this.playerView = value;
+	}
+	
+	public boolean getPlayerView(){
+		return this.playerView;
 	}
 
 	public void setPen(GraphicsContext pen) {
@@ -107,7 +116,7 @@ public class World {
 				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
 				draw();
 			} else {
-				this.pen.fillRect(0, 0, (x+y) * BLOCK_WIDTH, (x+y) * BLOCK_WIDTH);
+				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH); //(x+y) * BLOCK_WIDTH, (x+y) * BLOCK_WIDTH);
 				draw(x, y, x1, y1);
 			}
 		} catch (NullPointerException e) {
@@ -176,7 +185,7 @@ public class World {
 			if (iterator + w > current.length) { // If iterator is bigger than the list length then stop
 				break;
 			}
-      for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
+      			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
 				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")){
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
@@ -207,10 +216,10 @@ public class World {
 		}
 		drawStart(0, 0);
 		drawEnd(0, 0);
-		this.player.draw(this.pen);
 		for (Entity e : this.ents){
 			e.draw(this.pen);
 		}
+		this.player.draw(this.pen);
 	}
 	
 	public void draw(int x, int y, int x1, int y1){	
@@ -235,11 +244,13 @@ public class World {
 		if  ((end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
 			drawEnd(x, y);
 		}
+		for (Entity e : this.ents){
+			if ((e.getX() >= x && e.getX() <= x1) && (e.getY() >= y && e.getY() <= y1)){
+				e.draw(this.pen, e.getX()-x, e.getY()-y);
+			}
+		}
 		if ((this.player.getX() >= x && this.player.getX() <= x1) && (this.player.getY() >= y && this.player.getY() <= y1)){
 			this.player.draw(this.pen, this.player.getX()-x, this.player.getY()-y);
-		}
-		for (Entity e : this.ents){
-			e.draw(this.pen);
 		}
 	}
 	

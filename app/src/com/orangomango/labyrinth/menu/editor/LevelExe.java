@@ -22,6 +22,7 @@ public class LevelExe {
 	public static boolean PLAYER_MOVEMENT;
 	private int xGap = 0;
 	private int yGap = 0;
+	public static final int PWS = 2;  // Player World Space(right)
 
 	public LevelExe(String path, String filename, boolean saved) {
 		if (OPEN) {
@@ -33,6 +34,7 @@ public class LevelExe {
 		OPEN = true;
 
 		final World world = new World(path);
+		world.setPlayerView(true);
 		
 		stage.setOnCloseRequest(event -> {
 			if (LevelExe.exStage != null) {
@@ -70,7 +72,11 @@ public class LevelExe {
 			e.start();
 		}
 		
-		world.draw(); //player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2);
+		if (world.getPlayerView()){
+			world.draw(world.start[0]-PWS, world.start[1]-PWS, world.start[0]+PWS, world.start[1]+PWS);
+		} else {
+			world.draw();
+		}
 		
 		// Handle movement
 		canvas.setOnKeyPressed(new EventHandler<KeyEvent> () {
@@ -98,13 +104,13 @@ public class LevelExe {
 					player.setY((int)Math.round(player.psy+yGap));
 				}
 				if (event.getCode() == KeyCode.UP) {
-					player.moveOn(Player.Y, Player.NEGATIVE, stage, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.Y, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.DOWN) {
-					player.moveOn(Player.Y, Player.POSITIVE, stage, null); // new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.Y, Player.POSITIVE, stage,   new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.RIGHT) {
-					player.moveOn(Player.X, Player.POSITIVE, stage, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.X, Player.POSITIVE, stage,  new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.LEFT) {
-					player.moveOn(Player.X, Player.NEGATIVE, stage, null); //new int[]{player.getX()-2, player.getY()-2, player.getX()+2, player.getY()+2});
+					player.moveOn(Player.X, Player.NEGATIVE, stage,  new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else {
 					System.out.println(event.getCode());
 				}

@@ -33,10 +33,14 @@ public abstract class Entity{
 	protected void setData(World w){
 		this.world = w;
 	}
-
+	
 	public void draw(GraphicsContext p){
+		draw(p, x, y);
+	}
+
+	public void draw(GraphicsContext p, double px, double py){
 		p.setFill(Color.BLACK);
-		p.fillRect(x*World.BLOCK_WIDTH, y*World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+		p.fillRect(px*World.BLOCK_WIDTH, py*World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
 	public boolean isOnPlayer(Player pl, double px, double py){
