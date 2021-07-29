@@ -11,8 +11,8 @@ public abstract class Entity{
 	protected double y = 0;
 	protected World world;
 	
-  public static final String VERTICAL = "v";
-  public static final String HORIZONTAL = "h";
+        public static final String VERTICAL = "v";
+        public static final String HORIZONTAL = "h";
 
 	public double getX(){
 		return x;

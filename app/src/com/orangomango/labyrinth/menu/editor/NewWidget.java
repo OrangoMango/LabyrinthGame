@@ -14,6 +14,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 
@@ -32,6 +33,7 @@ public class NewWidget {
 	private static Scene SCENE_3;
 	private static Scene SCENE_4;
 	public static final int MAX_WORLD_SIZE = 30;
+	public static final int MAX_PLAYER_VIEW_SIZE = 15;
 	private static boolean FIRST_TIME = false;
 
 	private Spinner spinner1, spinner2, spinner3, spinner4;
@@ -39,7 +41,7 @@ public class NewWidget {
 	private EditableWorld ed;
 	private Editor editor;
 
-	private int pWidth, pHeight = 2;
+	private int pWidth, pHeight = 0;
 	private int sX, sY, eX, eY;
 
 	private File file;
@@ -65,16 +67,19 @@ public class NewWidget {
 		for (int x = 0; x<4; x++) {
 			boxes[x] = new HBox();
 			pres[x] = new Button("<--");
+			pres[x].setTooltip(new Tooltip("Previous page"));
 			pres[x].setOnAction(event -> switchScene(-1));
 			if (x == 0) {
 				pres[x].setDisable(true);
 			}
 			nexts[x] = new Button("-->");
+			nexts[x].setTooltip(new Tooltip("Next page"));
 			nexts[x].setOnAction(event -> switchScene(1));
 			if (x == 3) {
 				nexts[x].setDisable(true);
 			}
 			finish[x] = new Button("Finish");
+			finish[x].setTooltip(new Tooltip("Create level"));
 			finish[x].setOnAction(event -> finishWidget());
 			if (x != 3) {
 				finish[x].setDisable(true);
@@ -118,8 +123,8 @@ public class NewWidget {
 		l2.setHgap(10);
 		l2.setVgap(10);
 		Label lvlSize = new Label("Select level size:");
-		Label sX = new Label("x:");
-		Label sY = new Label("y:");
+		Label sX = new Label("Width:");
+		Label sY = new Label("Height:");
 		Canvas preview = new Canvas(100, 100);
 		Slider sl1 = new Slider(2, MAX_WORLD_SIZE, 2);
 		Slider sl2 = new Slider(2, MAX_WORLD_SIZE, 2);
@@ -137,11 +142,25 @@ public class NewWidget {
 		pen.setFill(Color.WHITE);
 		pen.fillRect(0, 0, 100, 100);
 		Label cPreview = new Label("preview (0x0)");
+		Label playerView = new Label("Player view disabled (?)");
+		playerView.setTooltip(new Tooltip("When this option is enabled, width or height is greater than "+MAX_PLAYER_VIEW_SIZE+",\nyou will se the player at the centre and the level \"moving\".\nOtherwise the player will move normally.\nThe orange square is your view when you play your level"));
 		sl1.setOnMouseDragged(event -> {
-			this.pWidth = (int) sl1.getValue();updateCanvas(pen, cPreview);
+			this.pWidth = (int) sl1.getValue();
+			updateCanvas(pen, cPreview);
+			if (this.pWidth > MAX_PLAYER_VIEW_SIZE){
+				playerView.setText("Player view enabled (?)");
+			} else if (this.pHeight <= MAX_PLAYER_VIEW_SIZE) {
+				playerView.setText("Player view disabled (?)");
+			}
 		});
 		sl2.setOnMouseDragged(event -> {
-			this.pHeight = (int) sl2.getValue();updateCanvas(pen, cPreview);
+			this.pHeight = (int) sl2.getValue();
+			updateCanvas(pen, cPreview);
+			if (this.pHeight > MAX_PLAYER_VIEW_SIZE){
+				playerView.setText("Player view enabled (?)");
+			} else if (this.pWidth <= MAX_PLAYER_VIEW_SIZE){
+				playerView.setText("Player view disabled (?)");
+			}
 		});
 		l2.add(lvlSize, 0, 0, 2, 2);
 		l2.add(sX, 0, 1);
@@ -150,6 +169,7 @@ public class NewWidget {
 		l2.add(sl2, 1, 2);
 		l2.add(preview, 2, 0);
 		l2.add(cPreview, 2, 1);
+		l2.add(playerView, 2, 2);
 		l2.add(boxes[1], 0, 3, 2, 1);
 
 		// Scene 3
@@ -226,10 +246,10 @@ public class NewWidget {
 		l4.add(pathP, 0, 2);
 		l4.add(boxes[3], 0, 3, 2, 1);
 
-		SCENE_1 = new Scene(l1, 300, 250);
-		SCENE_2 = new Scene(l2, 300, 250);
-		SCENE_3 = new Scene(l3, 300, 250);
-		SCENE_4 = new Scene(l4, 300, 250);
+		SCENE_1 = new Scene(l1, 350, 250);
+		SCENE_2 = new Scene(l2, 350, 250);
+		SCENE_3 = new Scene(l3, 350, 250);
+		SCENE_4 = new Scene(l4, 350, 250);
 
 		stage.setTitle("Create a new world");
 		stage.setScene(SCENE_1);
@@ -243,6 +263,10 @@ public class NewWidget {
 		pen.fillRect(0, 0, 100, 100);
 		pen.setStroke(Color.RED);
 		pen.strokeRect(10, 10, this.pWidth * 80 / MAX_WORLD_SIZE, this.pHeight * 80 / MAX_WORLD_SIZE); // x : 80 = width : 30
+		if (this.pWidth > MAX_PLAYER_VIEW_SIZE || this.pHeight > MAX_PLAYER_VIEW_SIZE){
+			pen.setStroke(Color.ORANGE);
+			pen.strokeRect(10, 10, (this.pWidth > LevelExe.PWS*2+1 ? LevelExe.PWS*2+1 : this.pWidth) * 80 / MAX_WORLD_SIZE, (this.pHeight > LevelExe.PWS*2+1 ? LevelExe.PWS*2+1 : this.pHeight) * 80 / MAX_WORLD_SIZE);
+		}
 	}
 
 	public String getPath() {

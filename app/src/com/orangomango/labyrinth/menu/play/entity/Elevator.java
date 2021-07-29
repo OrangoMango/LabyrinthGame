@@ -8,6 +8,7 @@ import javafx.util.Duration;
 import com.orangomango.labyrinth.World;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.editor.Editor;
+import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
 
 public class Elevator extends Entity {
 	private double startX;
@@ -54,7 +55,11 @@ public class Elevator extends Entity {
 					w.getPlayer().psy = getY();
 				}
 			}
-			w.update(0, 0, 0, 0);
+			if (w.getPlayerView()){
+				w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
+			} else {
+				w.update(0, 0, 0, 0);
+			}
 		}));
 		this.t.setCycleCount(Animation.INDEFINITE);
 	}
@@ -69,7 +74,11 @@ public class Elevator extends Entity {
 
 	@Override
 	public void draw(GraphicsContext p) {
+		draw(p, getX(), getY());
+	}
+	
+	public void draw(GraphicsContext p, double px, double py) {
 		if (M != 0)
-			p.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			p.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 }

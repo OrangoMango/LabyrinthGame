@@ -34,7 +34,7 @@ public class LevelExe {
 		OPEN = true;
 
 		final World world = new World(path);
-		world.setPlayerView(true);
+		world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE);
 		
 		stage.setOnCloseRequest(event -> {
 			if (LevelExe.exStage != null) {
@@ -102,6 +102,8 @@ public class LevelExe {
 					}
 					player.setX((int)Math.round(player.psx+xGap));
 					player.setY((int)Math.round(player.psy+yGap));
+					xGap = 0;
+					yGap = 0;
 				}
 				if (event.getCode() == KeyCode.UP) {
 					player.moveOn(Player.Y, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
