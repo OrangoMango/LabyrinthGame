@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import java.io.*;
 
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import static com.orangomango.labyrinth.menu.editor.Editor.DONE;
 
 public class Selection {
@@ -45,7 +46,10 @@ public class Selection {
 		layout.add(or, 1, 0);
 		layout.add(openBtn, 2, 0);
 
-		this.stage.setScene(new Scene(layout, 300, 100));
+		Scene scene = new Scene(layout, 300, 100);
+		//scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+		
+		this.stage.setScene(scene);
 		this.stage.setResizable(false);
 		this.stage.setOnCloseRequest(event -> Platform.exit());
 		this.stage.show();
@@ -76,7 +80,7 @@ public class Selection {
 			alert.setTitle("Error");
 			alert.setContentText("Could not open world file!");
 			alert.showAndWait();
-                        Platform.exit();
+            Platform.exit();
 		}
 		OPENED = false;
 	}

@@ -49,7 +49,7 @@ public class Elevator extends Entity {
 			if (isOnPlayer(w.getPlayer()) || (w.getPlayer().psx != null && w.getPlayer().psy != null)) {
 				if (this.direction.equals(VERTICAL)) {
 					w.getPlayer().psy = getY() + 0.25 * M;
-					w.getPlayer().psx = getY();
+					w.getPlayer().psx = getX();
 				} else if (this.direction.equals(HORIZONTAL)) {
 					w.getPlayer().psx = getX() + 0.25 * M;
 					w.getPlayer().psy = getY();

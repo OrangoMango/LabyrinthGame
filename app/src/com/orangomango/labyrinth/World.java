@@ -45,6 +45,8 @@ public class World {
 	public final static String SHOOTER = "shooter";
 	public final static String BAT_GEN = "bat_generator";
 	public final static String ELEVATOR = "elevator";
+	
+	public final static String D_WARNING = "decoration_warning";
 
 	public final static int BLOCK_WIDTH = 32;
 

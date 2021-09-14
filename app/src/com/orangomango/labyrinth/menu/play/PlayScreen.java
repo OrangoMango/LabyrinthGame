@@ -14,6 +14,7 @@ import java.io.*;
 import com.orangomango.labyrinth.LabyrinthMain;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import static com.orangomango.labyrinth.menu.Menu.PLAY;
 import static com.orangomango.labyrinth.menu.LoadingScreen.LEVELS;
 
@@ -69,7 +70,9 @@ public class PlayScreen {
 
     tab.setContent(pane);
     tabpane.getTabs().add(tab);
-    stage.setScene(new Scene(tabpane, 600, 300));
+    Scene scene = new Scene(tabpane, 600, 300);
+    scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+    stage.setScene(scene);
     stage.show();
   }
 }

@@ -5,10 +5,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.geometry.*;
 import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.*;
 import javafx.scene.canvas.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
@@ -133,7 +133,6 @@ public class Editor {
 							}
 						}
 					}
-					item1.setDisable(edblock.getType() != EditableWorld.PORTAL);
 					MenuItem item2 = new MenuItem("Set bat data");
 					item2.setOnAction(batEvent -> {
 						Stage st = new Stage();
@@ -179,10 +178,11 @@ public class Editor {
 						pane.add(slider, 1, 4);
 						pane.add(ok, 0, 5);
 						pane.add(canc, 1, 5);
-						st.setScene(new Scene(pane, 420, 300));
+						Scene scene = new Scene(pane, 420, 300);
+						scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+						st.setScene(scene);
 						st.show();
 					});
-					item2.setDisable(edblock.getType() != EditableWorld.BAT_GEN);
 					Menu item3 = new Menu("Rotate");
 					MenuItem r = new MenuItem("Rotate 90deg right");
 					r.setOnAction(rr -> {
@@ -227,7 +227,6 @@ public class Editor {
 						unsaved();
 					});
 					item3.getItems().addAll(r, l);
-					item3.setDisable(edblock.getType() != EditableWorld.SHOOTER);
 					MenuItem item4 = new MenuItem("Set movable block data");
 					item4.setOnAction(clickEv -> {
 						Stage st = new Stage();
@@ -264,11 +263,25 @@ public class Editor {
 						pane.add(b2, 0, 3);
 						pane.add(ok, 0, 4);
 						pane.add(canc, 1, 4);
-						st.setScene(new Scene(pane, 350, 250));
+						Scene scene = new Scene(pane, 350, 250);
+						scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+						st.setScene(scene);
 						st.show();
 					});
-					item4.setDisable(edblock.getType() != EditableWorld.ELEVATOR);
-					contextMenu.getItems().addAll(item1, item2, item3, item4);
+					switch (edblock.getType()){
+						case EditableWorld.PORTAL:
+							contextMenu.getItems().add(item1);
+							break;
+						case EditableWorld.BAT_GEN:
+							contextMenu.getItems().add(item2);
+							break;
+						case EditableWorld.SHOOTER:
+							contextMenu.getItems().add(item3);
+							break;
+						case EditableWorld.ELEVATOR:
+							contextMenu.getItems().add(item4);
+							break;
+					}
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
@@ -283,11 +296,83 @@ public class Editor {
 					if (edblock.getType() == EditableWorld.PORTAL && !edblock.getInfo().equals("NoPointSet")){
 						String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
 						editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
-								
+					}
+					// Check clone on EditableWorld class
+					if (edblock.getType() == EditableWorld.WALL){
+					    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()-1) != null){
+						if (editableworld.getBlockAt(edblock.getX(), edblock.getY()-1).getType().equals(EditableWorld.WALL)){
+						    editableworld.getBlockAt(edblock.getX(), edblock.getY()-1).removeConn("s");
+						}
+					    }
+					    if (editableworld.getBlockAt(edblock.getX()+1, edblock.getY()) != null){
+						if (editableworld.getBlockAt(edblock.getX()+1, edblock.getY()).getType().equals(EditableWorld.WALL)){
+						    editableworld.getBlockAt(edblock.getX()+1, edblock.getY()).removeConn("w");
+						}
+					    }
+					    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()+1) != null){
+						if (editableworld.getBlockAt(edblock.getX(), edblock.getY()+1).getType().equals(EditableWorld.WALL)){
+						    editableworld.getBlockAt(edblock.getX(), edblock.getY()+1).removeConn("n");
+						}
+					    }
+					    if (editableworld.getBlockAt(edblock.getX()-1, edblock.getY()) != null){
+						if (editableworld.getBlockAt(edblock.getX()-1, edblock.getY()).getType().equals(EditableWorld.WALL)){
+						    editableworld.getBlockAt(edblock.getX()-1, edblock.getY()).removeConn("e");
+						}
+					    }
+					    editableworld.updateOnFile();
 					}
 					switch (SELECTED_BLOCK) {
 						case 1:
-							edblock.setInfo(null);
+							if (edblock.getType().equals(EditableWorld.AIR)){
+							    StringBuilder b = new StringBuilder();
+							    int c = 0;
+							    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()-1) != null){
+								    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()-1).getType().equals(EditableWorld.WALL)){
+									    b.append("n");
+									    editableworld.getBlockAt(edblock.getX(), edblock.getY()-1).addConn("s");
+								    } else {
+									    c++;
+								    }
+							    } else {
+								    c++;
+							    }
+							    if (editableworld.getBlockAt(edblock.getX()+1, edblock.getY()) != null){
+								    if (editableworld.getBlockAt(edblock.getX()+1, edblock.getY()).getType().equals(EditableWorld.WALL)){
+									    b.append("e");
+									    editableworld.getBlockAt(edblock.getX()+1, edblock.getY()).addConn("w");
+								    } else {
+									    c++;
+								    }
+							    } else {
+								    c++;
+							    }
+							    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()+1) != null){
+								    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()+1).getType().equals(EditableWorld.WALL)){
+									    b.append("s");
+									    editableworld.getBlockAt(edblock.getX(), edblock.getY()+1).addConn("n");
+								    } else {
+									    c++;
+								    }
+							    } else {
+								    c++;
+							    }
+							    if (editableworld.getBlockAt(edblock.getX()-1, edblock.getY()) != null){
+								    if (editableworld.getBlockAt(edblock.getX()-1, edblock.getY()).getType().equals(EditableWorld.WALL)){
+									    b.append("w");
+									    editableworld.getBlockAt(edblock.getX()-1, edblock.getY()).addConn("e");
+								    } else {
+									    c++;
+								    }
+							    } else {
+								    c++;
+							    }
+							    if (c != 4){
+								edblock.setInfo("conn#"+b.toString());
+							    } else {
+								    edblock.setInfo("conn#null");
+							    }
+							}
+							
 							edblock.toggleType(EditableWorld.WALL);
 							break;
 						case 2:
@@ -318,9 +403,15 @@ public class Editor {
 							edblock.setInfo(null);
 							edblock.toggleType(EditableWorld.C_SPIKE);
 							break;
+						case 9:
+							edblock.setInfo(null);
+							edblock.toggleType(EditableWorld.D_WARNING);
+							break;
 					}
+					
 					editableworld.setBlockOn(edblock);
 					editableworld.updateOnFile();
+					
 					unsaved();
 				}
 			}
@@ -382,6 +473,106 @@ public class Editor {
 
 		GridPane layout = new GridPane();
 
+		// Setup the menu
+		MenuBar menuBar = new MenuBar();
+		
+		Menu fileMenu = new Menu("File");
+		MenuItem mNew = new MenuItem("New");
+		mNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+		mNew.setOnAction(e -> {
+		    // Clone of toolbar button
+		    NewWidget wid = new NewWidget(false);
+		    wid.setEDW(edworld);
+		    wid.setEditor(this);
+		});
+		MenuItem mSave = new MenuItem("Save");
+		mSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+		mSave.setOnAction(e -> {
+		    try {
+				// Clone of toolbar button
+				saved();
+				copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setHeaderText("File saved successfully");
+				alert.setTitle("File saved");
+				alert.setContentText("File saved successfully.");
+				alert.showAndWait();
+			} catch (Exception ex) {
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setHeaderText("Error while parsing file");
+				alert.setTitle("Error");
+				alert.setContentText("Could not save world file!");
+				alert.showAndWait();
+			}
+		});
+		MenuItem mOpen = new MenuItem("Open");
+		mOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+		mOpen.setOnAction(e -> {
+		    try {
+				// Clone of toolbar button
+				FileChooser chooser = new FileChooser();
+				chooser.setInitialDirectory(new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator));
+				chooser.setTitle("Open world");
+				chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
+				File f = chooser.showOpenDialog(this.stage);
+				if (f.equals(null)) {
+					throw new Exception("Null file opened");
+				}
+				open(f);
+			} catch (Exception ex) {
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setHeaderText("Error while parsing file");
+				alert.setTitle("Error");
+				alert.setContentText("Could not open world file!");
+				alert.showAndWait();
+			}
+		});
+		fileMenu.getItems().addAll(mNew, mSave, mOpen);
+		
+		Menu editMenu = new Menu("Edit");
+		MenuItem mAR = new MenuItem("Add row");
+		mAR.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.ALT_DOWN));
+		mAR.setOnAction(e -> {
+			// Clone of toolbar button
+			if (checkValidityMax("h")) {
+				edworld.addRow();
+				unsaved();
+			}
+		});
+		MenuItem mAC = new MenuItem("Add column");
+		mAC.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN));
+		mAC.setOnAction(e -> {
+			// Clone of toolbar button
+			if (checkValidityMax("w")) {
+				edworld.addColumn();
+				unsaved();
+			}
+		});
+		MenuItem mRR = new MenuItem("Remove row");
+		mRR.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN));
+		mRR.setOnAction(e -> {
+			// Clone of toolbar button
+			checkValidity(edworld.removeRow());
+			unsaved();
+		});
+		MenuItem mRC = new MenuItem("Remove column");
+		mRC.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN));
+		mRC.setOnAction(e -> {
+			// Clone of toolbar button
+			checkValidity(edworld.removeColumn());
+			unsaved();
+		});
+		MenuItem mUndo = new MenuItem("Undo");
+		mUndo.setDisable(true);
+		MenuItem mRedo = new MenuItem("Redo");
+		mRedo.setDisable(true);
+		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mUndo, mRedo);
+		
+		Menu modeMenu = new Menu("Mode");
+		modeMenu.setDisable(true);
+		
+		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu);
+
 		// Setup the toolbar
 		ToolBar toolbar = new ToolBar();
 		toolbar.setOrientation(Orientation.HORIZONTAL);
@@ -392,6 +583,7 @@ public class Editor {
 		newBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/new.png")));
                 newBtn.setTooltip(new Tooltip("Create a new world file"));
 		newBtn.setOnAction(event -> {
+			// Clone of menu button
 			NewWidget wid = new NewWidget(false);
 			wid.setEDW(edworld);
 			wid.setEditor(this);
@@ -401,6 +593,7 @@ public class Editor {
                 saveBtn.setTooltip(new Tooltip("Save file"));
 		saveBtn.setOnAction(event -> {
 			try {
+				// Clone of menu button
 				saved();
 				copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -422,6 +615,7 @@ public class Editor {
         	openBtn.setTooltip(new Tooltip("Open a world file"));
 		openBtn.setOnAction(event -> {
 			try {
+				// Clone of menu button
 				FileChooser chooser = new FileChooser();
 				chooser.setInitialDirectory(new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator));
 				chooser.setTitle("Open world");
@@ -444,37 +638,41 @@ public class Editor {
                 addCBtn.setTooltip(new Tooltip("Add column to world"));
 		addCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ac.png")));
 		addCBtn.setOnAction(event -> {
+			// Clone of menu button
 			if (checkValidityMax("w")) {
 				edworld.addColumn();
 				unsaved();
 			}
 		});
 		Button addRBtn = new Button();
-        addRBtn.setTooltip(new Tooltip("Add row to world"));
+		addRBtn.setTooltip(new Tooltip("Add row to world"));
 		addRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ar.png")));
 		addRBtn.setOnAction(event -> {
+			// Clone of menu button
 			if (checkValidityMax("h")) {
 				edworld.addRow();
 				unsaved();
 			}
 		});
 		Button rmCBtn = new Button();
-        rmCBtn.setTooltip(new Tooltip("Remove column from world"));
+		rmCBtn.setTooltip(new Tooltip("Remove column from world"));
 		rmCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rc.png")));
 		rmCBtn.setOnAction(event -> {
+			// Clone of menu button
 			checkValidity(edworld.removeColumn());
 			unsaved();
 		});
 		Button rmRBtn = new Button();
-        rmRBtn.setTooltip(new Tooltip("Remove row from world"));
+		rmRBtn.setTooltip(new Tooltip("Remove row from world"));
 		rmRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rr.png")));
 		rmRBtn.setOnAction(event -> {
+			// Clone of menu button
 			checkValidity(edworld.removeRow());
 			unsaved();
 		});
 
 		Button runBtn = new Button("Run");
-        runBtn.setTooltip(new Tooltip("Run current level"));
+		runBtn.setTooltip(new Tooltip("Run current level"));
 		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/run.png")));
 		runBtn.setOnAction(event -> {
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
@@ -482,7 +680,7 @@ public class Editor {
 		});
 
 		Button sseBtn = new Button();
-        sseBtn.setTooltip(new Tooltip("Change start and end position"));
+		sseBtn.setTooltip(new Tooltip("Change start and end position"));
 		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/sse.png")));
 		sseBtn.setOnAction(event -> {new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end); unsaved();});
 
@@ -527,80 +725,95 @@ public class Editor {
 		tabs.getTabs().add(editTab);
 		splitpane.getItems().add(tabs);
 
-		int AW = 160; // Accordion width
+		Pagination pages = new Pagination();
+		pages.setPageCount(3);
+		pages.setCurrentPageIndex(0);
+		pages.setMaxPageIndicatorCount(3);
+		
+		ToggleGroup tg = new ToggleGroup();
+		
+		pages.setPageFactory((pageIndex) -> {
+			
+			String style = "-fx-font-weight: bold;\n-fx-font-family: \"Courier New\";\n-fx-font-size: 14;";
+			
+			if (pageIndex == 0){
+				TilePane db = new TilePane();
+				db.setPadding(new Insets(5, 5, 5, 5));
+				db.setHgap(5);
+				db.setVgap(5);
+				ToggleButton wallB = new ToggleButton();
+				wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-nesw.png")));
+				wallB.setTooltip(new Tooltip("Wall block. ID:1"));
+				wallB.setToggleGroup(tg);
+				wallB.setOnAction(event -> SELECTED_BLOCK = 1);
+				wallB.setSelected(true);
+				ToggleButton portalB = new ToggleButton();
+				portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
+				portalB.setTooltip(new Tooltip("Portal block. ID:4"));
+				portalB.setToggleGroup(tg);
+				portalB.setOnAction(event -> SELECTED_BLOCK = 4);
+				ToggleButton moveB = new ToggleButton();
+				moveB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png")));
+				moveB.setTooltip(new Tooltip("Elevator block. ID:7"));
+				moveB.setToggleGroup(tg);
+				moveB.setOnAction(event -> SELECTED_BLOCK = 7);
+				db.getChildren().addAll(wallB, portalB, moveB);
+				Label header = new Label(" Default Blocks");
+				header.setStyle(style);
+				return new VBox(header, db);
+			} else if (pageIndex == 1){
+				TilePane deb = new TilePane();
+				deb.setPadding(new Insets(5, 5, 5, 5));
+				deb.setHgap(5);
+				deb.setVgap(5);
+				ToggleButton voidB = new ToggleButton("VOID");
+				voidB.setTooltip(new Tooltip("VOID block. ID:2"));
+				voidB.setToggleGroup(tg);
+				voidB.setOnAction(event -> SELECTED_BLOCK = 2);
+				ToggleButton warB = new ToggleButton();
+				warB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_warning.png")));
+				warB.setTooltip(new Tooltip("Warning decoration. ID:9"));
+				warB.setToggleGroup(tg);
+				warB.setOnAction(event -> SELECTED_BLOCK = 9);
+				deb.getChildren().addAll(voidB, warB);
+				Label header = new Label(" Decoration Blocks");
+				header.setStyle(style);
+				return new VBox(header, deb);
+			} else if (pageIndex == 2){
+				TilePane dab = new TilePane();
+				dab.setPadding(new Insets(5, 5, 5, 5));
+				dab.setHgap(5);
+				dab.setVgap(5);
+				ToggleButton spikeB = new ToggleButton();
+				spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
+				spikeB.setTooltip(new Tooltip("Spike block. ID:3"));
+				spikeB.setToggleGroup(tg);
+				spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
+				ToggleButton shootB = new ToggleButton();
+				shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png")));
+				shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
+				shootB.setToggleGroup(tg);
+				shootB.setOnAction(event -> SELECTED_BLOCK = 5);
+				ToggleButton batB = new ToggleButton();
+				batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
+				batB.setTooltip(new Tooltip("Bat. ID:6"));
+				batB.setToggleGroup(tg);
+				batB.setOnAction(event -> SELECTED_BLOCK = 6);
+				ToggleButton cspikeB = new ToggleButton();
+				cspikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png")));
+				cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
+				cspikeB.setToggleGroup(tg);
+				cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
+				dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
+				Label header = new Label(" Damage Blocks");
+				header.setStyle(style);
+				return new VBox(header, dab);
+			}
+			
+			return new TilePane(new Label("Page: "+(pageIndex+1)));
+		});
 
-                Accordion blockSelect = new Accordion();
-                ToggleGroup tg = new ToggleGroup();
-                
-                // Default blocks
-                TilePane db = new TilePane();
-                db.setHgap(5);
-                db.setVgap(5);
-                ToggleButton wallB = new ToggleButton();
-                wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png")));
-                wallB.setTooltip(new Tooltip("Wall block. ID:1"));
-                wallB.setToggleGroup(tg);
-                wallB.setOnAction(event -> SELECTED_BLOCK = 1);
-                wallB.setSelected(true);
-                ToggleButton portalB = new ToggleButton();
-                portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
-                portalB.setTooltip(new Tooltip("Portal block. ID:4"));
-                portalB.setToggleGroup(tg);
-                portalB.setOnAction(event -> SELECTED_BLOCK = 4);
-                ToggleButton moveB = new ToggleButton();
-                moveB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png")));
-                moveB.setTooltip(new Tooltip("Elevator block. ID:7"));
-                moveB.setToggleGroup(tg);
-                moveB.setOnAction(event -> SELECTED_BLOCK = 7);
-                //moveB.setDisable(true);
-                db.getChildren().addAll(wallB, portalB, moveB);
-                TitledPane defaultBlocks = new TitledPane("Default blocks", db);
-                defaultBlocks.setPrefWidth(AW);
-                this.stage.widthProperty().addListener((ob, ov, nv) -> defaultBlocks.setPrefWidth(((double)nv)*0.195));
-                
-                // Decoration blocks
-                TilePane deb = new TilePane();
-                ToggleButton voidB = new ToggleButton("VOID");
-                voidB.setTooltip(new Tooltip("VOID block. ID:2"));
-                voidB.setToggleGroup(tg);
-                voidB.setOnAction(event -> SELECTED_BLOCK = 2);
-                deb.getChildren().add(voidB);
-                TitledPane decorationBlocks = new TitledPane("Decoration blocks", deb);
-                decorationBlocks.setPrefWidth(AW);
-                
-                // Damage blocks
-                TilePane dab = new TilePane();
-                dab.setHgap(5);
-                dab.setVgap(5);
-                ToggleButton spikeB = new ToggleButton();
-                spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
-                spikeB.setTooltip(new Tooltip("Spike block. ID:3"));
-                spikeB.setToggleGroup(tg);
-                spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
-                ToggleButton shootB = new ToggleButton();
-                shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png")));
-                shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
-                shootB.setToggleGroup(tg);
-                shootB.setOnAction(event -> SELECTED_BLOCK = 5);
-                ToggleButton batB = new ToggleButton();
-                batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
-                batB.setTooltip(new Tooltip("Bat. ID:6"));
-                batB.setToggleGroup(tg);
-                batB.setOnAction(event -> SELECTED_BLOCK = 6);
-                ToggleButton cspikeB = new ToggleButton();
-                cspikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png")));
-                cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
-                cspikeB.setToggleGroup(tg);
-                cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
-                
-                dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
-                TitledPane damageBlocks = new TitledPane("Damage blocks", dab);
-                damageBlocks.setPrefWidth(AW);
-                
-                blockSelect.getPanes().addAll(defaultBlocks, decorationBlocks, damageBlocks);
-                blockSelect.setExpandedPane(defaultBlocks);
-                ScrollPane blockSelector = new ScrollPane(blockSelect);
-		splitpane.getItems().add(blockSelector);
+		splitpane.getItems().add(pages);
 
 		// Set the divider on 80%
 		splitpane.setDividerPositions(0.8f);
@@ -608,10 +821,13 @@ public class Editor {
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
 		splitpane.getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> splitpane.setDividerPositions(0.8f));
 
-		layout.add(toolbar, 0, 0);
-		layout.add(splitpane, 0, 1);
+		layout.add(menuBar, 0, 0);
+		layout.add(toolbar, 0, 1);
+		layout.add(splitpane, 0, 2);
 
-		this.stage.setScene(new Scene(layout, 850, 550));
+		Scene scene = new Scene(layout, 850, 550);
+		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+		this.stage.setScene(scene);
 	}
     
     /**

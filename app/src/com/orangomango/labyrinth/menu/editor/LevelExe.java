@@ -12,9 +12,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Alert;
 
+import java.io.*;
+
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.menu.play.entity.*;
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 
 public class LevelExe {
 	public static Stage exStage = null;
@@ -62,6 +66,7 @@ public class LevelExe {
 		world.setPen(pen);
 
 		Scene scene = new Scene(layout, World.BLOCK_WIDTH * world.width + 20, World.BLOCK_WIDTH * world.height + 40);
+		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 
 		final Player player = new Player(world.start[0], world.start[1], world);

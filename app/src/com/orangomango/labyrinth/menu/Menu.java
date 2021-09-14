@@ -7,10 +7,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Hyperlink;
 
+import java.io.*;
+
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
 import com.orangomango.labyrinth.menu.play.PlayScreen;
 import com.orangomango.labyrinth.LabyrinthMain; // import main application
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 
 public class Menu {
 	private Stage stage;
@@ -54,14 +58,16 @@ public class Menu {
 
 		Label sign = new Label("Game by OrangoMango (C)2021");
 		Hyperlink l = new Hyperlink("https://orangomango.github.io");
-		l.setOnAction(event -> System.out.println("You clicked the link"));
+		l.setOnAction(event -> System.out.println("Click at this link: https://orangomango.github.io"));
 		layout.add(playBtn, 0, 0);
 		layout.add(editorBtn, 1, 0);
 		layout.add(levelsBtn, 2, 0);
 		layout.add(sign, 0, 1, 3, 1);
 		layout.add(l, 0, 2, 3, 1);
 
-		this.stage.setScene(new Scene(layout, 300, 200));
+		Scene scene = new Scene(layout, 300, 200);
+		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+		this.stage.setScene(scene);
 	}
 
 	private void startEditor(String param) {

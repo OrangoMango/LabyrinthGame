@@ -46,6 +46,52 @@ public class EditableWorld extends World {
 	public void setBlockOn(EditableBlock block) {
 		this.world[block.getY()][block.getX()] = new Block(block.getType(), block.getX(), block.getY(), block.getInfo());
 	}
+	
+	public void updateWalls(){
+		for (Block[] blockRow : this.world){
+			for (Block b : blockRow){
+				if (b.getType() == EditableWorld.WALL){
+					if (this.getBlockAt(b.getX(), b.getY()-1) != null){
+						if (this.getBlockAt(b.getX(), b.getY()-1).getType().equals(WALL)){
+						    this.getBlockAt(b.getX(), b.getY()-1).addConn("s");
+						} else {
+							b.removeConn("n");
+						}
+					} else {
+						b.removeConn("n");
+					}
+					if (this.getBlockAt(b.getX()+1, b.getY()) != null){
+						if (this.getBlockAt(b.getX()+1, b.getY()).getType().equals(WALL)){
+						    this.getBlockAt(b.getX()+1, b.getY()).addConn("w");
+						} else {
+							b.removeConn("e");
+						}
+					} else {
+						b.removeConn("e");
+					}
+					if (this.getBlockAt(b.getX(), b.getY()+1) != null){
+						if (this.getBlockAt(b.getX(), b.getY()+1).getType().equals(WALL)){
+						    this.getBlockAt(b.getX(), b.getY()+1).addConn("n");
+						} else {
+							b.removeConn("s");
+						}
+					} else {
+						b.removeConn("s");
+					}
+					if (this.getBlockAt(b.getX()-1, b.getY()) != null){
+						if (this.getBlockAt(b.getX()-1, b.getY()).getType().equals(WALL)){
+						    this.getBlockAt(b.getX()-1, b.getY()).addConn("e");
+						} else {
+							b.removeConn("w");
+						}
+					} else {
+						b.removeConn("w");
+					}
+				}
+			}
+		}
+		updateOnFile();
+	}
 
 	public void addRow() {
 		Block[][] newArray = new Block[this.height + 1][this.width];
@@ -95,8 +141,17 @@ public class EditableWorld extends World {
 		if (this.height - 1 == start[1] || this.height - 1 == end[1]) {
 			return false;
 		}
+		
+		for (Block b : this.world[newArray.length]){
+			if (b.getType().equals(PORTAL) && !b.getInfo().equals("NoPointSet")){
+				String[] data = b.getInfo().split("#")[1].split(" ");
+				getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+			}
+		}
+		
 		this.world = newArray;
 		this.height--;
+		updateWalls();
 		updateOnFile();
 		return true;
 	}
@@ -121,6 +176,7 @@ public class EditableWorld extends World {
 		}
 		this.world = newArray;
 		this.width--;
+		updateWalls();
 		updateOnFile();
 		return true;
 	}

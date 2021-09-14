@@ -10,6 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Alert;
 
+import java.io.*;
+
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
+
 public class SESetup {
   private EditableWorld world;
   private Stage stage;
@@ -57,7 +62,9 @@ public class SESetup {
     GridPane.setHalignment(cancel, HPos.RIGHT);
     GridPane.setHalignment(endX, HPos.RIGHT);
 
-    this.stage.setScene(new Scene(layout, 500, 150));
+    Scene scene = new Scene(layout, 500, 150);
+    scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+    this.stage.setScene(scene);
     this.stage.setTitle("Change start and end position");
     this.stage.show();
   }

@@ -20,6 +20,7 @@ public class EditableBlock extends Block {
 			setType(blockType);
 		} else {
 			setType(EditableWorld.AIR);
+			setInfo(null);
 		}
 	}
 }

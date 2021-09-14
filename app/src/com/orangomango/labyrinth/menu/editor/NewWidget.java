@@ -22,6 +22,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import com.orangomango.labyrinth.Logger;
 
 import java.io.*;
@@ -247,9 +249,13 @@ public class NewWidget {
 		l4.add(boxes[3], 0, 3, 2, 1);
 
 		SCENE_1 = new Scene(l1, 350, 250);
+		SCENE_1.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		SCENE_2 = new Scene(l2, 350, 250);
+		SCENE_2.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		SCENE_3 = new Scene(l3, 350, 250);
+		SCENE_3.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		SCENE_4 = new Scene(l4, 350, 250);
+		SCENE_4.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 
 		stage.setTitle("Create a new world");
 		stage.setScene(SCENE_1);

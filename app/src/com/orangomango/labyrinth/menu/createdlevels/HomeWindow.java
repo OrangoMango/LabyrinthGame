@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 
 import static com.orangomango.labyrinth.menu.Menu.MYLEVELS;
 import com.orangomango.labyrinth.menu.editor.Editor;
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import com.orangomango.labyrinth.World;
 
@@ -99,7 +101,9 @@ public class HomeWindow{
     layout.add(pane, 0, 0);
 
     stage.setOnCloseRequest(event -> MYLEVELS = false);
-    stage.setScene(new Scene(layout, 550, 300));
+    Scene scene = new Scene(layout, 550, 300);
+    scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+    stage.setScene(scene);
     
     stage.show();
   }  

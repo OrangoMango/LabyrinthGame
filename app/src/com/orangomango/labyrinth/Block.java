@@ -37,6 +37,7 @@ public class Block {
 			case World.SPIKE:
 			case World.ELEVATOR:
 			case World.BAT_GEN:
+			case World.D_WARNING:
 				this.category = World.AIR;
 				break;
 		}
@@ -95,6 +96,8 @@ public class Block {
 				return new Block(World.ELEVATOR, x1, y1, i);
 			case 8:
 				return new Block(World.C_SPIKE, x1, y1, i);
+			case 9:
+				return new Block(World.D_WARNING, x1, y1, i);
 			default:
 				return null;
 		}
@@ -116,12 +119,65 @@ public class Block {
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/editor/warning.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
+	private String wallOpposite(String d){
+		if (!getType().equals(World.WALL)){
+			throw new RuntimeException("Method only available for wall block");
+		}
+		if (d.equals("null")){
+			return "nesw";
+		} else if (d.equals("nesw")){
+			return "null";
+		}
+		String[] directions = new String[]{"n", "e", "s", "w"};
+		StringBuilder output = new StringBuilder();
+		for (String c : directions){
+			if (!d.contains(c))
+				output.append(c);
+		}
+		return output.toString();
+	}
+	
+	public void addConn(String d){
+		if (!getType().equals(World.WALL)){
+			throw new RuntimeException("Method only available for wall block");
+		}
+		if (getInfo().split("#")[1].equals("null")){
+			setInfo("conn#"+d);
+			return;
+		}
+		
+		StringBuilder builder = new StringBuilder();
+		String[] directions = new String[]{"n", "e", "s", "w"};
+		for (String c : directions){
+			if (getInfo().split("#")[1].contains(c) || d.equals(c)){
+				builder.append(c);
+			}
+		}
+		setInfo("conn#"+builder.toString());
+	}
+	
+	public void removeConn(String d){
+		if (!getType().equals(World.WALL)){
+			throw new RuntimeException("Method only available for wall block");
+		}
+		if (d.equals(getInfo().split("#")[1])){
+			setInfo("conn#null");
+			return;
+		}
+		if (!getInfo().split("#")[1].contains(d)){
+			return;
+		}
+		StringBuilder sb = new StringBuilder(getInfo().split("#")[1]);
+		sb.deleteCharAt(getInfo().split("#")[1].indexOf(d));
+		setInfo("conn#"+sb.toString());
+	}
+	
 	public void draw(GraphicsContext pen, int px, int py, World w) {
 		pen.setStroke(Color.BLACK);
 		pen.setLineWidth(1);
 		switch (getType()){
 			case World.WALL:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-"+wallOpposite(getInfo().split("#")[1])+".png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.AIR:
 				drawAirBlock(pen, px, py);
@@ -198,10 +254,14 @@ public class Block {
 					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				}
 				break;
-      default:
-        pen.setFill(Color.RED);
-				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-        break;
+			case World.D_WARNING:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_warning.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			default:
+				pen.setFill(Color.RED);
+						pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
 		}
 	}
 	
@@ -225,6 +285,8 @@ public class Block {
 					return 7;
 				case World.C_SPIKE:
 					return 8;
+				case World.D_WARNING:
+					return 9;
 				default:
 					return null;
 		}

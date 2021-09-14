@@ -39,11 +39,27 @@ public class LoadingScreen {
 		"editor" + File.separator + "arrow_sign_v",
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_spike_closed",
-		"blocks" + File.separator + "block_wall",
+		"blocks" + File.separator + "block_wall-null",
+		"blocks" + File.separator + "block_wall-n",
+		"blocks" + File.separator + "block_wall-e",
+		"blocks" + File.separator + "block_wall-s",
+		"blocks" + File.separator + "block_wall-w",
+		"blocks" + File.separator + "block_wall-ne",
+		"blocks" + File.separator + "block_wall-es",
+		"blocks" + File.separator + "block_wall-sw",
+		"blocks" + File.separator + "block_wall-nw",
+		"blocks" + File.separator + "block_wall-nes",
+		"blocks" + File.separator + "block_wall-esw",
+		"blocks" + File.separator + "block_wall-nsw",
+		"blocks" + File.separator + "block_wall-new",
+		"blocks" + File.separator + "block_wall-nesw",
+		"blocks" + File.separator + "block_wall-ns",
+		"blocks" + File.separator + "block_wall-ew",
 		"blocks" + File.separator + "block_portal",
 		"blocks" + File.separator + "block_air",
 		"blocks" + File.separator + "block_shooter_v",
 		"blocks" + File.separator + "block_shooter_h",
+		"blocks" + File.separator + "decoration_warning",
 		"blocks" + File.separator + "end",
 		"entities" + File.separator + "move_block",
 		"entities" + File.separator + "player",
@@ -113,8 +129,9 @@ public class LoadingScreen {
 			Task dwlworker = new Task() {
 				@Override
 				protected Object call() {
-					int total = LEVELS + IMAGES - 2;
+					int total = LEVELS + IMAGES - 2 + 1;
 					int progress = 0;
+					downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "style.css");
 					for (int x = 0; x<LEVELS; x++) {
 						updateMessage("Downloading " + "level " + (x + 1) + ".wld.sys");
 						updateProgress(progress, total);
@@ -139,7 +156,9 @@ public class LoadingScreen {
 			new Thread(dwlworker).start();
 		});
 
-		this.stage.setScene(new Scene(pane, 380, 250));
+		Scene scene = new Scene(pane, 380, 250);
+		scene.getStylesheets().add("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/style.css");
+		this.stage.setScene(scene);
 		this.stage.setResizable(false);
 		this.stage.show();
 	}
