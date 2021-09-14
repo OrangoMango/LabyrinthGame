@@ -1,0 +1,10 @@
+.root{
+    -fx-font-size: 10pt;
+    -fx-font-family: "Courier New";
+    -fx-base: #F2A32A;
+    -fx-background: #F4D105;
+}
+
+.pagination > .pagination-control {
+    -fx-font-size: 10;
+}
