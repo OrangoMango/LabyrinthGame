@@ -100,8 +100,12 @@ public class LevelExe {
 					} else if (event.getCode() == KeyCode.LEFT) {
 						xGap = -1;
 					}
-					if (world.getBlockAt((int)Math.round(player.psx+xGap), (int)Math.round(player.psy+yGap)).getCategory() == World.WALL){
-						System.out.println("Next block is a wall");
+					if (world.getBlockAt((int)Math.round(player.psx+xGap), (int)Math.round(player.psy+yGap)) != null){
+						if (world.getBlockAt((int)Math.round(player.psx+xGap), (int)Math.round(player.psy+yGap)).getCategory() == World.WALL){
+							xGap = 0;
+							yGap = 0;
+						}
+					} else {
 						xGap = 0;
 						yGap = 0;
 					}
@@ -113,11 +117,11 @@ public class LevelExe {
 				if (event.getCode() == KeyCode.UP) {
 					player.moveOn(Player.Y, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.DOWN) {
-					player.moveOn(Player.Y, Player.POSITIVE, stage,   new int[]{world.getPlayerView() ? 1 : -1, PWS});
+					player.moveOn(Player.Y, Player.POSITIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.RIGHT) {
-					player.moveOn(Player.X, Player.POSITIVE, stage,  new int[]{world.getPlayerView() ? 1 : -1, PWS});
+					player.moveOn(Player.X, Player.POSITIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.LEFT) {
-					player.moveOn(Player.X, Player.NEGATIVE, stage,  new int[]{world.getPlayerView() ? 1 : -1, PWS});
+					player.moveOn(Player.X, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else {
 					System.out.println(event.getCode());
 				}

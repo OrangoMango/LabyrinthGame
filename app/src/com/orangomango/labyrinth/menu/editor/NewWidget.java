@@ -43,6 +43,7 @@ public class NewWidget {
 	private Label pathL;
 	private EditableWorld ed;
 	private Editor editor;
+	private Label sizeL;
 
 	private int pWidth, pHeight = 0;
 	private int sX, sY, eX, eY;
@@ -244,10 +245,12 @@ public class NewWidget {
 		Label toDo = new Label("To change your settings use the \"<--\"\nbutton");
 		this.pathL = new Label("Selected file path: null");
 		ScrollPane pathP = new ScrollPane(this.pathL);
+		this.sizeL = new Label(String.format("Size: %sx%s", this.pWidth, this.pHeight));
 		l4.add(success, 0, 0);
 		l4.add(toDo, 0, 1);
 		l4.add(pathP, 0, 2);
-		l4.add(boxes[3], 0, 3, 2, 1);
+		l4.add(this.sizeL, 0, 3);
+		l4.add(boxes[3], 0, 4, 2, 1);
 
 		SCENE_1 = new Scene(l1, 350, 250);
 		SCENE_1.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
@@ -274,6 +277,7 @@ public class NewWidget {
 			pen.setStroke(Color.ORANGE);
 			pen.strokeRect(10, 10, (this.pWidth > LevelExe.PWS*2+1 ? LevelExe.PWS*2+1 : this.pWidth) * 80 / MAX_WORLD_SIZE, (this.pHeight > LevelExe.PWS*2+1 ? LevelExe.PWS*2+1 : this.pHeight) * 80 / MAX_WORLD_SIZE);
 		}
+		this.sizeL.setText(String.format("Size: %sx%s", this.pWidth, this.pHeight));
 	}
 
 	public String getPath() {
@@ -287,9 +291,6 @@ public class NewWidget {
 	public void finishWidget() {
 		try {
 			String path = this.file.getAbsolutePath();
-			System.out.println(path);
-			System.out.println(String.format("%sx%s", this.pWidth, this.pHeight));
-			System.out.println(this.pWidth * this.pHeight);
 			this.sX = (int) this.spinner1.getValue();
 			this.sY = (int) this.spinner2.getValue();
 			this.eX = (int) this.spinner3.getValue();
@@ -309,7 +310,6 @@ public class NewWidget {
 				alert.showAndWait();
 				return;
 			}
-			System.out.println(String.format("%s %s     %s %s", sX, sY, eX, eY));
 			if (sX > this.pWidth || sY > this.pHeight || eX > this.pWidth || eY > this.pHeight) {
 				Logger.warning("Start or end position is outside world");
 				Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -352,7 +352,6 @@ public class NewWidget {
 			writer.write(String.format("%s,%s", this.eX, this.eY));
 			writer.close();
 			if (!this.ed.equals(null)) {
-				System.out.println("If null");
 				Editor.DONE = true;
 				this.editor.start(); // If it's hidded then show
 				this.editor.open(new File(getPath()));

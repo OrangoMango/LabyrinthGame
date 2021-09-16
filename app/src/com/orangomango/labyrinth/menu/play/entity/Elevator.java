@@ -16,6 +16,7 @@ public class Elevator extends Entity {
 	private double startY;
 	private String direction;
 	private Timeline t;
+	private boolean inRound = false;
 
 	public Elevator(World w, double x, double y, int pl, String d) {
 		setX(x);
@@ -43,20 +44,28 @@ public class Elevator extends Entity {
 				}
 				setY(getY() + 0.25 * M);
 			}
-			/*if (isOnPlayer(w.getPlayer())) {
-				System.out.println(this);
-			}*/
-			if (isOnPlayer(w.getPlayer()) || (w.getPlayer().psx != null && w.getPlayer().psy != null)) {
-				if (this.direction.equals(VERTICAL)) {
-					w.getPlayer().psy = getY() + 0.25 * M;
-					w.getPlayer().psx = getX();
-				} else if (this.direction.equals(HORIZONTAL)) {
-					w.getPlayer().psx = getX() + 0.25 * M;
-					w.getPlayer().psy = getY();
+			if (isOnPlayer(w.getPlayer()) || (inRound)){
+				if (w.getPlayer().psx == null && w.getPlayer().psy == null && inRound){
+					inRound = false;
+				} else {
+					if (this.direction.equals(VERTICAL)) {
+						w.getPlayer().psy = this.getY();
+						w.getPlayer().psx = this.getX();
+					} else if (this.direction.equals(HORIZONTAL)) {
+						w.getPlayer().psx = this.getX();
+						w.getPlayer().psy = this.getY();
+					}
+					inRound = true;
 				}
+			} else {
+				inRound = false;
 			}
 			if (w.getPlayerView()){
-				w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
+				if (w.getPlayer().psx != null && w.getPlayer().psy != null){
+					w.update((int)Math.round(w.getPlayer().psx)-PWS,(int)Math.round(w.getPlayer().psy)-PWS, (int)Math.round(w.getPlayer().psx)+PWS, (int)Math.round(w.getPlayer().psy)+PWS);
+				} else {
+					w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
+				}
 			} else {
 				w.update(0, 0, 0, 0);
 			}

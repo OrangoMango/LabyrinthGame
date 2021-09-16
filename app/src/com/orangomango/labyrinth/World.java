@@ -254,7 +254,11 @@ public class World {
 		if ((this.player.getX() >= x && this.player.getX() <= x1) && (this.player.getY() >= y && this.player.getY() <= y1)){
 			if (this.player.psx == null && this.player.psy == null){
 				this.player.draw(this.pen, this.player.getX()-x, this.player.getY()-y);
-			} else {
+			}
+		}
+		
+		if (this.player.psx != null && this.player.psy != null){
+			if ((this.player.psx >= x && this.player.psx <= x1) && (this.player.psy >= y && this.player.psy <= y1)){
 				this.player.draw(this.pen, this.player.psx-x, this.player.psy-y);
 			}
 		}

@@ -203,6 +203,6 @@ public class Player {
 
 	@Override
 	public String toString() {
-		return String.format("Player at X:%s and Y:%s, %s", getX(), getY(), isOnEnd() ? "On end" : (isOnStart() ? "On start" : "Not on start or end"));
+		return String.format("Player at X:%s and Y:%s (psx, psy: %s %s), %s", getX(), getY(), this.psx, this.psy, isOnEnd() ? "On end" : (isOnStart() ? "On start" : "Not on start or end"));
 	}
 }
