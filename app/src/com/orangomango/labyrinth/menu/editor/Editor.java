@@ -39,6 +39,7 @@ public class Editor {
 	private TabPane tabs;
 	private static boolean EDITOR = false;
         public static Editor EDITOR_INSTANCE = null;
+	private Label pointingOn;
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -86,7 +87,7 @@ public class Editor {
 
 		Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
 		canvas.setFocusTraversable(true);
-		final Label pointingOn = new Label("Mouse on Block: null");
+		
 
 		canvas.setOnMousePressed(new EventHandler<MouseEvent> () {
 			@Override
@@ -427,12 +428,9 @@ public class Editor {
 		editableworld.setCanvas(canvas);
 		editableworld.draw();
 		
-		canvas.setOnMouseMoved(new EventHandler<MouseEvent>(){
-			@Override
-			public void handle(MouseEvent event){
-				Block block = edworld.getBlockAtCoord((int)event.getX(), (int)event.getY());
-				pointingOn.setText("Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position")));
-			}
+		canvas.setOnMouseMoved(event -> {
+			Block block = edworld.getBlockAtCoord((int)event.getX(), (int)event.getY());
+			this.pointingOn.setText("Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position"))+" ["+getFileName()+"]");
 		});
 
 		scrollpane.setPrefSize(this.stage.getWidth(), this.stage.getHeight());
@@ -441,7 +439,6 @@ public class Editor {
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
 
 		layout.add(scrollpane, 0, 0);
-		layout.add(pointingOn, 0, 1, 2, 1);
 		this.edworld = editableworld;
 		if (OPENED_TABS > 0) {
 			WORLDS = Arrays.copyOf(WORLDS, OPENED_TABS);
@@ -708,6 +705,8 @@ public class Editor {
 		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize((double) newVal, this.stage.getHeight()));
 		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> scrollpane.setPrefSize(this.stage.getWidth(), (double) newVal));
 
+		this.pointingOn = new Label("Mouse on Block: null");
+
 		if (editorFilePath != null) {
 			Logger.info("Opening: " + editorFilePath);
 			open(new File(editorFilePath));
@@ -843,6 +842,7 @@ public class Editor {
 		layout.add(menuBar, 0, 0);
 		layout.add(toolbar, 0, 1);
 		layout.add(splitpane, 0, 2);
+		layout.add(pointingOn, 0, 3, 2, 1);
 
 		Scene scene = new Scene(layout, 850, 550);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
