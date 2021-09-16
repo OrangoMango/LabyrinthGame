@@ -1,7 +1,7 @@
 /**
    Labirinth game - world class
    @author OrangoMango
-   @version 3.2
+   @version 3.3
 */
 
 package com.orangomango.labyrinth;
@@ -191,7 +191,7 @@ public class World {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
 				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")){
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
-					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1], Integer.parseInt(d[2])));
+					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1], Integer.parseInt(d[2]), d[3].equals("t") ? true : false));
 				} else if (x[it2].getType() == SHOOTER){
 					String d = Character.toString(x[it2].getInfo().split("#")[1].charAt(0));
 					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d));

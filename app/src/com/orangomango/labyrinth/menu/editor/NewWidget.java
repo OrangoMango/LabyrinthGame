@@ -39,6 +39,7 @@ public class NewWidget {
 	private static boolean FIRST_TIME = false;
 
 	private Spinner spinner1, spinner2, spinner3, spinner4;
+	private CheckBox allow;
 	private Label pathL;
 	private EditableWorld ed;
 	private Editor editor;
@@ -179,7 +180,7 @@ public class NewWidget {
 		l3.setPadding(new Insets(10, 10, 10, 10));
 		l3.setHgap(10);
 		l3.setVgap(10);
-		CheckBox allow = new CheckBox("Set start and end pos");
+		this.allow = new CheckBox("Set start and end pos");
 		Label lab1 = new Label("Start X:");
 		Label lab2 = new Label("End X:");
 		Label lab3 = new Label("Y:");
@@ -293,10 +294,11 @@ public class NewWidget {
 			this.sY = (int) this.spinner2.getValue();
 			this.eX = (int) this.spinner3.getValue();
 			this.eY = (int) this.spinner4.getValue();
-			if (sX == 0 && sY == 0 && eX == 0 && eY == 0) {
+			if (!this.allow.isSelected()) {
 				sX = 1;
 				eX = 1;
 				eY = 1;
+				sY = 0;
 			}
 			if (this.pWidth == 0 || this.pHeight == 0) {
 				Logger.warning("No dimension defined for world");
@@ -352,7 +354,7 @@ public class NewWidget {
 			if (!this.ed.equals(null)) {
 				System.out.println("If null");
 				Editor.DONE = true;
-				this.editor.start(); // If it's hidded the show
+				this.editor.start(); // If it's hidded then show
 				this.editor.open(new File(getPath()));
 			}
 		} catch (IOException ex) {}

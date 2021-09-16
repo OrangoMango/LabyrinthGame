@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Button;
 import javafx.scene.control.Alert;
@@ -92,7 +93,7 @@ public class LoadingScreen {
 		try (InputStream in = new URL(link).openStream()) {
 			Files.copy( in , Paths.get(path));
 		} catch (IOException ex) {
-			Logger.error("No internet available");
+			Logger.error("No internet available/Old update detected");
 			internetError(true, "Could not connect to " + ex.getMessage());
 		}
 	}
@@ -111,18 +112,21 @@ public class LoadingScreen {
 		pane.setHgap(5);
 		pane.setPadding(new Insets(10, 10, 10, 10));
 		final Label label = new Label("Start download to continue");
-		final ProgressIndicator bar = new ProgressIndicator(0);
-		bar.setMaxHeight(50);
+		final ProgressBar bar = new ProgressBar(0);
+		final ProgressIndicator bar2 = new ProgressIndicator(0);
+		bar.setPrefWidth(300);
+		bar2.setMaxHeight(40);
 		ImageView view = new ImageView(new Image("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/icon.png"));
 		Button start = new Button("Start downloading files");
 		Button end = new Button("Done");
 		end.setDisable(true);
 		end.setOnAction(event -> this.endWindow());
 		pane.add(label, 0, 0, 3, 1);
-		pane.add(bar, 3, 0);
 		pane.add(view, 0, 1, 2, 1);
-		pane.add(start, 0, 2);
-		pane.add(end, 1, 2);
+		pane.add(bar, 0, 2, 2, 1);
+		pane.add(bar2, 2, 2, 1, 2);
+		pane.add(start, 0, 3);
+		pane.add(end, 1, 3);
 
 		start.setOnAction(event -> {
 			start.setDisable(true);
@@ -131,7 +135,10 @@ public class LoadingScreen {
 				protected Object call() {
 					int total = LEVELS + IMAGES - 2 + 1;
 					int progress = 0;
+					updateMessage("Downloading styles");
+					updateProgress(progress, total);
 					downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "style.css");
+					progress++;
 					for (int x = 0; x<LEVELS; x++) {
 						updateMessage("Downloading " + "level " + (x + 1) + ".wld.sys");
 						updateProgress(progress, total);
@@ -152,6 +159,7 @@ public class LoadingScreen {
 
 			label.textProperty().bind(dwlworker.messageProperty());
 			bar.progressProperty().bind(dwlworker.progressProperty());
+			bar2.progressProperty().bind(dwlworker.progressProperty());
 
 			new Thread(dwlworker).start();
 		});
@@ -177,8 +185,8 @@ public class LoadingScreen {
 		}
 		Platform.runLater(() -> {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setHeaderText("Internet error, please check your connection");
-			alert.setTitle("Internet Error");
+			alert.setHeaderText("Internet error, please check your connection. If you have internet then be sure to have the latest version of this app");
+			alert.setTitle("Internet/Update Error");
 			alert.setContentText("ERROR: " + errormsg);
 			alert.showAndWait();
 			Platform.exit();

@@ -129,6 +129,8 @@ public class Player {
 				}
 				if (rec[0] == 1){
 					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+				} else {
+					this.world.update(0, 0, 0, 0);
 				}
 				return;
 			} else {
@@ -140,12 +142,16 @@ public class Player {
 				}
 				if (rec[0] == 1){
 					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+				} else {
+					this.world.update(0, 0, 0, 0);
 				}
 			}
 			if (this.isOnBlock(World.SPIKE)){
 				this.die();
 				if (rec[0] == 1){
 					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+				} else {
+					this.world.update(0, 0, 0, 0);
 				}
 				this.repeat = rep2;
 				return;

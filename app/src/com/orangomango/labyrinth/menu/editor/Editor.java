@@ -156,12 +156,13 @@ public class Editor {
 						slider.setShowTickLabels(true);
 						slider.setShowTickMarks(true);
 						slider.setOnMouseDragged(evt -> l3.setText("Set speed (ms) ["+Math.round((int)slider.getValue())+"]"));
+						CheckBox invert = new CheckBox("Invert movement");
 						Button ok = new Button("Save changes");
 						ok.setOnAction(ev -> {
 							int pl = (int) sp.getValue();
 							String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
 							int speed = (int)slider.getValue();
-							edblock.setInfo(String.format("data#%s %s %s", pl, dir, speed));
+							edblock.setInfo(String.format("data#%s %s %s %s", pl, dir, speed, invert.isSelected() ? "t" : "f"));
 							editableworld.setBlockOn(edblock);
 							editableworld.updateOnFile();
 							unsaved();
@@ -176,8 +177,9 @@ public class Editor {
 						pane.add(b2, 0, 3);
 						pane.add(l3, 0, 4);
 						pane.add(slider, 1, 4);
-						pane.add(ok, 0, 5);
-						pane.add(canc, 1, 5);
+						pane.add(invert, 0, 5);
+						pane.add(ok, 0, 6);
+						pane.add(canc, 1, 6);
 						Scene scene = new Scene(pane, 420, 300);
 						scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 						st.setScene(scene);
@@ -562,11 +564,25 @@ public class Editor {
 			checkValidity(edworld.removeColumn());
 			unsaved();
 		});
+		MenuItem mSSE = new MenuItem("Change start/end position");
+		mSSE.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
+		mSSE.setOnAction(e -> {
+			// Clone of toolbar button
+			new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end);
+			unsaved();
+		});
+		MenuItem mRun = new MenuItem("Run current level");
+		mRun.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
+		mRun.setOnAction(e -> {
+			// Clone of toolbar button
+			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
+			LevelExe.setOnFinish(null);
+		});
 		MenuItem mUndo = new MenuItem("Undo");
 		mUndo.setDisable(true);
 		MenuItem mRedo = new MenuItem("Redo");
 		mRedo.setDisable(true);
-		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mUndo, mRedo);
+		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mSSE, new SeparatorMenuItem(), mRun, new SeparatorMenuItem(), mUndo, mRedo);
 		
 		Menu modeMenu = new Menu("Mode");
 		modeMenu.setDisable(true);
@@ -675,6 +691,7 @@ public class Editor {
 		runBtn.setTooltip(new Tooltip("Run current level"));
 		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/run.png")));
 		runBtn.setOnAction(event -> {
+			// Clone of menu button
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
 			LevelExe.setOnFinish(null);
 		});
@@ -736,81 +753,83 @@ public class Editor {
 			
 			String style = "-fx-font-weight: bold;\n-fx-font-family: \"Courier New\";\n-fx-font-size: 14;";
 			
-			if (pageIndex == 0){
-				TilePane db = new TilePane();
-				db.setPadding(new Insets(5, 5, 5, 5));
-				db.setHgap(5);
-				db.setVgap(5);
-				ToggleButton wallB = new ToggleButton();
-				wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-nesw.png")));
-				wallB.setTooltip(new Tooltip("Wall block. ID:1"));
-				wallB.setToggleGroup(tg);
-				wallB.setOnAction(event -> SELECTED_BLOCK = 1);
-				wallB.setSelected(true);
-				ToggleButton portalB = new ToggleButton();
-				portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
-				portalB.setTooltip(new Tooltip("Portal block. ID:4"));
-				portalB.setToggleGroup(tg);
-				portalB.setOnAction(event -> SELECTED_BLOCK = 4);
-				ToggleButton moveB = new ToggleButton();
-				moveB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png")));
-				moveB.setTooltip(new Tooltip("Elevator block. ID:7"));
-				moveB.setToggleGroup(tg);
-				moveB.setOnAction(event -> SELECTED_BLOCK = 7);
-				db.getChildren().addAll(wallB, portalB, moveB);
-				Label header = new Label(" Default Blocks");
-				header.setStyle(style);
-				return new VBox(header, db);
-			} else if (pageIndex == 1){
-				TilePane deb = new TilePane();
-				deb.setPadding(new Insets(5, 5, 5, 5));
-				deb.setHgap(5);
-				deb.setVgap(5);
-				ToggleButton voidB = new ToggleButton("VOID");
-				voidB.setTooltip(new Tooltip("VOID block. ID:2"));
-				voidB.setToggleGroup(tg);
-				voidB.setOnAction(event -> SELECTED_BLOCK = 2);
-				ToggleButton warB = new ToggleButton();
-				warB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_warning.png")));
-				warB.setTooltip(new Tooltip("Warning decoration. ID:9"));
-				warB.setToggleGroup(tg);
-				warB.setOnAction(event -> SELECTED_BLOCK = 9);
-				deb.getChildren().addAll(voidB, warB);
-				Label header = new Label(" Decoration Blocks");
-				header.setStyle(style);
-				return new VBox(header, deb);
-			} else if (pageIndex == 2){
-				TilePane dab = new TilePane();
-				dab.setPadding(new Insets(5, 5, 5, 5));
-				dab.setHgap(5);
-				dab.setVgap(5);
-				ToggleButton spikeB = new ToggleButton();
-				spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
-				spikeB.setTooltip(new Tooltip("Spike block. ID:3"));
-				spikeB.setToggleGroup(tg);
-				spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
-				ToggleButton shootB = new ToggleButton();
-				shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png")));
-				shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
-				shootB.setToggleGroup(tg);
-				shootB.setOnAction(event -> SELECTED_BLOCK = 5);
-				ToggleButton batB = new ToggleButton();
-				batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
-				batB.setTooltip(new Tooltip("Bat. ID:6"));
-				batB.setToggleGroup(tg);
-				batB.setOnAction(event -> SELECTED_BLOCK = 6);
-				ToggleButton cspikeB = new ToggleButton();
-				cspikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png")));
-				cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
-				cspikeB.setToggleGroup(tg);
-				cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
-				dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
-				Label header = new Label(" Damage Blocks");
-				header.setStyle(style);
-				return new VBox(header, dab);
+			switch (pageIndex){
+				case 0:
+					TilePane db = new TilePane();
+					db.setPadding(new Insets(5, 5, 5, 5));
+					db.setHgap(5);
+					db.setVgap(5);
+					ToggleButton wallB = new ToggleButton();
+					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-nesw.png")));
+					wallB.setTooltip(new Tooltip("Wall block. ID:1"));
+					wallB.setToggleGroup(tg);
+					wallB.setOnAction(event -> SELECTED_BLOCK = 1);
+					wallB.setSelected(true);
+					ToggleButton portalB = new ToggleButton();
+					portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
+					portalB.setTooltip(new Tooltip("Portal block. ID:4"));
+					portalB.setToggleGroup(tg);
+					portalB.setOnAction(event -> SELECTED_BLOCK = 4);
+					ToggleButton moveB = new ToggleButton();
+					moveB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png")));
+					moveB.setTooltip(new Tooltip("Elevator block. ID:7"));
+					moveB.setToggleGroup(tg);
+					moveB.setOnAction(event -> SELECTED_BLOCK = 7);
+					db.getChildren().addAll(wallB, portalB, moveB);
+					Label header = new Label(" Default Blocks");
+					header.setStyle(style);
+					return new VBox(header, db);
+				case 1:
+					TilePane deb = new TilePane();
+					deb.setPadding(new Insets(5, 5, 5, 5));
+					deb.setHgap(5);
+					deb.setVgap(5);
+					ToggleButton voidB = new ToggleButton("VOID");
+					voidB.setTooltip(new Tooltip("VOID block. ID:2"));
+					voidB.setToggleGroup(tg);
+					voidB.setOnAction(event -> SELECTED_BLOCK = 2);
+					ToggleButton warB = new ToggleButton();
+					warB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_warning.png")));
+					warB.setTooltip(new Tooltip("Warning decoration. ID:9"));
+					warB.setToggleGroup(tg);
+					warB.setOnAction(event -> SELECTED_BLOCK = 9);
+					deb.getChildren().addAll(voidB, warB);
+					Label header1 = new Label(" Decoration Blocks");
+					header1.setStyle(style);
+					return new VBox(header1, deb);
+				case 2:
+					TilePane dab = new TilePane();
+					dab.setPadding(new Insets(5, 5, 5, 5));
+					dab.setHgap(5);
+					dab.setVgap(5);
+					ToggleButton spikeB = new ToggleButton();
+					spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
+					spikeB.setTooltip(new Tooltip("Spike block. ID:3"));
+					spikeB.setToggleGroup(tg);
+					spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
+					ToggleButton shootB = new ToggleButton();
+					shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png")));
+					shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
+					shootB.setToggleGroup(tg);
+					shootB.setOnAction(event -> SELECTED_BLOCK = 5);
+					ToggleButton batB = new ToggleButton();
+					batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
+					batB.setTooltip(new Tooltip("Bat. ID:6"));
+					batB.setToggleGroup(tg);
+					batB.setOnAction(event -> SELECTED_BLOCK = 6);
+					ToggleButton cspikeB = new ToggleButton();
+					cspikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png")));
+					cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
+					cspikeB.setToggleGroup(tg);
+					cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
+					dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
+					Label header2 = new Label(" Damage Blocks");
+					header2.setStyle(style);
+					return new VBox(header2, dab);
+				
+				default:
+					return new TilePane(new Label("Page: "+(pageIndex+1)));
 			}
-			
-			return new TilePane(new Label("Page: "+(pageIndex+1)));
 		});
 
 		splitpane.getItems().add(pages);
@@ -1004,7 +1023,7 @@ public class Editor {
 			f.createNewFile();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(f));
 			writer.write("2x2\n");
-			writer.write("1,0,0,0\n");
+			writer.write("0,0,0,0\n");
 			writer.write("1,0\n");
 			writer.write("1,1");
 			writer.close();

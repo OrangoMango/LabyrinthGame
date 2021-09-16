@@ -21,7 +21,7 @@ public class Bat extends Entity {
 	private String direction;
 	private int speed;
 
-	public Bat(World w, double x, double y, int pl, String d, int s) {
+	public Bat(World w, double x, double y, int pl, String d, int s, boolean invert) {
 		setData(w);
 		this.direction = d;
 		setX(x);
@@ -32,18 +32,18 @@ public class Bat extends Entity {
 		t = new Timeline(new KeyFrame(Duration.millis(this.speed), event -> {
 			if (this.direction.equals(HORIZONTAL)) {
 				if (getX() == startX) {
-					M = 1;
+					M = invert ? -1 : 1;
 				}
-				if (getX() == startX + pl - 1) {
-					M = -1;
+				if (getX() == (invert ? startX - pl + 1 : startX + pl - 1)) {
+					M = invert ? 1 : -1;
 				}
 				setX(getX() + 0.25 * M);
 			} else if (this.direction.equals(VERTICAL)) {
 				if (getY() == startY) {
-					M = 1;
+					M = invert ? -1 : 1;
 				}
-				if (getY() == startY + pl - 1) {
-					M = -1;
+				if (getY() == (invert ? startY - pl + 1 : startY + pl - 1)) {
+					M = invert ? 1 : -1;
 				}
 				setY(getY() + 0.25 * M);
 			}

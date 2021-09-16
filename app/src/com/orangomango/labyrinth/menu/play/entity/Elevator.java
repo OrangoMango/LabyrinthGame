@@ -44,7 +44,7 @@ public class Elevator extends Entity {
 				setY(getY() + 0.25 * M);
 			}
 			/*if (isOnPlayer(w.getPlayer())) {
-				System.out.println(w.getPlayer().psx + " " + w.getPlayer().psy + " | " + w.getPlayer());
+				System.out.println("On player "+getX()+" "+getY()+" "+this);
 			}*/
 			if (isOnPlayer(w.getPlayer()) || (w.getPlayer().psx != null && w.getPlayer().psy != null)) {
 				if (this.direction.equals(VERTICAL)) {

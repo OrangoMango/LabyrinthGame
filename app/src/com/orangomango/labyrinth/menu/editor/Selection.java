@@ -47,7 +47,7 @@ public class Selection {
 		layout.add(openBtn, 2, 0);
 
 		Scene scene = new Scene(layout, 300, 100);
-		//scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		
 		this.stage.setScene(scene);
 		this.stage.setResizable(false);

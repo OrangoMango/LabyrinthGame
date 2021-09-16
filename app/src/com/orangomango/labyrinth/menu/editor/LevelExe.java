@@ -26,7 +26,7 @@ public class LevelExe {
 	public static boolean PLAYER_MOVEMENT;
 	private int xGap = 0;
 	private int yGap = 0;
-	public static final int PWS = 2;  // Player World Space(right)
+	public static final int PWS = 4;  // Player World Space(right)
 
 	public LevelExe(String path, String filename, boolean saved) {
 		if (OPEN) {

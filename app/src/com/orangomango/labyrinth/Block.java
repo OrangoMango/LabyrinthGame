@@ -226,6 +226,8 @@ public class Block {
 					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Entity.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png")),  0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 					if (this.info.equals("NoDataSet")){
 						drawWarningSign(pen, px, py);
+					} else {
+						String direction = this.info.split("#")[1].split(" ")[1];
 					}
 				}
 				break;
