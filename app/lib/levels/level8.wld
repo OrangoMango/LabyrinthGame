@@ -1,0 +1,4 @@
+10x13
+2,2,5:direction#s,1:conn#e,1:conn#ew,1:conn#w,2,2,2,2,2,1:conn#s,0,0,0,0,5:direction#w,1:conn#e,1:conn#ew,1:conn#sw,2,1:conn#ns,0,1:conn#s,0,1:conn#s,0,0,8,1:conn#ns,2,1:conn#ns,0,1:conn#ns,0,1:conn#ns,0,0,0,1:conn#ns,2,1:conn#ns,0,1:conn#ns,0,1:conn#ns,0,0,0,1:conn#ns,2,1:conn#n,0,1:conn#ne,1:conn#ew,1:conn#nw,0,0,0,1:conn#ns,2,5:direction#e,0,0,0,0,0,1:conn#null,0,1:conn#ns,1:conn#s,0,1:conn#e,1:conn#ew,1:conn#ew,1:conn#w,5:direction#n,3,0,1:conn#ns,1:conn#ns,0,6:data#3 v 200 f,0,0,0,6:data#3 v 200 f,0,0,1:conn#ns,1:conn#ns,0,0,0,0,0,0,0,0,1:conn#ns,1:conn#ns,0,0,0,6:data#3 v 200 t,0,0,0,1:conn#e,1:conn#nw,1:conn#ns,0,3,3,3,3,3,3,2,2,1:conn#n,0,1:conn#null,2,2,2,2,2,2,2
+4,4
+1,12
