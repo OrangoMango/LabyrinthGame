@@ -4,9 +4,8 @@
 # Run program
 ## Requirements
 * Java JDK version 11+
-* JavaFX
+* JavaFX 11+ (Download link: https://gluonhq.com/products/javafx)
 * Windows/Linux/MacOS
----
 ## How to do
 * Change the first line of the `run.sh` file according to your javafx path location
 * Execute the `run.sh` file in the `app/` folder with the command:
