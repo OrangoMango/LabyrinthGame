@@ -25,6 +25,7 @@ import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
 import com.orangomango.labyrinth.Logger;
+import com.orangomango.labyrinth.engineering.EngBlock;
 
 public class Editor {
 	private Stage stage;
@@ -40,6 +41,12 @@ public class Editor {
 	private static boolean EDITOR = false;
         public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
+	private String mode = "normal";
+	private TilePane engp = new TilePane();
+	private TilePane[] normalModePanes = new TilePane[3];
+	private MenuItem[] engToDisable = new MenuItem[6];
+	private Button[] engToDisableB = new Button[6];
+	private ToggleButton[] toEnableBlockB = new ToggleButton[2]; // When switching mode one of these buttons will be enabled
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -93,7 +100,12 @@ public class Editor {
 			@Override
 			public void handle(MouseEvent event) {
 				EditableBlock edblock = EditableBlock.fromBlock(editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()));
-				if (event.getButton() == MouseButton.SECONDARY){
+				EngBlock engblock = null;
+				if (mode.equals("engineering")){
+					engblock = editableworld.getEngineeringWorld().getBlockAtCoord((int) event.getX(), (int) event.getY());
+					System.out.println(engblock);
+				}
+				if (event.getButton() == MouseButton.SECONDARY && mode.equals("normal")){
 					ContextMenu contextMenu = new ContextMenu();
 					Menu item1 = new Menu("Set other portal end");
 					MenuItem rmPoint = new MenuItem("Remove pointing");
@@ -192,9 +204,9 @@ public class Editor {
 						String d = Character.toString(edblock.getInfo().split("#")[1].charAt(0));
 						switch (d) {
 							case EditableWorld.NORTH:
-								edblock.setInfo("direction#"+EditableWorld.EST);
+								edblock.setInfo("direction#"+EditableWorld.EAST);
 								break;
-							case EditableWorld.EST:
+							case EditableWorld.EAST:
 								edblock.setInfo("direction#"+EditableWorld.SOUTH);
 								break;
 							case EditableWorld.SOUTH:
@@ -215,11 +227,11 @@ public class Editor {
 							case EditableWorld.NORTH:
 								edblock.setInfo("direction#"+EditableWorld.WEST);
 								break;
-							case EditableWorld.EST:
+							case EditableWorld.EAST:
 								edblock.setInfo("direction#"+EditableWorld.NORTH);
 								break;
 							case EditableWorld.SOUTH:
-								edblock.setInfo("direction#"+EditableWorld.EST);
+								edblock.setInfo("direction#"+EditableWorld.EAST);
 								break;
 							case EditableWorld.WEST:
 								edblock.setInfo("direction#"+EditableWorld.SOUTH);
@@ -286,7 +298,7 @@ public class Editor {
 							break;
 					}
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
-				} else if (event.getButton() == MouseButton.PRIMARY){
+				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("normal")){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
 						Logger.warning("Could not place block on start or end position");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -416,6 +428,18 @@ public class Editor {
 					editableworld.updateOnFile();
 					
 					unsaved();
+				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("engineering")){
+					switch (SELECTED_BLOCK){
+						case 3:
+							engblock.setInfo(null);
+							engblock.toggleType(EngBlock.GENERATOR);
+							System.out.println("Toggled");
+							break;
+					}
+					
+					editableworld.getEngineeringWorld().setBlockOn(engblock);
+					editableworld.updateOnFile();
+					System.out.println(editableworld.getEngineeringWorld());
 				}
 			}
 		});
@@ -538,6 +562,7 @@ public class Editor {
 				unsaved();
 			}
 		});
+		engToDisable[0] = mAR;
 		MenuItem mAC = new MenuItem("Add column");
 		mAC.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN));
 		mAC.setOnAction(e -> {
@@ -547,6 +572,7 @@ public class Editor {
 				unsaved();
 			}
 		});
+		engToDisable[1] = mAC;
 		MenuItem mRR = new MenuItem("Remove row");
 		mRR.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN));
 		mRR.setOnAction(e -> {
@@ -554,6 +580,7 @@ public class Editor {
 			checkValidity(edworld.removeRow());
 			unsaved();
 		});
+		engToDisable[2] = mRR;
 		MenuItem mRC = new MenuItem("Remove column");
 		mRC.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN));
 		mRC.setOnAction(e -> {
@@ -561,6 +588,7 @@ public class Editor {
 			checkValidity(edworld.removeColumn());
 			unsaved();
 		});
+		engToDisable[3] = mRC;
 		MenuItem mSSE = new MenuItem("Change start/end position");
 		mSSE.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
 		mSSE.setOnAction(e -> {
@@ -568,6 +596,7 @@ public class Editor {
 			new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end);
 			unsaved();
 		});
+		engToDisable[4] = mSSE;
 		MenuItem mRun = new MenuItem("Run current level");
 		mRun.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
 		mRun.setOnAction(e -> {
@@ -575,6 +604,7 @@ public class Editor {
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved);
 			LevelExe.setOnFinish(null);
 		});
+		engToDisable[5] = mRun;
 		MenuItem mUndo = new MenuItem("Undo");
 		mUndo.setDisable(true);
 		MenuItem mRedo = new MenuItem("Redo");
@@ -582,7 +612,17 @@ public class Editor {
 		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mSSE, new SeparatorMenuItem(), mRun, new SeparatorMenuItem(), mUndo, mRedo);
 		
 		Menu modeMenu = new Menu("Mode");
-		modeMenu.setDisable(true);
+		ToggleGroup modeGroup = new ToggleGroup();
+		RadioMenuItem mNormal = new RadioMenuItem("Normal mode");
+		mNormal.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN));
+		mNormal.setOnAction(e -> setMode("normal"));
+		mNormal.setSelected(true);
+		mNormal.setToggleGroup(modeGroup);
+		RadioMenuItem mEngineer = new RadioMenuItem("Engineer mode");
+		mEngineer.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+		mEngineer.setOnAction(e -> setMode("engineering"));
+		mEngineer.setToggleGroup(modeGroup);
+		modeMenu.getItems().addAll(mNormal, mEngineer);
 		
 		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu);
 
@@ -648,6 +688,7 @@ public class Editor {
 		});
 
 		Button addCBtn = new Button();
+		engToDisableB[0] = addCBtn;
                 addCBtn.setTooltip(new Tooltip("Add column to world"));
 		addCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ac.png")));
 		addCBtn.setOnAction(event -> {
@@ -658,6 +699,7 @@ public class Editor {
 			}
 		});
 		Button addRBtn = new Button();
+		engToDisableB[1] = addRBtn;
 		addRBtn.setTooltip(new Tooltip("Add row to world"));
 		addRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/ar.png")));
 		addRBtn.setOnAction(event -> {
@@ -668,6 +710,7 @@ public class Editor {
 			}
 		});
 		Button rmCBtn = new Button();
+		engToDisableB[2] = rmCBtn;
 		rmCBtn.setTooltip(new Tooltip("Remove column from world"));
 		rmCBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rc.png")));
 		rmCBtn.setOnAction(event -> {
@@ -676,6 +719,7 @@ public class Editor {
 			unsaved();
 		});
 		Button rmRBtn = new Button();
+		engToDisableB[3] = rmRBtn;
 		rmRBtn.setTooltip(new Tooltip("Remove row from world"));
 		rmRBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/rr.png")));
 		rmRBtn.setOnAction(event -> {
@@ -685,6 +729,7 @@ public class Editor {
 		});
 
 		Button runBtn = new Button("Run");
+		engToDisableB[4] = runBtn;
 		runBtn.setTooltip(new Tooltip("Run current level"));
 		runBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/run.png")));
 		runBtn.setOnAction(event -> {
@@ -694,6 +739,7 @@ public class Editor {
 		});
 
 		Button sseBtn = new Button();
+		engToDisableB[5] = sseBtn;
 		sseBtn.setTooltip(new Tooltip("Change start and end position"));
 		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/sse.png")));
 		sseBtn.setOnAction(event -> {new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end); unsaved();});
@@ -742,9 +788,9 @@ public class Editor {
 		splitpane.getItems().add(tabs);
 
 		Pagination pages = new Pagination();
-		pages.setPageCount(3);
+		pages.setPageCount(4);
 		pages.setCurrentPageIndex(0);
-		pages.setMaxPageIndicatorCount(3);
+		pages.setMaxPageIndicatorCount(4);
 		
 		ToggleGroup tg = new ToggleGroup();
 		
@@ -755,23 +801,26 @@ public class Editor {
 			switch (pageIndex){
 				case 0:
 					TilePane db = new TilePane();
+					normalModePanes[0] = db;
+					db.setDisable(this.mode.equals("normal") ? false : true);
 					db.setPadding(new Insets(5, 5, 5, 5));
 					db.setHgap(5);
 					db.setVgap(5);
 					ToggleButton wallB = new ToggleButton();
+					toEnableBlockB[0] = wallB;
 					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-nesw.png")));
-					wallB.setTooltip(new Tooltip("Wall block. ID:1"));
+					wallB.setTooltip(new Tooltip("Wall block. ID:N1"));
 					wallB.setToggleGroup(tg);
 					wallB.setOnAction(event -> SELECTED_BLOCK = 1);
 					wallB.setSelected(true);
 					ToggleButton portalB = new ToggleButton();
 					portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
-					portalB.setTooltip(new Tooltip("Portal block. ID:4"));
+					portalB.setTooltip(new Tooltip("Portal block. ID:N4"));
 					portalB.setToggleGroup(tg);
 					portalB.setOnAction(event -> SELECTED_BLOCK = 4);
 					ToggleButton moveB = new ToggleButton();
 					moveB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png")));
-					moveB.setTooltip(new Tooltip("Elevator block. ID:7"));
+					moveB.setTooltip(new Tooltip("Elevator block. ID:N7"));
 					moveB.setToggleGroup(tg);
 					moveB.setOnAction(event -> SELECTED_BLOCK = 7);
 					db.getChildren().addAll(wallB, portalB, moveB);
@@ -780,16 +829,18 @@ public class Editor {
 					return new VBox(header, db);
 				case 1:
 					TilePane deb = new TilePane();
+					deb.setDisable(this.mode.equals("normal") ? false : true);
+					normalModePanes[1] = deb;
 					deb.setPadding(new Insets(5, 5, 5, 5));
 					deb.setHgap(5);
 					deb.setVgap(5);
 					ToggleButton voidB = new ToggleButton("VOID");
-					voidB.setTooltip(new Tooltip("VOID block. ID:2"));
+					voidB.setTooltip(new Tooltip("VOID block. ID:N2"));
 					voidB.setToggleGroup(tg);
 					voidB.setOnAction(event -> SELECTED_BLOCK = 2);
 					ToggleButton warB = new ToggleButton();
 					warB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_warning.png")));
-					warB.setTooltip(new Tooltip("Warning decoration. ID:9"));
+					warB.setTooltip(new Tooltip("Warning decoration. ID:N9"));
 					warB.setToggleGroup(tg);
 					warB.setOnAction(event -> SELECTED_BLOCK = 9);
 					deb.getChildren().addAll(voidB, warB);
@@ -798,34 +849,61 @@ public class Editor {
 					return new VBox(header1, deb);
 				case 2:
 					TilePane dab = new TilePane();
+					dab.setDisable(this.mode.equals("normal") ? false : true);
+					normalModePanes[2] = dab;
 					dab.setPadding(new Insets(5, 5, 5, 5));
 					dab.setHgap(5);
 					dab.setVgap(5);
 					ToggleButton spikeB = new ToggleButton();
 					spikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike.png")));
-					spikeB.setTooltip(new Tooltip("Spike block. ID:3"));
+					spikeB.setTooltip(new Tooltip("Spike block. ID:N3"));
 					spikeB.setToggleGroup(tg);
 					spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
 					ToggleButton shootB = new ToggleButton();
 					shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png")));
-					shootB.setTooltip(new Tooltip("Shooter block. ID:5"));
+					shootB.setTooltip(new Tooltip("Shooter block. ID:N5"));
 					shootB.setToggleGroup(tg);
 					shootB.setOnAction(event -> SELECTED_BLOCK = 5);
 					ToggleButton batB = new ToggleButton();
 					batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
-					batB.setTooltip(new Tooltip("Bat. ID:6"));
+					batB.setTooltip(new Tooltip("Bat. ID:N6"));
 					batB.setToggleGroup(tg);
 					batB.setOnAction(event -> SELECTED_BLOCK = 6);
 					ToggleButton cspikeB = new ToggleButton();
 					cspikeB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png")));
-					cspikeB.setTooltip(new Tooltip("Closable spike. ID:8"));
+					cspikeB.setTooltip(new Tooltip("Closable spike. ID:N8"));
 					cspikeB.setToggleGroup(tg);
 					cspikeB.setOnAction(event -> SELECTED_BLOCK = 8);
 					dab.getChildren().addAll(spikeB, shootB, batB, cspikeB);
 					Label header2 = new Label(" Damage Blocks");
 					header2.setStyle(style);
 					return new VBox(header2, dab);
-				
+				case 3:
+					engp = new TilePane();
+					engp.setPadding(new Insets(5, 5, 5, 5));
+					engp.setHgap(5);
+					engp.setVgap(5);
+					ToggleButton cableB = new ToggleButton();
+					cableB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-es.png")));
+					cableB.setTooltip(new Tooltip("Cable block. ID:E1"));
+					cableB.setToggleGroup(tg);
+					cableB.setOnAction(event -> SELECTED_BLOCK = 1);
+					ToggleButton leverB = new ToggleButton();
+					leverB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_on.png")));
+					leverB.setTooltip(new Tooltip("Lever block. ID:E2"));
+					leverB.setToggleGroup(tg);
+					leverB.setOnAction(event -> SELECTED_BLOCK = 2);
+					ToggleButton generatorB = new ToggleButton();
+					toEnableBlockB[1] = generatorB;
+					generatorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_5.png")));
+					generatorB.setTooltip(new Tooltip("Generator block. ID:E3"));
+					generatorB.setToggleGroup(tg);
+					generatorB.setOnAction(event -> SELECTED_BLOCK = 3);
+					engp.setDisable(this.mode.equals("normal") ? true : false);
+					engp.getChildren().addAll(cableB, leverB, generatorB);
+					Label header3 = new Label(" Engineer Blocks");
+					header3.setStyle(style);
+					return new VBox(header3, engp);
 				default:
 					return new TilePane(new Label("Page: "+(pageIndex+1)));
 			}
@@ -1056,6 +1134,8 @@ public class Editor {
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "editor");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "entities");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "engineer");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "engineer" + File.separator + "blocks");
 	}
 
     /**
@@ -1084,5 +1164,52 @@ public class Editor {
 		Path path = Paths.get(CURRENT_FILE_PATH);
 		Path fileName = path.getFileName();
 		return fileName.toString();
+	}
+	
+	private void setMode(String m){
+		this.mode = m;
+		if (this.mode.equals("engineering")){
+			engp.setDisable(false);
+			for (TilePane t: normalModePanes){
+				if (t != null){
+					t.setDisable(true);
+				}
+			}
+			for (MenuItem n: engToDisable){
+				if (n != null){
+					n.setDisable(true);
+				}
+			}
+			for (Button b: engToDisableB){
+				if (b != null){
+					b.setDisable(true);
+				}
+			}
+			SELECTED_BLOCK = 3;
+			toEnableBlockB[1].setSelected(true);
+			this.edworld.setDrawingMode("engineering");
+			this.edworld.update(0, 0, 0, 0);
+		} else if (this.mode.equals("normal")){
+			engp.setDisable(true);
+			for (TilePane t: normalModePanes){
+				if (t != null){
+					t.setDisable(false);
+				}
+			}
+			for (MenuItem n: engToDisable){
+				if (n != null){
+					n.setDisable(false);
+				}
+			}
+			for (Button b: engToDisableB){
+				if (b != null){
+					b.setDisable(false);
+				}
+			}
+			SELECTED_BLOCK = 1;
+			toEnableBlockB[0].setSelected(true);
+			this.edworld.setDrawingMode("normal");
+			this.edworld.update(0, 0, 0, 0);
+		}
 	}
 }

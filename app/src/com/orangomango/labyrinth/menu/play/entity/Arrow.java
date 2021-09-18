@@ -42,7 +42,7 @@ public class Arrow extends Entity{
 				startY = getY()+1;
 				setY(startY);
 				break;
-      case World.EST:
+      case World.EAST:
 				stepX = 0.25;
 				stepY = 0.0;
 				startX = getX()+1;
@@ -110,7 +110,7 @@ public class Arrow extends Entity{
 				case World.WEST:
 			    pen.drawImage(this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			    break;
-			  case World.EST:
+			  case World.EAST:
 			  	pen.drawImage(this.image, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			  	break;
 			  case World.NORTH:

@@ -71,6 +71,7 @@ public class LoadingScreen {
 		"entities" + File.separator + "bat_front_3",
 		"entities" + File.separator + "arrow_v",
 		"entities" + File.separator + "arrow_h"
+		//"engineering" + File.separator + "blocks"
 	};
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;

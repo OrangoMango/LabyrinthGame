@@ -206,7 +206,7 @@ public class Block {
 					case World.SOUTH:
 						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_v.png"), 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, 0+px*World.BLOCK_WIDTH, py * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
 						break;
-					case World.EST:
+					case World.EAST:
 						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png"), 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 						break;
 					case World.WEST:
@@ -262,7 +262,7 @@ public class Block {
 				break;
 			default:
 				pen.setFill(Color.RED);
-						pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 		}
 	}

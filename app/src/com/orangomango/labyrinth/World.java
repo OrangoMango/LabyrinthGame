@@ -1,7 +1,7 @@
 /**
    Labirinth game - world class
    @author OrangoMango
-   @version 3.3
+   @version 3.4
 */
 
 package com.orangomango.labyrinth;
@@ -20,6 +20,9 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.play.entity.*;
 
+// Engineering mode
+import com.orangomango.labyrinth.engineering.*;
+
 public class World {
 	protected Block[][] world;
 	protected String filePath;
@@ -30,10 +33,12 @@ public class World {
 	protected Canvas canvas;
 	private Entity[] ents = new Entity[0];
 	private boolean playerView = false;
-	
+	private EngWorld engW = null;
+	private String drawingMode = "normal";
+
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
-	public final static String EST = "e";
+	public final static String EAST = "e";
 	public final static String WEST = "w";
 
 	public final static String WALL = "wall";
@@ -45,7 +50,7 @@ public class World {
 	public final static String SHOOTER = "shooter";
 	public final static String BAT_GEN = "bat_generator";
 	public final static String ELEVATOR = "elevator";
-	
+
 	public final static String D_WARNING = "decoration_warning";
 
 	public final static int BLOCK_WIDTH = 32;
@@ -54,13 +59,17 @@ public class World {
 		filePath = path;
 		world = readWorld(filePath);
 	}
-	
-	public void setPlayerView(boolean value){
+
+	public void setPlayerView(boolean value) {
 		this.playerView = value;
 	}
-	
-	public boolean getPlayerView(){
+
+	public boolean getPlayerView() {
 		return this.playerView;
+	}
+	
+	public EngWorld getEngineeringWorld(){
+		return this.engW;
 	}
 
 	public void setPen(GraphicsContext pen) {
@@ -70,26 +79,34 @@ public class World {
 	public void setPlayer(Player pl) {
 		this.player = pl;
 	}
-	
-	public Player getPlayer(){
+
+	public Player getPlayer() {
 		return this.player;
 	}
 
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
 	}
-	
-	public void setEnts(Entity... e){
+
+	public void setEnts(Entity...e) {
 		ents = e;
 	}
-	
-	public void addEnt(Entity e){
-		this.ents = Arrays.copyOf(ents, ents.length+1);
-		this.ents[ents.length-1] = e;
+
+	public void addEnt(Entity e) {
+		this.ents = Arrays.copyOf(ents, ents.length + 1);
+		this.ents[ents.length - 1] = e;
+	}
+
+	public Entity[] getEnts() {
+		return this.ents;
 	}
 	
-	public Entity[] getEnts(){
-		return this.ents;
+	public String getDrawingMode(){
+		return this.drawingMode;
+	}
+	
+	public void setDrawingMode(String d){
+		this.drawingMode = d;
 	}
 
 	public void changeToWorld(String path) {
@@ -114,10 +131,13 @@ public class World {
 	public void update(int x, int y, int x1, int y1) {
 		try {
 			this.pen.setFill(Color.WHITE);
-			if (x == 0 && y == 0 && x1 == 0 && y1 == 0){
+			if (x == 0 && y == 0 && x1 == 0 && y1 == 0) {
 				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
 				draw();
 			} else {
+				if (getDrawingMode().equals("engineering")){
+					return;
+				}
 				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH); //(x+y) * BLOCK_WIDTH, (x+y) * BLOCK_WIDTH);
 				draw(x, y, x1, y1);
 			}
@@ -146,6 +166,20 @@ public class World {
 			start = configureFromString(startData);
 			end = configureFromString(endData);
 
+			String engData = reader.readLine();
+			if (engData != null) {
+				if (engData.equals("engineering_mode")) {
+					System.out.println("Eng mode available");
+					String engWorldData = reader.readLine();
+					EngBlock[][] engWorld = parseEngWorldData(engWorldData, this.width, this.height);  // array, y, x
+					this.engW = new EngWorld(engWorld, engWorld[0].length, engWorld.length);
+				} else {
+					System.out.println("Engineer mode not available (missing string)");
+				}
+			} else {
+				System.out.println("Engineer mode not available (null)");
+			}
+
 			reader.close();
 			return Fworld;
 
@@ -167,13 +201,41 @@ public class World {
 
 		return output;
 	}
+	
+	private EngBlock[][] parseEngWorldData(String data, int h, int w){
+		
+		// Very similar method to parseWorldData()
+		
+		String[] current = data.split(",");
+		EngBlock[][] output = new EngBlock[h][w];
+		
+		int iterator = 0;
+		int counter = 0;
+		for (String i: current) {
+			EngBlock[] x = new EngBlock[w];
+			int it2 = 0;
+
+			if (iterator + w > current.length) { // If iterator is bigger than the list length then stop
+				break;
+			}
+			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
+				x[it2] = EngBlock.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
+				it2++;
+			}
+			output[counter] = x;
+			iterator += w;
+			counter++;
+		}
+
+		return output;
+	}
 
 	/**
 	 * Parse give string from file and return an array
 	 * @param data - string with all file data
 	 * @param h - world height
 	 * @param w - world width
-	*/
+	 */
 	private Block[][] parseWorldData(String data, int h, int w) {
 		String[] current = data.split(",");
 		Block[][] output = new Block[h][w];
@@ -187,18 +249,18 @@ public class World {
 			if (iterator + w > current.length) { // If iterator is bigger than the list length then stop
 				break;
 			}
-      			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
+			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
-				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")){
+				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")) {
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
 					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1], Integer.parseInt(d[2]), d[3].equals("t") ? true : false));
-				} else if (x[it2].getType() == SHOOTER){
+				} else if (x[it2].getType() == SHOOTER) {
 					String d = Character.toString(x[it2].getInfo().split("#")[1].charAt(0));
 					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d));
-				} else if (x[it2].getType() == ELEVATOR && !x[it2].getInfo().equals("NoDataSet")){
+				} else if (x[it2].getType() == ELEVATOR && !x[it2].getInfo().equals("NoDataSet")) {
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
 					addEnt(new Elevator(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
-				} else if (x[it2].getType() == C_SPIKE){
+				} else if (x[it2].getType() == C_SPIKE) {
 					addEnt(new CSpike(this, x[it2].getX(), x[it2].getY()));
 				}
 				it2++;
@@ -211,66 +273,77 @@ public class World {
 	}
 
 	public void draw() {
-		for (Block[] blocks: world) {
-			for (Block block: blocks) {
-				block.draw(this.pen, this);
+		if (getDrawingMode().equals("normal")){
+			for (Block[] blocks: world) {
+				for (Block block: blocks) {
+					block.draw(this.pen, this);
+				}
+			}
+			drawStart(0, 0);
+			drawEnd(0, 0);
+			for (Entity e: this.ents) {
+				e.draw(this.pen);
+			}
+			this.player.draw(this.pen);
+		} else if (getDrawingMode().equals("engineering")){
+			for (EngBlock[] blocks: engW.getWorld()) {
+				for (EngBlock block: blocks) {
+					block.draw(this.pen);
+				}
 			}
 		}
-		drawStart(0, 0);
-		drawEnd(0, 0);
-		for (Entity e : this.ents){
-			e.draw(this.pen);
-		}
-		this.player.draw(this.pen);
 	}
-	
-	public void draw(int x, int y, int x1, int y1){	
-                int coux = 0;
-                int couy = 0;
-                for (int cy = y; cy <= y1; cy++){
-                    for (int cx = x; cx <= x1; cx++){
-                        Block b = getBlockAt(cx, cy);
-                        if (b != null){
-                        	b.draw(this.pen, coux, couy, this);
-                        } else {
-                        	new Block(VOID, coux, couy, null).draw(this.pen, this);
-                        }
-                        coux++;
-                    }
-                    coux = 0;
-                    couy++;
-                }
-		if ((start[0] >= x && start[0] <= x1) && (start[1] >= y && start[1] <= y1)){
+
+	public void draw(int x, int y, int x1, int y1) {
+		if (getDrawingMode().equals("engineering")){
+			return;
+		}
+		int coux = 0;
+		int couy = 0;
+		for (int cy = y; cy<= y1; cy++) {
+			for (int cx = x; cx<= x1; cx++) {
+				Block b = getBlockAt(cx, cy);
+				if (b != null) {
+					b.draw(this.pen, coux, couy, this);
+				} else {
+					new Block(VOID, coux, couy, null).draw(this.pen, this);
+				}
+				coux++;
+			}
+			coux = 0;
+			couy++;
+		}
+		if ((start[0] >= x && start[0]<= x1) && (start[1] >= y && start[1]<= y1)) {
 			drawStart(x, y);
 		}
-		if  ((end[0] >= x && end[0] <= x1) && (end[1] >= y && end[1] <= y1)){
+		if ((end[0] >= x && end[0]<= x1) && (end[1] >= y && end[1]<= y1)) {
 			drawEnd(x, y);
 		}
-		for (Entity e : this.ents){
-			if ((e.getX() >= x && e.getX() <= x1) && (e.getY() >= y && e.getY() <= y1)){
-				e.draw(this.pen, e.getX()-x, e.getY()-y);
+		for (Entity e: this.ents) {
+			if ((e.getX() >= x && e.getX()<= x1) && (e.getY() >= y && e.getY()<= y1)) {
+				e.draw(this.pen, e.getX() - x, e.getY() - y);
 			}
 		}
-		if ((this.player.getX() >= x && this.player.getX() <= x1) && (this.player.getY() >= y && this.player.getY() <= y1)){
-			if (this.player.psx == null && this.player.psy == null){
-				this.player.draw(this.pen, this.player.getX()-x, this.player.getY()-y);
+		if ((this.player.getX() >= x && this.player.getX()<= x1) && (this.player.getY() >= y && this.player.getY()<= y1)) {
+			if (this.player.psx == null && this.player.psy == null) {
+				this.player.draw(this.pen, this.player.getX() - x, this.player.getY() - y);
 			}
 		}
-		
-		if (this.player.psx != null && this.player.psy != null){
-			if ((this.player.psx >= x && this.player.psx <= x1) && (this.player.psy >= y && this.player.psy <= y1)){
-				this.player.draw(this.pen, this.player.psx-x, this.player.psy-y);
+
+		if (this.player.psx != null && this.player.psy != null) {
+			if ((this.player.psx >= x && this.player.psx<= x1) && (this.player.psy >= y && this.player.psy<= y1)) {
+				this.player.draw(this.pen, this.player.psx - x, this.player.psy - y);
 			}
 		}
 	}
-	
-	private void drawStart(int x, int y){
+
+	private void drawStart(int x, int y) {
 		this.pen.setStroke(Color.GREEN);
 		this.pen.setFont(new Font("Arial", 23));
 		this.pen.strokeText("S", (start[0] - x) * BLOCK_WIDTH + 2, (start[1] - y) * BLOCK_WIDTH + 22);
 	}
-	
-	private void drawEnd(int x, int y){
+
+	private void drawEnd(int x, int y) {
 		this.pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/end.png"), (end[0] - x) * BLOCK_WIDTH, (end[1] - y) * BLOCK_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH);
 	}
 
