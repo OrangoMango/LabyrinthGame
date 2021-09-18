@@ -111,11 +111,11 @@ public class Block {
 		draw(pen, this.x, this.y, w);
 	}
 	
-	private void drawAirBlock(GraphicsContext pen, int px, int py){
+	public static void drawAirBlock(GraphicsContext pen, int px, int py){
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_air.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
-	private void drawWarningSign(GraphicsContext pen, int px, int py){
+	public static void drawWarningSign(GraphicsContext pen, int px, int py){
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/editor/warning.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	

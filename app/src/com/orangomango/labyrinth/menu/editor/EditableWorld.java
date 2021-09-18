@@ -181,8 +181,8 @@ public class EditableWorld extends World {
 		
 		this.world = newArray;
 		this.height--;
-		updateWalls();
 		getEngineeringWorld().setWorld(getEngineeringClone());
+		updateWalls();
 		updateOnFile();
 		return true;
 	}
@@ -207,8 +207,8 @@ public class EditableWorld extends World {
 		}
 		this.world = newArray;
 		this.width--;
-		updateWalls();
 		getEngineeringWorld().setWorld(getEngineeringClone());
+		updateWalls();
 		updateOnFile();
 		return true;
 	}

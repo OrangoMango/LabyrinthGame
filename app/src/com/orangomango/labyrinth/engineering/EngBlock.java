@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 
 import com.orangomango.labyrinth.World;
+import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
@@ -196,8 +197,19 @@ public class EngBlock {
 	}
 	
 	public void draw(GraphicsContext pen){
-		System.out.println("---> "+this);
 		switch (getType()){
+			case AIR:
+				Block.drawAirBlock(pen, getX(), getY());
+				break;
+			case CABLE:
+				Block.drawAirBlock(pen, getX(), getY());
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/"+this.world.getAtt(getX(), getY())[2]), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				System.out.println("---> "+this.world.getAtt(getX(), getY())[2]);
+				break;
+			case LEVER:
+				Block.drawAirBlock(pen, getX(), getY());
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_off.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
 			case GENERATOR:
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_5.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;

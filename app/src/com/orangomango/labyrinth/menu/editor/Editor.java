@@ -46,7 +46,6 @@ public class Editor {
 	private TilePane[] normalModePanes = new TilePane[3];
 	private MenuItem[] engToDisable = new MenuItem[6];
 	private Button[] engToDisableB = new Button[6];
-	private ToggleButton[] toEnableBlockB = new ToggleButton[2]; // When switching mode one of these buttons will be enabled
 
 	private static String[] WORKING_FILE_PATHS = new String[0];
 	private static String[] CURRENT_FILE_PATHS = new String[0];
@@ -430,16 +429,22 @@ public class Editor {
 					unsaved();
 				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("engineering")){
 					switch (SELECTED_BLOCK){
+						case 1:
+							engblock.setInfo("attachments#es");
+							engblock.toggleType(EngBlock.CABLE);
+							break;
+						case 2:
+							engblock.setInfo(null);
+							engblock.toggleType(EngBlock.LEVER);
+							break;
 						case 3:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.GENERATOR);
-							System.out.println("Toggled");
 							break;
 					}
 					
 					editableworld.getEngineeringWorld().setBlockOn(engblock);
 					editableworld.updateOnFile();
-					System.out.println(editableworld.getEngineeringWorld());
 				}
 			}
 		});
@@ -807,7 +812,6 @@ public class Editor {
 					db.setHgap(5);
 					db.setVgap(5);
 					ToggleButton wallB = new ToggleButton();
-					toEnableBlockB[0] = wallB;
 					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-nesw.png")));
 					wallB.setTooltip(new Tooltip("Wall block. ID:N1"));
 					wallB.setToggleGroup(tg);
@@ -894,13 +898,17 @@ public class Editor {
 					leverB.setToggleGroup(tg);
 					leverB.setOnAction(event -> SELECTED_BLOCK = 2);
 					ToggleButton generatorB = new ToggleButton();
-					toEnableBlockB[1] = generatorB;
 					generatorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_5.png")));
 					generatorB.setTooltip(new Tooltip("Generator block. ID:E3"));
 					generatorB.setToggleGroup(tg);
 					generatorB.setOnAction(event -> SELECTED_BLOCK = 3);
+					ToggleButton doorB = new ToggleButton();
+					doorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_3.png")));
+					doorB.setTooltip(new Tooltip("Door block. ID:E4"));
+					doorB.setToggleGroup(tg);
+					doorB.setOnAction(event -> SELECTED_BLOCK = 4);
 					engp.setDisable(this.mode.equals("normal") ? true : false);
-					engp.getChildren().addAll(cableB, leverB, generatorB);
+					engp.getChildren().addAll(cableB, leverB, generatorB, doorB);
 					Label header3 = new Label(" Engineer Blocks");
 					header3.setStyle(style);
 					return new VBox(header3, engp);
@@ -1134,8 +1142,8 @@ public class Editor {
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "editor");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "entities");
-		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "engineer");
-		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "engineer" + File.separator + "blocks");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "engineering");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "engineering" + File.separator + "blocks");
 	}
 
     /**
@@ -1186,7 +1194,6 @@ public class Editor {
 				}
 			}
 			SELECTED_BLOCK = 3;
-			toEnableBlockB[1].setSelected(true);
 			this.edworld.setDrawingMode("engineering");
 			this.edworld.update(0, 0, 0, 0);
 		} else if (this.mode.equals("normal")){
@@ -1207,7 +1214,6 @@ public class Editor {
 				}
 			}
 			SELECTED_BLOCK = 1;
-			toEnableBlockB[0].setSelected(true);
 			this.edworld.setDrawingMode("normal");
 			this.edworld.update(0, 0, 0, 0);
 		}

@@ -70,9 +70,36 @@ public class LoadingScreen {
 		"entities" + File.separator + "bat_front_2",
 		"entities" + File.separator + "bat_front_3",
 		"entities" + File.separator + "arrow_v",
-		"entities" + File.separator + "arrow_h"
-		//"engineering" + File.separator + "blocks"
+		"entities" + File.separator + "arrow_h",
+		"engineering" + File.separator + "blocks" + File.separator + "generator_1",
+		"engineering" + File.separator + "blocks" + File.separator + "generator_2",
+		"engineering" + File.separator + "blocks" + File.separator + "generator_3",
+		"engineering" + File.separator + "blocks" + File.separator + "generator_4",
+		"engineering" + File.separator + "blocks" + File.separator + "generator_5",
+		"engineering" + File.separator + "blocks" + File.separator + "lever_on",
+		"engineering" + File.separator + "blocks" + File.separator + "lever_off",
+		"engineering" + File.separator + "blocks" + File.separator + "cable",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-n",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-e",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-s",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-w",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-ne",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-es",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-sw",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-nw",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-nes",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-esw",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-nsw",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-new",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-nesw",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-ns",
+		"engineering" + File.separator + "blocks" + File.separator + "cable-ew",
+		"engineering" + File.separator + "blocks" + File.separator + "door_1",
+		"engineering" + File.separator + "blocks" + File.separator + "door_2",
+		"engineering" + File.separator + "blocks" + File.separator + "door_3",
+		"engineering" + File.separator + "blocks" + File.separator + "door_4"
 	};
+	
 	private static final int IMAGES = IMGNAMES.length;
 	private Stage stage;
 	private Menu menu;
@@ -115,7 +142,7 @@ public class LoadingScreen {
 		final Label label = new Label("Start download to continue");
 		final ProgressBar bar = new ProgressBar(0);
 		final ProgressIndicator bar2 = new ProgressIndicator(0);
-		bar.setPrefWidth(300);
+		bar.setPrefWidth(320);
 		bar2.setMaxHeight(40);
 		ImageView view = new ImageView(new Image("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/icon.png"));
 		Button start = new Button("Start downloading files");
@@ -165,7 +192,7 @@ public class LoadingScreen {
 			new Thread(dwlworker).start();
 		});
 
-		Scene scene = new Scene(pane, 380, 250);
+		Scene scene = new Scene(pane, 410, 250);
 		scene.getStylesheets().add("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/style.css");
 		this.stage.setScene(scene);
 		this.stage.setResizable(false);
