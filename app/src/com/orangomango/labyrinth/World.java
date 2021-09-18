@@ -178,10 +178,10 @@ public class World {
 					EngBlock[][] engWorld = parseEngWorldData(engWorldData, this.height, this.width);  // array, y, x
 					this.engW = new EngWorld(engWorld, engWorld[0].length, engWorld.length);
 				} else {
-					System.out.println("Engineer mode not available (missing string)");
+					System.out.println("Engineering mode not available (missing string)");
 				}
 			} else {
-				System.out.println("Engineer mode not available (null)");
+				System.out.println("Engineering mode not available (null)");
 			}
 
 			reader.close();

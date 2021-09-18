@@ -33,6 +33,7 @@ public class EngBlock {
 	public static final String LED = "led";
 	public static final String GENERATOR = "generator";
 	public static final String AIR = "air";
+	public static final String DOOR = "door";
 
 	public String getType() {
 		return this.type;
@@ -193,6 +194,10 @@ public class EngBlock {
 				this.category = SIGNAL_OUTPUT;
 				this.activable = true;
 				break;
+			case DOOR:
+				this.category = SIGNAL_OUTPUT;
+				this.activable = true;
+				break;
 		}
 	}
 	
@@ -212,6 +217,10 @@ public class EngBlock {
 			case GENERATOR:
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_5.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
+			case DOOR:
+				Block.drawAirBlock(pen, getX(), getY());
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_4.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
 			default:
 				pen.setFill(Color.RED);
 				pen.fillRect(getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -230,6 +239,8 @@ public class EngBlock {
 				return new EngBlock(x1, y1, GENERATOR, i);
 			case 4:
 				return new EngBlock(x1, y1, LED, i);
+			case 5:
+				return new EngBlock(x1, y1, DOOR, i);
 			default:
 				return null;
 		}
@@ -247,6 +258,8 @@ public class EngBlock {
 				return 3;
 			case LED:
 				return 4;
+			case DOOR:
+				return 5;
 			default:
 				return null;
 		}

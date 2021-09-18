@@ -429,7 +429,7 @@ public class Editor {
 				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("engineering")){
 					switch (SELECTED_BLOCK){
 						case 1:
-							engblock.setInfo("attachments#es");
+							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.CABLE);
 							break;
 						case 2:
@@ -439,6 +439,10 @@ public class Editor {
 						case 3:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.GENERATOR);
+							break;
+						case 5:
+							engblock.setInfo(null);
+							engblock.toggleType(EngBlock.DOOR);
 							break;
 					}
 					
@@ -903,12 +907,12 @@ public class Editor {
 					generatorB.setOnAction(event -> SELECTED_BLOCK = 3);
 					ToggleButton doorB = new ToggleButton();
 					doorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_3.png")));
-					doorB.setTooltip(new Tooltip("Door block. ID:E4"));
+					doorB.setTooltip(new Tooltip("Door block. ID:E5"));
 					doorB.setToggleGroup(tg);
-					doorB.setOnAction(event -> SELECTED_BLOCK = 4);
+					doorB.setOnAction(event -> SELECTED_BLOCK = 5);
 					engp.setDisable(this.mode.equals("normal") ? true : false);
 					engp.getChildren().addAll(cableB, leverB, generatorB, doorB);
-					Label header3 = new Label(" Engineer Blocks");
+					Label header3 = new Label(" Engineering Blocks");
 					header3.setStyle(style);
 					return new VBox(header3, engp);
 				default:
