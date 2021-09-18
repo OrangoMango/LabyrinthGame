@@ -20,7 +20,8 @@ sh run.sh
 
 # Screenshots
 * Gameplay (*Use arrows to move*)<br>
-![level6](https://user-images.githubusercontent.com/61402409/125439883-81451397-1a76-45a0-8002-f9a10dd1bddf.png)
+![slvl8](https://user-images.githubusercontent.com/61402409/133892713-7ceba2d7-258f-4487-8f28-ba2a4403cf81.png)
+![slvl6](https://user-images.githubusercontent.com/61402409/133892711-703bad4a-b670-46ee-86e9-e811b87e280d.png)
 * Editor (*Click on the block to change its type*)<br>
 ![editor3_4](https://user-images.githubusercontent.com/61402409/133609868-f92db532-ac04-4317-a8bd-41371f69a173.png)
 * `My levels` interface (*Edit, delete and run levels*)<br>
