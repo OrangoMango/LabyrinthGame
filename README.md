@@ -2,6 +2,12 @@
 [TO BE CONTINUED] Easy java game
 
 # Run program
+## Requirements
+* Java JDK version 11+
+* JavaFX
+* Windows/Linux/MacOS
+---
+## How to do
 * Change the first line of the `run.sh` file according to your javafx path location
 * Execute the `run.sh` file in the `app/` folder with the command:
 ```bash
