@@ -1,3 +1,4 @@
+# Change the next line with your javafx/lib path
 export FX_PATH=/usr/share/openjfx/lib
 cd src
 echo "Compiling..."
