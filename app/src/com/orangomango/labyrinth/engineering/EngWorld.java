@@ -25,6 +25,14 @@ public class EngWorld {
 		return this.world;
 	}
 	
+	public int getWidth(){
+		return this.width;
+	}
+	
+	public int getHeight(){
+		return this.height;
+	}
+	
 	public void setWorld(EngBlock[][] w){
 		this.world = w;
 	}
@@ -58,6 +66,7 @@ public class EngWorld {
 			b.append(Arrays.toString(r));
 			b.append("\n");
 		}
+		b.append("Size: "+this.width+"x"+this.height);
 		return b.toString();
 	}
 
@@ -96,6 +105,16 @@ public class EngWorld {
 		return new String[] {
 			Integer.toString(a), d, "cable" + (a == 0 ? "" : "-") + d + ".png"
 		};
+	}
+	
+	public static EngWorld createNewEngWorld(int w, int h){
+		EngBlock[][] output = new EngBlock[h][w];
+		for (int y = 0; y < h; y++){
+			for (int x = 0; x < w; x++){
+				output[y][x] = new EngBlock(x, y, EngBlock.AIR, null);
+			}
+		}
+		return new EngWorld(output, w, h);
 	}
 
 	public int getConnected(int px, int py, String f) {

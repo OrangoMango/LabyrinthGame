@@ -71,6 +71,10 @@ public class World {
 	public EngWorld getEngineeringWorld(){
 		return this.engW;
 	}
+	
+	public void setEngineeringWorld(EngWorld w){
+		this.engW = w;
+	}
 
 	public void setPen(GraphicsContext pen) {
 		this.pen = pen;
@@ -171,7 +175,7 @@ public class World {
 				if (engData.equals("engineering_mode")) {
 					System.out.println("Eng mode available");
 					String engWorldData = reader.readLine();
-					EngBlock[][] engWorld = parseEngWorldData(engWorldData, this.width, this.height);  // array, y, x
+					EngBlock[][] engWorld = parseEngWorldData(engWorldData, this.height, this.width);  // array, y, x
 					this.engW = new EngWorld(engWorld, engWorld[0].length, engWorld.length);
 				} else {
 					System.out.println("Engineer mode not available (missing string)");

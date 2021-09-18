@@ -204,7 +204,6 @@ public class EngBlock {
 			case CABLE:
 				Block.drawAirBlock(pen, getX(), getY());
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/"+this.world.getAtt(getX(), getY())[2]), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-				System.out.println("---> "+this.world.getAtt(getX(), getY())[2]);
 				break;
 			case LEVER:
 				Block.drawAirBlock(pen, getX(), getY());

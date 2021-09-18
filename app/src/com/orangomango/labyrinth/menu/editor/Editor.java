@@ -25,7 +25,7 @@ import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
 import com.orangomango.labyrinth.Logger;
-import com.orangomango.labyrinth.engineering.EngBlock;
+import com.orangomango.labyrinth.engineering.*;
 
 public class Editor {
 	private Stage stage;
@@ -102,7 +102,6 @@ public class Editor {
 				EngBlock engblock = null;
 				if (mode.equals("engineering")){
 					engblock = editableworld.getEngineeringWorld().getBlockAtCoord((int) event.getX(), (int) event.getY());
-					System.out.println(engblock);
 				}
 				if (event.getButton() == MouseButton.SECONDARY && mode.equals("normal")){
 					ContextMenu contextMenu = new ContextMenu();
@@ -1177,6 +1176,16 @@ public class Editor {
 	private void setMode(String m){
 		this.mode = m;
 		if (this.mode.equals("engineering")){
+			if (this.edworld.getEngineeringWorld() == null){
+				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.width, this.edworld.height));
+				this.edworld.updateOnFile();
+				unsaved();
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setHeaderText("Engineering mode missing");
+				alert.setTitle("Engineering mode was not selected when you created this world");
+				alert.setContentText("Engineering mode was missing and has been created for you");
+				alert.showAndWait();
+			}
 			engp.setDisable(false);
 			for (TilePane t: normalModePanes){
 				if (t != null){

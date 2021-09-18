@@ -42,7 +42,7 @@ public class EditableWorld extends World {
 				for (EngBlock[] bArr: getEngineeringWorld().getWorld()) {
 					for (EngBlock block: bArr) {
 						writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
-						if (counter + 1 != getEngineeringWorld().getWorld().length*getEngineeringWorld().getWorld()[0].length) {
+						if (counter + 1 != getEngineeringWorld().getHeight() * getEngineeringWorld().getWidth()) {
 							writer.write(",");
 						}
 						counter++;
