@@ -108,7 +108,7 @@ public class LoadingScreen {
 	private String convertSlash(String input){
 		StringBuilder out = new StringBuilder();
 		for (char c : input.toCharArray()){
-			if (Character.toString(c) == "\\"){
+			if (Character.toString(c).equals("//")){
 				out.append("/");
 			} else {
 				out.append(c);

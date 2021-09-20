@@ -42,7 +42,7 @@ public class EditableWorld extends World {
 				for (EngBlock[] bArr: getEngineeringWorld().getWorld()) {
 					for (EngBlock block: bArr) {
 						writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
-						if (counter + 1 != getEngineeringWorld().getHeight() * getEngineeringWorld().getWidth()) {
+						if (counter + 1 != this.height * this.width) {
 							writer.write(",");
 						}
 						counter++;
@@ -58,21 +58,6 @@ public class EditableWorld extends World {
 
 	public void setBlockOn(EditableBlock block) {
 		this.world[block.getY()][block.getX()] = new Block(block.getType(), block.getX(), block.getY(), block.getInfo());
-	}
-	
-	public EngBlock[][] getEngineeringClone(){
-		EngBlock[][] output = new EngBlock[this.height][this.width];
-		for (int y = 0; y < this.height; y++){
-			for (int x = 0; x < this.width; x++){
-				if (getEngineeringWorld().getBlockAt(x, y) != null){
-					output[y][x] = getEngineeringWorld().getBlockAt(x, y);
-				} else {
-					output[y][x] = EngBlock.fromInt(0, x, y, null);
-				}
-			}
-		}
-		return output;
-		//return getEngineeringWorld().getWorld();
 	}
 	
 	public void updateWalls(){
@@ -120,6 +105,8 @@ public class EditableWorld extends World {
 		}
 		updateOnFile();
 	}
+	
+	// private (addRow, removeRow, addColumn, removeColumn) for engineering mode
 
 	public void addRow() {
 		Block[][] newArray = new Block[this.height + 1][this.width];
@@ -135,7 +122,6 @@ public class EditableWorld extends World {
 		newArray[counter] = newRow;
 		this.world = newArray;
 		this.height++;
-		getEngineeringWorld().setWorld(getEngineeringClone());
 		updateOnFile();
 	}
 
@@ -155,7 +141,6 @@ public class EditableWorld extends World {
 		}
 		this.world = newArray;
 		this.width++;
-		getEngineeringWorld().setWorld(getEngineeringClone());
 		updateOnFile();
 	}
 
@@ -181,7 +166,6 @@ public class EditableWorld extends World {
 		
 		this.world = newArray;
 		this.height--;
-		getEngineeringWorld().setWorld(getEngineeringClone());
 		updateWalls();
 		updateOnFile();
 		return true;
@@ -207,7 +191,6 @@ public class EditableWorld extends World {
 		}
 		this.world = newArray;
 		this.width--;
-		getEngineeringWorld().setWorld(getEngineeringClone());
 		updateWalls();
 		updateOnFile();
 		return true;

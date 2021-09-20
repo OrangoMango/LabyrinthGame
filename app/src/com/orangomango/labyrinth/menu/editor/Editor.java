@@ -462,7 +462,18 @@ public class Editor {
 		
 		canvas.setOnMouseMoved(event -> {
 			Block block = edworld.getBlockAtCoord((int)event.getX(), (int)event.getY());
-			this.pointingOn.setText("Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position"))+" ["+getFileName()+"]");
+			EngBlock Eblock;
+			if (edworld.getEngineeringWorld() != null){
+				Eblock = edworld.getEngineeringWorld().getBlockAtCoord((int)event.getX(), (int)event.getY());
+			} else {
+				Eblock = null;
+			}
+			if (this.mode.equals("normal")){
+				this.pointingOn.setText("Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position"))+" ["+getFileName()+"]");
+			} else if (this.mode.equals("engineering")){
+				this.pointingOn.setText("Mouse on block: "+Eblock+" ["+getFileName()+"]");
+			}
+					
 		});
 
 		scrollpane.setPrefSize(this.stage.getWidth(), this.stage.getHeight());
@@ -1184,11 +1195,7 @@ public class Editor {
 				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.width, this.edworld.height));
 				this.edworld.updateOnFile();
 				unsaved();
-				Alert alert = new Alert(Alert.AlertType.ERROR);
-				alert.setHeaderText("Engineering mode missing");
-				alert.setTitle("Engineering mode was not selected when you created this world");
-				alert.setContentText("Engineering mode was missing and has been created for you");
-				alert.showAndWait();
+				System.out.println("Engineering mode created successfully");
 			}
 			engp.setDisable(false);
 			for (TilePane t: normalModePanes){

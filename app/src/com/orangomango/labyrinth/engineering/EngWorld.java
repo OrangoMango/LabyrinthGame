@@ -15,6 +15,7 @@ public class EngWorld {
 		this.height = h;
 		this.width = w;
 		for (EngBlock[] r: this.world) {
+			System.out.println(Arrays.toString(r));
 			for (EngBlock b: r) {
 				b.setWorld(this);
 			}

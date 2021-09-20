@@ -166,7 +166,7 @@ public class EngBlock {
 
 	@Override
 	public String toString() {
-		return getType() + " " + isActive() + " " + getX() + " " + getY() + " " + getInfo(); //"Block:"+this.type+" at x:"+this.x+" y:"+this.y+" Active:"+isActive()+" Cat:"+getCategory()+" Path:"+this.path+" Info:"+getInfo();
+		return "Block:"+this.type+" at x:"+this.x+" y:"+this.y+" Active:"+isActive()+" Cat:"+getCategory()+" Info:"+getInfo();
 	}
 
 	public EngBlock(int x, int y, String type, String info) {
@@ -215,7 +215,7 @@ public class EngBlock {
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_off.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case GENERATOR:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_5.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_1.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case DOOR:
 				Block.drawAirBlock(pen, getX(), getY());

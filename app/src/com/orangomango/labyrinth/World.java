@@ -176,7 +176,7 @@ public class World {
 					System.out.println("Eng mode available");
 					String engWorldData = reader.readLine();
 					EngBlock[][] engWorld = parseEngWorldData(engWorldData, this.height, this.width);  // array, y, x
-					this.engW = new EngWorld(engWorld, engWorld[0].length, engWorld.length);
+					this.engW = new EngWorld(engWorld, this.width, this.height);
 				} else {
 					System.out.println("Engineering mode not available (missing string)");
 				}
