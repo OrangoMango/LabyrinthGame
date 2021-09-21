@@ -56,7 +56,7 @@ public class PlayScreen {
 
         Button playBtn = new Button("Play level");
         playBtn.setOnAction(clickEvent -> {
-          new LevelExe(PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + level, level, true);
+          new LevelExe(PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + level, level, true, "normal");
           LevelExe.setOnFinish(stage);
           stage.hide();
         });

@@ -202,6 +202,9 @@ public class EngBlock {
 	}
 	
 	public void draw(GraphicsContext pen){
+		if (getType() == CABLE){
+			this.info = "attachments#" + this.world.getAtt(getX(), getY())[1];
+		}
 		switch (getType()){
 			case AIR:
 				Block.drawAirBlock(pen, getX(), getY());
@@ -212,7 +215,7 @@ public class EngBlock {
 				break;
 			case LEVER:
 				Block.drawAirBlock(pen, getX(), getY());
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_off.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_"+(isActive() ? "on" : "off")+".png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case GENERATOR:
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_1.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);

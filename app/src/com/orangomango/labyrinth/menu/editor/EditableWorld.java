@@ -107,6 +107,73 @@ public class EditableWorld extends World {
 	}
 	
 	// private (addRow, removeRow, addColumn, removeColumn) for engineering mode
+	
+	public void addERow(){
+		EngBlock[][] newArray = new EngBlock[this.getEngineeringWorld().getHeight() + 1][this.getEngineeringWorld().getWidth()];
+		int counter = 0;
+		for (EngBlock[] bl: this.getEngineeringWorld().getWorld()) {
+			newArray[counter] = bl;
+			counter++;
+		}
+		EngBlock[] newRow = new EngBlock[this.getEngineeringWorld().getWidth()];
+		for (int i = 0; i<this.getEngineeringWorld().getWidth(); i++) {
+			newRow[i] = EngBlock.fromInt(0, i, counter, null);
+		}
+		newArray[counter] = newRow;
+		this.getEngineeringWorld().setWorld(newArray);
+		this.getEngineeringWorld().setHeight(this.getEngineeringWorld().getHeight()+1);
+	}
+	
+	public void addEColumn(){
+		EngBlock[][] newArray = new EngBlock[this.getEngineeringWorld().getHeight()][this.getEngineeringWorld().getWidth() + 1];
+		int counter = 0;
+		for (EngBlock[] bl: this.getEngineeringWorld().getWorld()) {
+			EngBlock[] newRow = new EngBlock[this.getEngineeringWorld().getWidth() + 1];
+			int c = 0;
+			for (EngBlock b: bl) {
+				newRow[c] = b;
+				c++;
+			}
+			newRow[c] = EngBlock.fromInt(0, this.getEngineeringWorld().getWidth() + 1, counter, null);
+			newArray[counter] = newRow;
+			counter++;
+		}
+		this.getEngineeringWorld().setWorld(newArray);
+		this.getEngineeringWorld().setWidth(this.getEngineeringWorld().getWidth()+1);
+	}
+	
+	public void removeERow(){
+		EngBlock[][] newArray = new EngBlock[this.getEngineeringWorld().getHeight() - 1][this.getEngineeringWorld().getWidth()];
+		int counter = 0;
+		for (EngBlock[] bl: this.getEngineeringWorld().getWorld()) {
+			if (counter<this.getEngineeringWorld().getHeight() - 1) {
+				newArray[counter] = bl;
+				counter++;
+			}
+		}
+		
+		this.getEngineeringWorld().setWorld(newArray);
+		this.getEngineeringWorld().setHeight(this.getEngineeringWorld().getHeight()-1);
+	}
+	
+	public void removeEColumn(){
+		EngBlock[][] newArray = new EngBlock[this.getEngineeringWorld().getHeight()][this.getEngineeringWorld().getWidth() - 1];
+		int counter = 0;
+		for (EngBlock[] bl: this.getEngineeringWorld().getWorld()) {
+			EngBlock[] newRow = new EngBlock[this.getEngineeringWorld().getWidth() - 1];
+			int c = 0;
+			for (EngBlock b: bl) {
+				if (c<this.getEngineeringWorld().getWidth() - 1) {
+					newRow[c] = b;
+				}
+				c++;
+			}
+			newArray[counter] = newRow;
+			counter++;
+		}
+		this.getEngineeringWorld().setWorld(newArray);
+		this.getEngineeringWorld().setWidth(this.getEngineeringWorld().getWidth()-1);
+	}
 
 	public void addRow() {
 		Block[][] newArray = new Block[this.height + 1][this.width];
@@ -122,6 +189,9 @@ public class EditableWorld extends World {
 		newArray[counter] = newRow;
 		this.world = newArray;
 		this.height++;
+		if (this.getEngineeringWorld() != null){
+			addERow();
+		}
 		updateOnFile();
 	}
 
@@ -141,6 +211,9 @@ public class EditableWorld extends World {
 		}
 		this.world = newArray;
 		this.width++;
+		if (this.getEngineeringWorld() != null){
+			addEColumn();
+		}
 		updateOnFile();
 	}
 
@@ -166,6 +239,9 @@ public class EditableWorld extends World {
 		
 		this.world = newArray;
 		this.height--;
+		if (this.getEngineeringWorld() != null){
+			removeERow();
+		}
 		updateWalls();
 		updateOnFile();
 		return true;
@@ -191,6 +267,9 @@ public class EditableWorld extends World {
 		}
 		this.world = newArray;
 		this.width--;
+		if (this.getEngineeringWorld() != null){
+			removeEColumn();
+		}
 		updateWalls();
 		updateOnFile();
 		return true;

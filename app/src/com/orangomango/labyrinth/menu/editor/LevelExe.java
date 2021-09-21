@@ -7,9 +7,7 @@ import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.canvas.*;
-import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Alert;
 
 import java.io.*;
@@ -17,6 +15,7 @@ import java.io.*;
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.menu.play.entity.*;
+import com.orangomango.labyrinth.engineering.*;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 
@@ -26,9 +25,10 @@ public class LevelExe {
 	public static boolean PLAYER_MOVEMENT;
 	private int xGap = 0;
 	private int yGap = 0;
+	private String mode;
 	public static final int PWS = 4;  // Player World Space(right)
 
-	public LevelExe(String path, String filename, boolean saved) {
+	public LevelExe(String path, String filename, boolean saved, String mode) {
 		if (OPEN) {
 			return;
 		}
@@ -39,6 +39,8 @@ public class LevelExe {
 
 		final World world = new World(path);
 		world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE);
+		this.mode = mode;
+		world.setDrawingMode(this.mode);
 		
 		stage.setOnCloseRequest(event -> {
 			if (LevelExe.exStage != null) {
@@ -84,9 +86,8 @@ public class LevelExe {
 		}
 		
 		// Handle movement
-		canvas.setOnKeyPressed(new EventHandler<KeyEvent> () {
-			@Override
-			public void handle(KeyEvent event) {
+		canvas.setOnKeyPressed(event -> {
+			if (this.mode.equals("normal")){
 				if (!PLAYER_MOVEMENT){
 					return;
 				}
@@ -125,6 +126,17 @@ public class LevelExe {
 				} else {
 					System.out.println(event.getCode());
 				}
+			}
+		});
+		
+		canvas.setOnMousePressed(event -> {
+			if (this.mode.equals("engineering")){
+				EngBlock engblock = world.getEngineeringWorld().getBlockAtCoord((int)event.getX(), (int)event.getY());
+				if (engblock.getCategory().equals(EngBlock.SIGNAL_INPUT)){
+					engblock.toggleActive();
+				}
+				System.out.println(engblock);
+				world.update(0, 0, 0, 0);
 			}
 		});
 

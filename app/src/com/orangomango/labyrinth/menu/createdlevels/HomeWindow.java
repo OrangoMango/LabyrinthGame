@@ -90,7 +90,7 @@ public class HomeWindow {
 				Button pub = new Button("Publish");
 				pub.setDisable(true);
 				run.setOnAction(event -> {
-					new LevelExe(p, file.getName(), true);LevelExe.setOnFinish(null);
+					new LevelExe(p, file.getName(), true, "normal");LevelExe.setOnFinish(null);
 				});
 				innerpane.add(plabel, 0, 0);
 				innerpane.add(edit, 1, 0);
