@@ -1,0 +1,4 @@
+15x10
+3,0,0,1:conn#s,5:direction#s,1:conn#s,3,4:point#4 6,3,3,3,3,2,2,2,3,0,0,1:conn#n,0,1:conn#n,0,0,0,0,0,0,0,3,0,3,0,0,0,0,2,6:data#5 h 200 f,0,0,0,0,1:conn#null,0,3,0,3,0,0,0,0,2,0,1:conn#s,0,0,0,0,0,3,0,3,0,0,0,0,1:conn#es,1:conn#ew,1:conn#nw,0,0,1:conn#null,0,0,1:conn#e,1:conn#sw,1:conn#e,1:conn#ew,1:conn#ew,1:conn#sw,0,1:conn#ns,0,0,0,0,0,0,0,5:direction#w,1:conn#ns,3:point#6 4,0,0:data#3 v 200,1:conn#ns,4:point#7 0,1:conn#ns,0:data#3 v 200,1:conn#e,1:conn#ew,1:conn#ew,1:conn#ew,1:conn#esw,1:conn#ew,1:conn#ew,1:conn#nw,1:conn#null,0,0,1:conn#ne,1:conn#ew,1:conn#nw,0,0,0,0,4:point#5 8,1:conn#ns,2,2,2,0,1:conn#null,0,0,0,4:point#10 7,1:conn#e,1:conn#ew,1:conn#ew,1:conn#ew,1:conn#ew,1:conn#nw,2,2,2,0,0,0,1:conn#null,0,0,3,3,3,2,2,2,2,2,2
+1,0
+0,8
