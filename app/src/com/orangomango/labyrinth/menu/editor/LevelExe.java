@@ -49,6 +49,9 @@ public class LevelExe {
 			for (Entity e : world.getEnts()){
 				e.stop();
 			}
+			if (world.getEngineeringWorld() != null){
+				world.getEngineeringWorld().stopAnimations();
+			}
 			OPEN = false;
 		});
 
@@ -140,6 +143,9 @@ public class LevelExe {
 			}
 		});
 
+		if (world.getEngineeringWorld() != null){
+			world.getEngineeringWorld().startAnimations();
+		}
 		stage.setScene(scene);
 		stage.setResizable(false);
 		stage.show();

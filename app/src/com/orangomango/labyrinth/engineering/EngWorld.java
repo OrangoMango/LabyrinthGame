@@ -9,14 +9,40 @@ public class EngWorld {
 	private int width;
 	private int height;
 	public EngBlock[] foundBlocks = new EngBlock[0];
+	private World bigWorld;
 
-	public EngWorld(EngBlock[][] wo, int w, int h) {
+	public EngWorld(World bigWorld, EngBlock[][] wo, int w, int h) {
 		this.world = wo;
 		this.height = h;
 		this.width = w;
+		this.bigWorld = bigWorld;
 		for (EngBlock[] r: this.world) {
 			for (EngBlock b: r) {
 				b.setWorld(this);
+			}
+		}
+	}
+	
+	public World getBigWorld(){
+		return this.bigWorld;
+	}
+	
+	public void startAnimations(){
+		for (EngBlock[] r: this.world) {
+			for (EngBlock b: r) {
+				if (b.getType().equals(EngBlock.GENERATOR)){
+					b.makeAnimation(new String[]{"generator_1", "generator_2", "generator_3", "generator_4", "generator_5", "generator_5"}, 250);
+				}
+			}
+		}
+	}
+	
+	public void stopAnimations(){
+		for (EngBlock[] r: this.world) {
+			for (EngBlock b: r) {
+				if (b.getType().equals(EngBlock.GENERATOR)){
+					b.stopAnimation();
+				}
 			}
 		}
 	}
@@ -115,14 +141,14 @@ public class EngWorld {
 		};
 	}
 	
-	public static EngWorld createNewEngWorld(int w, int h){
+	public static EngWorld createNewEngWorld(World wo, int w, int h){
 		EngBlock[][] output = new EngBlock[h][w];
 		for (int y = 0; y < h; y++){
 			for (int x = 0; x < w; x++){
 				output[y][x] = new EngBlock(x, y, EngBlock.AIR, null);
 			}
 		}
-		return new EngWorld(output, w, h);
+		return new EngWorld(wo, output, w, h);
 	}
 
 	public int getConnected(int px, int py, String f) {

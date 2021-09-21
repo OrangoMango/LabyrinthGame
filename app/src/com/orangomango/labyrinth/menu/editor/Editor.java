@@ -1224,7 +1224,7 @@ public class Editor {
 		this.mode = m;
 		if (this.mode.equals("engineering")){
 			if (this.edworld.getEngineeringWorld() == null){
-				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.width, this.edworld.height));
+				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld, this.edworld.width, this.edworld.height));
 				this.edworld.updateOnFile();
 				unsaved();
 				System.out.println("Engineering mode created successfully");

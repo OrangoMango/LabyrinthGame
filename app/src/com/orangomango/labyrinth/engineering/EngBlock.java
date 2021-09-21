@@ -3,6 +3,8 @@ package com.orangomango.labyrinth.engineering;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
+import javafx.animation.*;
+import javafx.util.Duration;
 
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Block;
@@ -19,6 +21,10 @@ public class EngBlock {
 	private String category;
 	private String path;
 	private String info;
+	private String imageName;
+	
+	private int counter;
+	private Timeline t;
 
 	//Categories
 	public static final String SIGNAL_EXTENDER = "signal_extender";
@@ -120,7 +126,6 @@ public class EngBlock {
 	}
 
 	public void setActive(boolean a) {
-		// Later on, put switch instead of else if
 
 		if (getCategory().equals(SIGNAL_GENERATOR) && isActive()) {
 			return;
@@ -188,6 +193,7 @@ public class EngBlock {
 			case GENERATOR:
 				this.category = SIGNAL_GENERATOR;
 				this.activable = true;
+				this.imageName = "generator_1";
 				setActive(true);
 				break;
 			case LED:
@@ -199,6 +205,25 @@ public class EngBlock {
 				this.activable = true;
 				break;
 		}
+	}
+	
+	public void makeAnimation(String[] images, int time){
+		counter = 0;
+		t = new Timeline(new KeyFrame(Duration.millis(time), event -> {
+			this.imageName = images[counter];
+			if (counter+1 != images.length){
+				counter++;
+			} else {
+				counter = 0;
+			}
+			this.world.getBigWorld().update(0, 0, 0, 0);
+		}));
+		t.setCycleCount(Animation.INDEFINITE);
+		t.play();
+	}
+	
+	public void stopAnimation(){
+		t.stop();
 	}
 	
 	public void draw(GraphicsContext pen){
@@ -218,7 +243,7 @@ public class EngBlock {
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_"+(isActive() ? "on" : "off")+".png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case GENERATOR:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_1.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/"+imageName+".png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case DOOR:
 				Block.drawAirBlock(pen, getX(), getY());
