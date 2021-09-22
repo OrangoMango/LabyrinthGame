@@ -1,5 +1,5 @@
 # LabyrinthGame
-[TO BE CONTINUED] Easy java game
+[TO BE CONTINUED] Easy java game (Feb 2021)
 
 # Features
 * Play a labyrinth 
