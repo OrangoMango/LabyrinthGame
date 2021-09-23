@@ -226,28 +226,36 @@ public class EngBlock {
 		t.stop();
 	}
 	
+	public void drawAirBlock(GraphicsContext pen, int px, int py){
+		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/block_air.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+	}
+	
 	public void draw(GraphicsContext pen){
 		if (getType() == CABLE){
 			this.info = "attachments#" + this.world.getAtt(getX(), getY())[1];
 		}
 		switch (getType()){
 			case AIR:
-				Block.drawAirBlock(pen, getX(), getY());
+				drawAirBlock(pen, getX(), getY());
 				break;
 			case CABLE:
-				Block.drawAirBlock(pen, getX(), getY());
+				drawAirBlock(pen, getX(), getY());
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/"+this.world.getAtt(getX(), getY())[2]), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case LEVER:
-				Block.drawAirBlock(pen, getX(), getY());
+				drawAirBlock(pen, getX(), getY());
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_"+(isActive() ? "on" : "off")+".png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case GENERATOR:
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/"+imageName+".png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case DOOR:
-				Block.drawAirBlock(pen, getX(), getY());
+				drawAirBlock(pen, getX(), getY());
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_4.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case LED:
+				drawAirBlock(pen, getX(), getY());
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/led_"+(isActive() ? "on" : "off")+".png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			default:
 				pen.setFill(Color.RED);

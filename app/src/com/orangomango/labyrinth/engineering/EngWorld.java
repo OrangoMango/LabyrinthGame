@@ -40,8 +40,9 @@ public class EngWorld {
 	public void stopAnimations(){
 		for (EngBlock[] r: this.world) {
 			for (EngBlock b: r) {
-				if (b.getType().equals(EngBlock.GENERATOR)){
+				try {
 					b.stopAnimation();
+				} catch (NullPointerException e){
 				}
 			}
 		}

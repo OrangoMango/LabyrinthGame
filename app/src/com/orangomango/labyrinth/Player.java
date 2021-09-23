@@ -155,6 +155,11 @@ public class Player {
 				}
 				this.repeat = rep2;
 				return;
+			} else if (this.isOnBlock(World.PARALLEL_BLOCK)){
+				if (this.world.getBlockAt(getX(), getY()).getCategory().equals(World.WALL)){
+						this.repeat = rep2;
+						return;
+				}
 			}
 			for (Entity ent : this.world.getEnts()){
 				if (ent.isOnPlayer(this) && (ent instanceof Bat || ent instanceof Arrow)){

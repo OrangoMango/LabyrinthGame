@@ -14,6 +14,7 @@ public class Block {
 	private int x, y;
 	private String info = null;
 	public String category = "";
+	public String[] parallelBlockData = null;
 
 	/**
 	  Block class constructor
@@ -45,6 +46,17 @@ public class Block {
 			if (this.info.equals("NoDataSet") || this.info.equals("NoPointSet")){
 				this.category = World.AIR;
 			}
+		}
+		if (this.type.equals(World.PARALLEL_BLOCK)){
+			if (this.info != null){
+				int counter = 0;
+				parallelBlockData = new String[this.info.split(";").length];
+				for (String infoPart : this.info.split(";")){
+					parallelBlockData[counter] = infoPart.split("#")[1];
+					counter++;
+				}
+			}
+			this.category = parallelBlockData[1];
 		}
 	}
 
@@ -98,6 +110,8 @@ public class Block {
 				return new Block(World.C_SPIKE, x1, y1, i);
 			case 9:
 				return new Block(World.D_WARNING, x1, y1, i);
+			case 10:
+				return new Block(World.PARALLEL_BLOCK, x1, y1, i);
 			default:
 				return null;
 		}
@@ -260,6 +274,10 @@ public class Block {
 				drawAirBlock(pen, px, py);
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_warning.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
+			case World.PARALLEL_BLOCK:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[0]), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
 			default:
 				pen.setFill(Color.RED);
 				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -289,6 +307,8 @@ public class Block {
 					return 8;
 				case World.D_WARNING:
 					return 9;
+				case World.PARALLEL_BLOCK:
+					return 10;
 				default:
 					return null;
 		}

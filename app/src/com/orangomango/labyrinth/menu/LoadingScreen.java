@@ -97,7 +97,10 @@ public class LoadingScreen {
 		"engineering" + File.separator + "blocks" + File.separator + "door_1",
 		"engineering" + File.separator + "blocks" + File.separator + "door_2",
 		"engineering" + File.separator + "blocks" + File.separator + "door_3",
-		"engineering" + File.separator + "blocks" + File.separator + "door_4"
+		"engineering" + File.separator + "blocks" + File.separator + "door_4",
+		"engineering" + File.separator + "blocks" + File.separator + "led_on",
+		"engineering" + File.separator + "blocks" + File.separator + "led_off",
+		"engineering" + File.separator + "blocks" + File.separator + "block_air"
 	};
 	
 	private static final int IMAGES = IMGNAMES.length;

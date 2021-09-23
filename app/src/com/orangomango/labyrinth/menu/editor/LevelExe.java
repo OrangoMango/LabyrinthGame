@@ -126,6 +126,8 @@ public class LevelExe {
 					player.moveOn(Player.X, Player.POSITIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.LEFT) {
 					player.moveOn(Player.X, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
+				} else if (event.getCode() == KeyCode.SPACE && player.isOnBlock(World.PARALLEL_BLOCK)){
+					System.out.println("Space pressed"); // Activate block
 				} else {
 					System.out.println(event.getCode());
 				}
@@ -143,7 +145,7 @@ public class LevelExe {
 			}
 		});
 
-		if (world.getEngineeringWorld() != null){
+		if (world.getEngineeringWorld() != null && this.mode.equals("engineering")){
 			world.getEngineeringWorld().startAnimations();
 		}
 		stage.setScene(scene);

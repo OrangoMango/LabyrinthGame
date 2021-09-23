@@ -334,6 +334,15 @@ public class Editor {
 					    }
 					    editableworld.updateOnFile();
 					}
+					if (edblock.getType().equals(EditableWorld.PARALLEL_BLOCK)){
+						Logger.warning("Could not place block on a parallel block");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setHeaderText("Could not place block on a parallel block.\nPlease remove this block from the engineering mode");
+						alert.setTitle("Parallel block Error");
+						alert.setContentText(null);
+						alert.showAndWait();
+						return;
+					}
 					switch (SELECTED_BLOCK) {
 						case 1:
 							if (edblock.getType().equals(EditableWorld.AIR)){
@@ -439,6 +448,10 @@ public class Editor {
 						case 3:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.GENERATOR);
+							break;
+						case 4:
+							engblock.setInfo(null);
+							engblock.toggleType(EngBlock.LED);
 							break;
 						case 5:
 							engblock.setInfo(null);
@@ -938,12 +951,17 @@ public class Editor {
 					TilePane engp4 = new TilePane();
 					engp4.setHgap(5);
 					engp4.setVgap(5);
+					ToggleButton ledB = new ToggleButton();
+					ledB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/led_off.png")));
+					ledB.setTooltip(new Tooltip("Led block. ID:E4"));
+					ledB.setToggleGroup(tg);
+					ledB.setOnAction(event -> SELECTED_BLOCK = 4);
 					ToggleButton doorB = new ToggleButton();
 					doorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_3.png")));
 					doorB.setTooltip(new Tooltip("Door block. ID:E5"));
 					doorB.setToggleGroup(tg);
 					doorB.setOnAction(event -> SELECTED_BLOCK = 5);
-					engp4.getChildren().add(doorB);
+					engp4.getChildren().addAll(ledB, doorB);
 					Label h4 = new Label("Signal output");
 					h4.setStyle(style2);
 					vb4.getChildren().addAll(h4, engp4);

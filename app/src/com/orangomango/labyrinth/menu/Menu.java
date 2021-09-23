@@ -1,5 +1,6 @@
 package com.orangomango.labyrinth.menu;
 
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -28,6 +29,9 @@ public class Menu {
 	public Menu(double version) {
 		this.stage = new Stage();
 		this.stage.setTitle("Menu v" + version);
+		this.stage.setOnCloseRequest(event -> {
+			Platform.exit();
+		});
 
 		LoadingScreen ls = new LoadingScreen(this);
 

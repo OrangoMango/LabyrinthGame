@@ -50,8 +50,8 @@ public class World {
 	public final static String SHOOTER = "shooter";
 	public final static String BAT_GEN = "bat_generator";
 	public final static String ELEVATOR = "elevator";
-
 	public final static String D_WARNING = "decoration_warning";
+	public final static String PARALLEL_BLOCK = "parallel_block";
 
 	public final static int BLOCK_WIDTH = 32;
 
@@ -134,15 +134,14 @@ public class World {
 
 	public void update(int x, int y, int x1, int y1) {
 		try {
-			this.pen.setFill(Color.WHITE);
 			if (x == 0 && y == 0 && x1 == 0 && y1 == 0) {
-				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
+				this.pen.clearRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
 				draw();
 			} else {
 				if (getDrawingMode().equals("engineering")){
 					return;
 				}
-				this.pen.fillRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH); //(x+y) * BLOCK_WIDTH, (x+y) * BLOCK_WIDTH);
+				this.pen.clearRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH); //(x+y) * BLOCK_WIDTH, (x+y) * BLOCK_WIDTH);
 				draw(x, y, x1, y1);
 			}
 		} catch (NullPointerException e) {
