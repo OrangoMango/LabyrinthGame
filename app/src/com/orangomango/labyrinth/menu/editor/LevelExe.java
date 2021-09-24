@@ -13,6 +13,7 @@ import javafx.scene.control.Alert;
 import java.io.*;
 
 import com.orangomango.labyrinth.World;
+import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.menu.play.entity.*;
 import com.orangomango.labyrinth.engineering.*;
@@ -127,7 +128,18 @@ public class LevelExe {
 				} else if (event.getCode() == KeyCode.LEFT) {
 					player.moveOn(Player.X, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
 				} else if (event.getCode() == KeyCode.SPACE && player.isOnBlock(World.PARALLEL_BLOCK)){
-					System.out.println("Space pressed"); // Activate block
+					Block block = world.getBlockAt(player.getX(), player.getY());
+					EngBlock engB = world.getEngineeringWorld().getBlockAt(block.getX(), block.getY());
+					String engBlockType = block.parallelBlockData[2];
+					if (engBlockType.equals(EngBlock.LEVER)){
+						engB.toggleActive();
+						world.updateParallelBlocks();
+					}
+					if (world.getPlayerView()){
+						world.update(world.start[0]-PWS, world.start[1]-PWS, world.start[0]+PWS, world.start[1]+PWS);
+					} else {
+						world.update(0, 0, 0, 0);
+					}
 				} else {
 					System.out.println(event.getCode());
 				}

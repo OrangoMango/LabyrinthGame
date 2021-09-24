@@ -92,7 +92,4 @@ public class Menu {
 		}
 	}
 
-	public void stop() {
-		this.stage.hide();
-	}
 }

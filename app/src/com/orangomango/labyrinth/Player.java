@@ -113,7 +113,7 @@ public class Player {
 					alert.setContentText(null);
 					alert.show();
 					LevelExe.OPEN = false;
-					stage.hide();
+					stage.close();
 					if (LevelExe.exStage != null)
 						LevelExe.exStage.show();
 					return;

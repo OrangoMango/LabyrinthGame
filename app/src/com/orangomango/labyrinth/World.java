@@ -53,7 +53,7 @@ public class World {
 	public final static String D_WARNING = "decoration_warning";
 	public final static String PARALLEL_BLOCK = "parallel_block";
 
-	public final static int BLOCK_WIDTH = 32;
+	public static int BLOCK_WIDTH = 32;
 
 	public World(String path) {
 		filePath = path;
@@ -130,6 +130,20 @@ public class World {
 			Logger.warning("World player is null");
 		}
 		update(0, 0, 0, 0);
+	}
+	
+	public void updateParallelBlocks(){
+		for (Block[] blockRow : this.world){
+			for (Block b : blockRow){
+				if (b.getType().equals(World.PARALLEL_BLOCK)){
+					String bType = b.parallelBlockData[2];
+					EngBlock eb = engW.getBlockAt(b.getX(), b.getY());
+					if (bType.equals(EngBlock.LEVER) || bType.equals(EngBlock.LED)){
+						b.setInfo("imagePath#engineering/blocks/"+bType+"_"+(eb.isActive() ? "on" : "off")+".png;category#wall;type#"+bType);
+					}
+				}
+			}
+		}
 	}
 
 	public void update(int x, int y, int x1, int y1) {
@@ -342,7 +356,7 @@ public class World {
 
 	private void drawStart(int x, int y) {
 		this.pen.setStroke(Color.GREEN);
-		this.pen.setFont(new Font("Arial", 23));
+		this.pen.setFont(new Font("Arial", 23/32 * World.BLOCK_WIDTH));
 		this.pen.strokeText("S", (start[0] - x) * BLOCK_WIDTH + 2, (start[1] - y) * BLOCK_WIDTH + 22);
 	}
 

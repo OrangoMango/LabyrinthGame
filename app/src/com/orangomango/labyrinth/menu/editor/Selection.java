@@ -59,7 +59,7 @@ public class Selection {
 		NewWidget wid = new NewWidget(true);
 		wid.setEDW(this.edworld);
 		wid.setEditor(this.editor);
-		this.stage.hide();
+		this.stage.close();
 		OPENED = false;
 	}
 
@@ -71,7 +71,7 @@ public class Selection {
 			chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 			File f = chooser.showOpenDialog(this.stage);
 			DONE = true;
-			this.stage.hide();
+			this.stage.close();
 			this.editor.start();
 			this.editor.open(f);
 		} catch (Exception e) {

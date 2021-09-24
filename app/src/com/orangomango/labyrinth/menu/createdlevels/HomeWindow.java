@@ -3,12 +3,16 @@ package com.orangomango.labyrinth.menu.createdlevels;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Alert;
+import javafx.scene.canvas.*;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -19,8 +23,11 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import com.orangomango.labyrinth.World;
+import com.orangomango.labyrinth.Player;
 
 public class HomeWindow {
+	
+	public final static int PREVIEW_BLOCK_WIDTH = 20;
 
 	private String getDim(int w, int h){
 	    int area = w*h;
@@ -92,14 +99,51 @@ public class HomeWindow {
 				run.setOnAction(event -> {
 					new LevelExe(p, file.getName(), true, "normal");LevelExe.setOnFinish(null);
 				});
+				ToggleGroup tg = new ToggleGroup();
+				RadioButton nm = new RadioButton("Normal Mode");
+				nm.setOnAction(event -> {
+					int tempW = World.BLOCK_WIDTH;
+					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
+					temp.setDrawingMode("normal");
+					temp.update(0, 0, 0, 0);
+					World.BLOCK_WIDTH = tempW;
+				});
+				nm.setToggleGroup(tg);
+				nm.setSelected(true);
+				RadioButton em = new RadioButton("Engineering mode");
+				em.setOnAction(event -> {
+					int tempW = World.BLOCK_WIDTH;
+					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
+					temp.setDrawingMode("engineering");
+					temp.update(0, 0, 0, 0);
+					World.BLOCK_WIDTH = tempW;
+				});
+				em.setDisable(temp.getEngineeringWorld() == null);
+				em.setToggleGroup(tg);
+				HBox hb = new HBox();
+				hb.setSpacing(5);
+				hb.getChildren().addAll(nm, em);
+				
+				int tempW = World.BLOCK_WIDTH;
+				World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
+				Canvas canvas = new Canvas(temp.width*World.BLOCK_WIDTH, temp.height*World.BLOCK_WIDTH);
+				temp.setCanvas(canvas);
+				GraphicsContext pen = canvas.getGraphicsContext2D();
+				temp.setPen(pen);
+				temp.setPlayer(new Player(temp.start[0], temp.start[1], temp));
+				temp.draw();
+				World.BLOCK_WIDTH = tempW;
+				
 				innerpane.add(plabel, 0, 0);
-				innerpane.add(edit, 1, 0);
+				innerpane.add(canvas, 1, 0, 1, 5);
+				innerpane.add(edit, 2, 0);
 				innerpane.add(mod, 0, 1);
 				innerpane.add(size, 0, 2);
-				innerpane.add(del, 1, 1);
-				innerpane.add(run, 1, 2);
+				innerpane.add(del, 2, 1);
+				innerpane.add(run, 2, 2);
 				innerpane.add(author, 0, 3);
-				innerpane.add(pub, 1, 3);
+				innerpane.add(pub, 2, 3);
+				innerpane.add(hb, 0, 4, 2, 1);
 
 				final TitledPane tp = new TitledPane(file.getName(), innerpane);
 
@@ -129,7 +173,7 @@ public class HomeWindow {
 		layout.add(pane, 0, 0);
 
 		stage.setOnCloseRequest(event -> MYLEVELS = false);
-		Scene scene = new Scene(layout, 550, 300);
+		Scene scene = new Scene(layout, 800, 500);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 

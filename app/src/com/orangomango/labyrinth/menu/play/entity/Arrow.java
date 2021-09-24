@@ -111,13 +111,13 @@ public class Arrow extends Entity{
 			    pen.drawImage(this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			    break;
 			  case World.EAST:
-			  	pen.drawImage(this.image, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			  	pen.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			  	break;
 			  case World.NORTH:
 			  	pen.drawImage(this.image2, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 			    break;
 			  case World.SOUTH:
-			  	pen.drawImage(this.image2, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, px * World.BLOCK_WIDTH + 0, World.BLOCK_WIDTH + py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
+			  	pen.drawImage(this.image2, 0, 0, this.image.getWidth(), this.image.getHeight(), px * World.BLOCK_WIDTH + 0, World.BLOCK_WIDTH + py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
 			    break;
 			}
 		}

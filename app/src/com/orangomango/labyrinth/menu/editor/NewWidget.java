@@ -357,7 +357,7 @@ public class NewWidget {
 				this.editor.open(new File(getPath()));
 			}
 		} catch (IOException ex) {}
-		this.stage.hide();
+		this.stage.close();
 	}
 
 	public void setEditor(Editor editor) {

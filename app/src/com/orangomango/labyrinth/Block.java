@@ -79,7 +79,21 @@ public class Block {
 		return y;
 	}
 	
-	public void setInfo(String i){this.info = i;}
+	public void setInfo(String i){
+		this.info = i;
+		if (this.type.equals(World.PARALLEL_BLOCK)){
+			if (this.info != null){
+				int counter = 0;
+				parallelBlockData = new String[this.info.split(";").length];
+				for (String infoPart : this.info.split(";")){
+					parallelBlockData[counter] = infoPart.split("#")[1];
+					counter++;
+				}
+			}
+			this.category = parallelBlockData[1];
+		}
+	}
+	
 	public String getInfo(){return this.info;}
 
 	/**
@@ -207,8 +221,8 @@ public class Block {
 			case World.PORTAL:
 				drawAirBlock(pen, px, py);
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-        if (this.info.equals("NoPointSet") && w instanceof EditableWorld){
-          drawWarningSign(pen, px, py);
+				if (this.info.equals("NoPointSet") && w instanceof EditableWorld){
+					drawWarningSign(pen, px, py);
 				}
 				break;
 			case World.SHOOTER:
@@ -218,10 +232,12 @@ public class Block {
 						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_v.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 						break;
 					case World.SOUTH:
-						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_v.png"), 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, 0+px*World.BLOCK_WIDTH, py * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
+						Image img = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_v.png");
+						pen.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), 0+px*World.BLOCK_WIDTH, py * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
 						break;
 					case World.EAST:
-						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png"), 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+						Image img2 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png");
+						pen.drawImage(img2, 0, 0, img2.getWidth(), img2.getHeight(), px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 						break;
 					case World.WEST:
 						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -237,7 +253,8 @@ public class Block {
 					} else {
 						dir = Entity.HORIZONTAL;
 					}
-					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Entity.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png")),  0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+					Image batImg = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Entity.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png"));
+					pen.drawImage(batImg,  0, 0, batImg.getWidth(), batImg.getHeight(), World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 					if (this.info.equals("NoDataSet")){
 						drawWarningSign(pen, px, py);
 					} else {

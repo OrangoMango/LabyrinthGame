@@ -46,7 +46,7 @@ public class SESetup {
     Button ok = new Button("Save changes");
     ok.setOnAction(event -> {change((int) spinner1.getValue(), (int) spinner2.getValue(), (int) spinner3.getValue(), (int) spinner4.getValue()); OPEN = false;});
     Button cancel = new Button("Cancel");
-    cancel.setOnAction(event -> {OPEN = false; this.stage.hide();});
+    cancel.setOnAction(event -> {OPEN = false; this.stage.close();});
 
     layout.add(label, 0, 0, 4, 1);
     layout.add(startX, 0, 1);
@@ -92,7 +92,7 @@ public class SESetup {
     this.world.start[1] = sY;
     this.world.end[0] = eX;
     this.world.end[1] = eY;
-    this.stage.hide();
+    this.stage.close();
     this.world.draw();
     this.world.updateOnFile();
     Alert alert = new Alert(Alert.AlertType.INFORMATION);

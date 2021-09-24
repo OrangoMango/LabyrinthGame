@@ -225,7 +225,7 @@ public class LoadingScreen {
 	}
 
 	private void endWindow() {
-		this.stage.hide();
+		this.stage.close();
 		this.menu.start();
 	}
 }

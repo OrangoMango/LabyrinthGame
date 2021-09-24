@@ -91,7 +91,7 @@ public class Bat extends Entity {
 
 	public void draw(GraphicsContext p, double px, double py) {
 		if (M == 1) {
-			p.drawImage(this.image, 0, 0, World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH + px * World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			p.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), World.BLOCK_WIDTH + px * World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 		} else if (M == -1) {
 			p.drawImage(this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 		}

@@ -177,10 +177,10 @@ public class Editor {
 							editableworld.setBlockOn(edblock);
 							editableworld.updateOnFile();
 							unsaved();
-							st.hide();
+							st.close();
 						});
 						Button canc = new Button("Cancel");
-						canc.setOnAction(e -> st.hide());
+						canc.setOnAction(e -> st.close());
 						pane.add(l1, 0, 0);
 						pane.add(sp, 1, 0);
 						pane.add(l2, 0, 1);
@@ -265,10 +265,10 @@ public class Editor {
 							editableworld.setBlockOn(edblock);
 							editableworld.updateOnFile();
 							unsaved();
-							st.hide();
+							st.close();
 						});
 						Button canc = new Button("Cancel");
-						canc.setOnAction(e -> st.hide());
+						canc.setOnAction(e -> st.close());
 						pane.add(l1, 0, 0);
 						pane.add(sp, 1, 0);
 						pane.add(l2, 0, 1);
@@ -436,6 +436,15 @@ public class Editor {
 					
 					unsaved();
 				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("engineering")){
+					if (editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType() != EditableWorld.AIR && !editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType().equals(EditableWorld.PARALLEL_BLOCK)){
+						Logger.warning("Could not place block on a block in normal mode");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setHeaderText("Could not place block on a existing block in normal mode.\nPlease remove this block in the same coordinates from the normal mode");
+						alert.setTitle("Normal mode block Error");
+						alert.setContentText(null);
+						alert.showAndWait();
+						return;
+					}
 					switch (SELECTED_BLOCK){
 						case 1:
 							engblock.setInfo(null);
@@ -444,6 +453,7 @@ public class Editor {
 						case 2:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.LEVER);
+							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/lever_off.png;category#wall;type#lever");
 							break;
 						case 3:
 							engblock.setInfo(null);
@@ -452,6 +462,7 @@ public class Editor {
 						case 4:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.LED);
+							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/led_off.png;category#air;type#led");
 							break;
 						case 5:
 							engblock.setInfo(null);
@@ -461,6 +472,7 @@ public class Editor {
 					
 					editableworld.getEngineeringWorld().setBlockOn(engblock);
 					editableworld.updateOnFile();
+					unsaved();
 				}
 			}
 		});
@@ -502,6 +514,13 @@ public class Editor {
 		}
 
 		return layout;
+	}
+	
+	public void createParallelBlock(EditableWorld w, int x, int y, String i){
+		EditableBlock edblock = EditableBlock.fromBlock(w.getBlockAt(x, y));
+		edblock.setType(EditableWorld.PARALLEL_BLOCK);
+		edblock.setInfo(i);
+		w.setBlockOn(edblock);
 	}
 
     /**
