@@ -35,6 +35,7 @@ public class World {
 	private boolean playerView = false;
 	private EngWorld engW = null;
 	private String drawingMode = "normal";
+	public boolean previewMode = false;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";

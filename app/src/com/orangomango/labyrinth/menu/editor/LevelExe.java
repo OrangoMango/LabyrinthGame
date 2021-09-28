@@ -47,8 +47,10 @@ public class LevelExe {
 			if (LevelExe.exStage != null) {
 				LevelExe.exStage.show();
 			}
-			for (Entity e : world.getEnts()){
-				e.stop();
+			if (this.mode.equals("normal")){
+				for (Entity e : world.getEnts()){
+					e.stop();
+				}
 			}
 			if (world.getEngineeringWorld() != null){
 				world.getEngineeringWorld().stopAnimations();
@@ -79,8 +81,10 @@ public class LevelExe {
 		player.draw(pen);
 		world.setPlayer(player);
 		
-		for (Entity e : world.getEnts()){
-			e.start();
+		if (this.mode.equals("normal")){
+			for (Entity e : world.getEnts()){
+				e.start();
+			}
 		}
 		
 		if (world.getPlayerView()){

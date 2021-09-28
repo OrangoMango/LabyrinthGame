@@ -246,7 +246,7 @@ public class Block {
 				break;
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
-				if (w instanceof EditableWorld){
+				if (w instanceof EditableWorld || w.previewMode){
 					String dir;
 					if (!this.info.equals("NoDataSet")){
 						dir = this.info.split("#")[1].split(" ")[1];
@@ -264,7 +264,7 @@ public class Block {
 				break;
 			case World.ELEVATOR:
 				drawAirBlock(pen, px, py);
-				if (w instanceof EditableWorld){
+				if (w instanceof EditableWorld || w.previewMode){
 				  pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 					if (this.info.equals("NoDataSet")){
 				  	drawWarningSign(pen, px, py);
@@ -283,7 +283,7 @@ public class Block {
 				break;
 			case World.C_SPIKE:
 				drawAirBlock(pen, px, py);
-				if (w instanceof EditableWorld){
+				if (w instanceof EditableWorld || w.previewMode){
 					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_spike_closed.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				}
 				break;

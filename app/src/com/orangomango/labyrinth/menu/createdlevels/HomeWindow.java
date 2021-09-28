@@ -74,6 +74,7 @@ public class HomeWindow {
 			for (String p: cwf.getPaths()) {
 				File file = new File(p);
 				World temp = new World(p);
+				temp.previewMode = true;
 
 				GridPane innerpane = new GridPane();
 				innerpane.setHgap(10);

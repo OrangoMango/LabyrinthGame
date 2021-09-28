@@ -436,7 +436,7 @@ public class Editor {
 					
 					unsaved();
 				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("engineering")){
-					if (editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType() != EditableWorld.AIR && !editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType().equals(EditableWorld.PARALLEL_BLOCK)){
+					if ((editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType() != EditableWorld.AIR && !editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType().equals(EditableWorld.PARALLEL_BLOCK)) && (SELECTED_BLOCK == 2 || SELECTED_BLOCK == 4)){
 						Logger.warning("Could not place block on a block in normal mode");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
 						alert.setHeaderText("Could not place block on a existing block in normal mode.\nPlease remove this block in the same coordinates from the normal mode");
