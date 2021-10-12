@@ -23,7 +23,7 @@ public class LabyrinthMain extends Application {
 
     public static String[] FILE_PATHS;
     public static int currentWorldIndex = 0;
-    public final static double VERSION = 3.3;
+    public final static double VERSION = 3.4;
 
     private static String ARG = null;
     private Stage stage;

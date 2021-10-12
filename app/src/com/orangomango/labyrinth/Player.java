@@ -9,6 +9,9 @@ import javafx.scene.control.Alert;
 import javafx.animation.*;
 import javafx.util.Duration;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
@@ -18,9 +21,14 @@ import com.orangomango.labyrinth.menu.play.entity.*;
 public class Player {
 	private World world;
 	private int x, y;
+	private int health = 100;
+	private int oxygen = 100;
 	private int repeat = 0;
 	public Double psx = null;
 	public Double psy = null;
+	private boolean healthRemovingStarted = false;
+	private boolean oxygenRemovingStarted = false;
+	private Timeline oxygenT = null;
 
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -34,8 +42,61 @@ public class Player {
 	}
 	
 	public void die(){
+		this.health = 100;
+		this.oxygen = 100;
 		setX(this.world.start[0]);
 		setY(this.world.start[1]);
+	}
+	
+	public void removeHealth(int v){
+		if (!healthRemovingStarted){
+			this.health -= v;
+			this.healthRemovingStarted = true;
+			if (this.health <= 0){
+				this.die();
+			}
+			new Timer().schedule(new TimerTask(){
+				@Override
+				public void run(){
+					healthRemovingStarted = false;
+					cancel();
+				}
+			}, 400);
+		}
+	}
+	
+	public int getHealth(){
+		return this.health;
+	}
+	
+	public int getOx(){
+		return this.oxygen;
+	}
+	
+	public void removeOx(int v){
+		this.oxygen -= v;
+		if (this.oxygen <= 0 || this.oxygen >= 100){
+			if (this.oxygen < 0){
+				this.oxygen = 0;
+				removeHealth(15);
+			} else if (this.oxygen > 100){
+				this.oxygen = 100;
+			}
+			oxygenT.stop();
+			oxygenRemovingStarted = false;
+		}
+	}
+	
+	public void removeOxCont(int v, int time){
+		System.out.println(oxygenRemovingStarted);
+		if (!oxygenRemovingStarted){
+			oxygenRemovingStarted = true;
+			oxygenT = new Timeline(new KeyFrame(Duration.millis(time), evt -> {
+				removeOx(v);
+			}));
+			oxygenT.setCycleCount(Animation.INDEFINITE);
+			oxygenT.play();
+		}
 	}
 
 	public int getX() {
@@ -135,6 +196,30 @@ public class Player {
 				return;
 			} else {
 				LevelExe.PLAYER_MOVEMENT = false;
+				for (Entity ent : this.world.getEnts()){
+					if (ent.isOnPlayer(this) && (ent instanceof Bat || ent instanceof Arrow)){
+						if (rec[0] == 1){
+							this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+						} else if (rec[0] == 0){
+							this.world.update(0, 0, 0, 0);
+						}
+						removeHealth(10);
+					} else if (ent.isOnPlayer(this) && ent instanceof Elevator){
+						this.repeat = rep2;
+						return;
+					} else if (ent.isOnPlayer(this) && ent instanceof CSpike){
+						if (((CSpike)ent).isOpened()){
+							this.die();
+							this.repeat = rep2;
+							return;
+						}
+					} else if (ent.isOnPlayer(this, ent.getX()+(direction == X ? m*-1 : 0), ent.getY()+(direction == Y ? m*-1 : 0)) && ent instanceof ParallelBlock){
+						if (!this.world.getEngineeringWorld().getBlockAt(((int)((ParallelBlock)ent).getX()), ((int)((ParallelBlock)ent).getY())).isActive()){
+							this.repeat = rep2;
+							return;
+						}
+					}
+				}
 				if (direction == X){
 					setX(getX() + m);
 				} else if (direction == Y){
@@ -157,28 +242,24 @@ public class Player {
 				return;
 			} else if (this.isOnBlock(World.PARALLEL_BLOCK)){
 				if (this.world.getBlockAt(getX(), getY()).getCategory().equals(World.WALL)){
-						this.repeat = rep2;
-						return;
-				}
-			}
-			for (Entity ent : this.world.getEnts()){
-				if (ent.isOnPlayer(this) && (ent instanceof Bat || ent instanceof Arrow)){
-					if (rec[0] == 1){
-						this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
-					}
 					this.repeat = rep2;
 					return;
-				} else if (ent.isOnPlayer(this) && ent instanceof Elevator){
-					this.repeat = rep2;
-					return;
-				} else if (ent.isOnPlayer(this) && ent instanceof CSpike){
-					if (((CSpike)ent).isOpened()){
-						this.die();
-						this.repeat = rep2;
-						return;
-					}
 				}
 			}
+			if (this.world.getBlockAt(getX(), getY()).isWater()){
+				if (oxygenT != null){
+					oxygenRemovingStarted = false;
+					oxygenT.stop();
+				}
+				removeOxCont(10, 1000);
+			} else {
+				if (oxygenT != null){
+					oxygenRemovingStarted = false;
+					oxygenT.stop();
+					removeOxCont(-10, 500);
+				}
+			}
+			
 			this.repeat++;
 		}));
 		tl.setCycleCount(rep+1);
@@ -208,6 +289,6 @@ public class Player {
 
 	@Override
 	public String toString() {
-		return String.format("Player at X:%s and Y:%s (psx, psy: %s %s), %s", getX(), getY(), this.psx, this.psy, isOnEnd() ? "On end" : (isOnStart() ? "On start" : "Not on start or end"));
+		return String.format("Player at X:%s and Y:%s (psx, psy: %s %s), %s. Health: %s", getX(), getY(), this.psx, this.psy, isOnEnd() ? "On end" : (isOnStart() ? "On start" : "Not on start or end"), getHealth());
 	}
 }

@@ -47,8 +47,8 @@ public class Bat extends Entity {
 				}
 				setY(getY() + 0.25 * M);
 			}
-			if (isOnPlayer(w.getPlayer())) {
-				w.getPlayer().die();
+			if (isOnPlayer(w.getPlayer())){
+				w.getPlayer().removeHealth(10);
 			}
 		}));
 		t.setCycleCount(Animation.INDEFINITE);

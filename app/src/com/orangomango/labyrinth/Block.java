@@ -3,11 +3,13 @@ package com.orangomango.labyrinth;
 import javafx.scene.canvas.*;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.effect.ColorAdjust;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.editor.EditableWorld;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.play.entity.*;
+import com.orangomango.labyrinth.engineering.EngBlock;
 
 public class Block {
 	protected String type;
@@ -15,6 +17,11 @@ public class Block {
 	private String info = null;
 	public String category = "";
 	public String[] parallelBlockData = null;
+	private boolean water = false;
+	
+	public static final double DARK = -0.25;
+	public static final double LIGHT = 0;
+	public static final int LIGHT_AREA = 1;
 
 	/**
 	  Block class constructor
@@ -45,6 +52,22 @@ public class Block {
 		if (this.info != null){
 			if (this.info.equals("NoDataSet") || this.info.equals("NoPointSet")){
 				this.category = World.AIR;
+			}
+			
+			int wc = 0;
+			boolean found = false;
+			for (String ik : this.info.split(";")){
+				if (ik.split("#")[0].equals("water")){
+					found = true;
+					break;
+				}
+				wc++;
+			}
+			if (wc >= 0 && found){
+				String iw = this.info.split(";")[wc];
+				if (iw.equals("water#true")){
+					this.water = true;
+				}
 			}
 		}
 		if (this.type.equals(World.PARALLEL_BLOCK)){
@@ -77,6 +100,10 @@ public class Block {
 	}
 	public int getY() {
 		return y;
+	}
+	
+	public boolean isWater(){
+		return this.water;
 	}
 	
 	public void setInfo(String i){
@@ -137,6 +164,28 @@ public class Block {
 	*/
 	public void draw(GraphicsContext pen, World w) {
 		draw(pen, this.x, this.y, w);
+	}
+	
+	public boolean activeBlockAround(World w){
+		if (w.previewMode){
+			return true;
+		}
+		for (int y = getY()-LIGHT_AREA*2; y <= getY()+LIGHT_AREA*2; y++){
+			for (int x = getX()-LIGHT_AREA*2; x <= getX()+LIGHT_AREA*2; x++){
+				if (w.getEngineeringWorld().getBlockAt(x, y) != null){
+					if (w.getEngineeringWorld().getBlockAt(x, y).getType().equals(EngBlock.LED) && w.getEngineeringWorld().getBlockAt(x, y).isActive()){
+						for (int y1 = y-LIGHT_AREA; y1 <= y+LIGHT_AREA; y1++){
+							for (int x1 = x-LIGHT_AREA; x1 <= x+LIGHT_AREA; x1++){
+								if (w.getBlockAt(x1, y1) == this){
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	public static void drawAirBlock(GraphicsContext pen, int px, int py){
@@ -201,8 +250,40 @@ public class Block {
 	}
 	
 	public void draw(GraphicsContext pen, int px, int py, World w) {
-		pen.setStroke(Color.BLACK);
-		pen.setLineWidth(1);
+		
+		/*
+		 * underwater:
+		 * 
+		 * pen.setFill(Color.CYAN);
+		 * pen.setGlobalAlpha(0.5);
+		 * pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+		 * pen.setGlobalAlpha(1);
+		 */
+		 
+		 ColorAdjust effect = new ColorAdjust();
+		 if (w.getEngineeringWorld() != null){
+			if (!getType().equals(World.PARALLEL_BLOCK)){
+				if (!activeBlockAround(w)){
+					effect.setBrightness(DARK);
+				} else {
+					effect.setBrightness(LIGHT);
+				}
+			} else if ((parallelBlockData[2].equals(EngBlock.LED) && w.getEngineeringWorld().getBlockAt(getX(), getY()).isActive()) || activeBlockAround(w)){
+				effect.setBrightness(LIGHT);
+			} else {
+				effect.setBrightness(DARK);
+			}
+		 } else {
+			effect.setBrightness(LIGHT);
+	 	}
+		
+	 	if (w instanceof EditableWorld || w.previewMode){
+			pen.setEffect(null);
+		} else {
+	 		pen.setEffect(effect);
+	 	}
+		
+		
 		switch (getType()){
 			case World.WALL:
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-"+wallOpposite(getInfo().split("#")[1])+".png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -226,6 +307,7 @@ public class Block {
 				}
 				break;
 			case World.SHOOTER:
+				pen.setEffect(null);
 				String d = Character.toString(this.getInfo().split("#")[1].charAt(0));
 				switch (d){
 					case World.NORTH:
@@ -257,8 +339,6 @@ public class Block {
 					pen.drawImage(batImg,  0, 0, batImg.getWidth(), batImg.getHeight(), World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 					if (this.info.equals("NoDataSet")){
 						drawWarningSign(pen, px, py);
-					} else {
-						String direction = this.info.split("#")[1].split(" ")[1];
 					}
 				}
 				break;
@@ -293,13 +373,22 @@ public class Block {
 				break;
 			case World.PARALLEL_BLOCK:
 				drawAirBlock(pen, px, py);
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[0]), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				if (!parallelBlockData[2].equals(EngBlock.DOOR) || (parallelBlockData[2].equals(EngBlock.DOOR) && (w instanceof EditableWorld || w.previewMode))){
+					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[0]), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				}
 				break;
 			default:
 				pen.setFill(Color.RED);
 				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 		}
+		if (this.water){
+			pen.setFill(Color.CYAN);
+			pen.setGlobalAlpha(0.5);
+			pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+			pen.setGlobalAlpha(1);
+		}
+		pen.setEffect(null);
 	}
 	
 	public Integer toInt(){
@@ -351,6 +440,6 @@ public class Block {
 	*/
 	@Override
 	public String toString() {
-		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : this.info);
+		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : this.info) + " Water: " + this.water;
 	}
 }

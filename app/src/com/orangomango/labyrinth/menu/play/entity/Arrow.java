@@ -65,24 +65,24 @@ public class Arrow extends Entity{
 			
 		t = new Timeline(new KeyFrame(Duration.millis(40), event -> {
 			if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)) != null){
-				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getCategory() == World.AIR) && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
+				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getCategory() == World.AIR)){ // && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
+					if (isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
+						w.getPlayer().removeHealth(10);
+					}
 					setX(getX()+stepX);
 					setY(getY()+stepY);
-					if (w.getPlayerView()){
-						w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
-					} else {
-						w.update(0, 0, 0, 0);
-					}
 				} else {
-					if (isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
-						w.getPlayer().die();
-					}
 					setX(startX);
 					setY(startY);
 				}
 			} else {
 				setX(startX);
 				setY(startY);
+			}
+			if (w.getPlayerView()){
+				w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
+			} else {
+				w.update(0, 0, 0, 0);
 			}
 		}));
 		t.setCycleCount(Animation.INDEFINITE);

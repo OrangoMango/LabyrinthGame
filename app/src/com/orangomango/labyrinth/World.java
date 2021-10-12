@@ -17,8 +17,10 @@ import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
+import com.orangomango.labyrinth.menu.editor.EditableWorld;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.play.entity.*;
+import com.orangomango.labyrinth.menu.editor.LevelStats;
 
 // Engineering mode
 import com.orangomango.labyrinth.engineering.*;
@@ -36,6 +38,7 @@ public class World {
 	private EngWorld engW = null;
 	private String drawingMode = "normal";
 	public boolean previewMode = false;
+	private LevelStats levelStats = null;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -59,6 +62,16 @@ public class World {
 	public World(String path) {
 		filePath = path;
 		world = readWorld(filePath);
+	}
+
+	public void setLevelStats(LevelStats ls){
+		this.levelStats = ls;
+	}
+	
+	public void updateLevelStats(){
+		if (this.levelStats != null){
+			this.levelStats.update();
+		}
 	}
 
 	public void setPlayerView(boolean value) {
@@ -140,7 +153,7 @@ public class World {
 					String bType = b.parallelBlockData[2];
 					EngBlock eb = engW.getBlockAt(b.getX(), b.getY());
 					if (bType.equals(EngBlock.LEVER) || bType.equals(EngBlock.LED)){
-						b.setInfo("imagePath#engineering/blocks/"+bType+"_"+(eb.isActive() ? "on" : "off")+".png;category#wall;type#"+bType);
+						b.setInfo("imagePath#engineering/blocks/"+bType+"_"+(eb.isActive() ? "on" : "off")+".png;category#air;type#"+bType);
 					}
 				}
 			}
@@ -152,6 +165,7 @@ public class World {
 			if (x == 0 && y == 0 && x1 == 0 && y1 == 0) {
 				this.pen.clearRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
 				draw();
+				this.updateLevelStats();
 			} else {
 				if (getDrawingMode().equals("engineering")){
 					return;
@@ -280,6 +294,10 @@ public class World {
 					addEnt(new Elevator(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
 				} else if (x[it2].getType() == C_SPIKE) {
 					addEnt(new CSpike(this, x[it2].getX(), x[it2].getY()));
+				} else if (x[it2].getType() == PARALLEL_BLOCK){
+					if (x[it2].parallelBlockData[2].equals(EngBlock.DOOR)){
+						addEnt(new ParallelBlock(this, x[it2].getX(), x[it2].getY(), x[it2].getInfo(), new String[][]{{"engineering/blocks/door_1.png", "engineering/blocks/door_2.png", "engineering/blocks/door_3.png", "engineering/blocks/door_4.png"},{"engineering/blocks/door_4.png", "engineering/blocks/door_3.png", "engineering/blocks/door_2.png", "engineering/blocks/door_1.png"}}, "engineering/blocks/door_4.png", "engineering/blocks/door_1.png"));
+					}
 				}
 				it2++;
 			}
@@ -299,14 +317,21 @@ public class World {
 			}
 			drawStart(0, 0);
 			drawEnd(0, 0);
+			this.player.draw(this.pen);
 			for (Entity e: this.ents) {
 				e.draw(this.pen);
 			}
-			this.player.draw(this.pen);
 		} else if (getDrawingMode().equals("engineering")){
 			for (EngBlock[] blocks: engW.getWorld()) {
 				for (EngBlock block: blocks) {
-					block.draw(this.pen);
+					block.draw(this.pen, this);
+				}
+			}
+			if (!(this instanceof EditableWorld)){
+				for (Entity e: this.ents) {
+					if (e.engineering){
+						e.draw(this.pen);
+					}
 				}
 			}
 		}

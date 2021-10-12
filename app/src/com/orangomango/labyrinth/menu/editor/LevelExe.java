@@ -47,9 +47,13 @@ public class LevelExe {
 			if (LevelExe.exStage != null) {
 				LevelExe.exStage.show();
 			}
-			if (this.mode.equals("normal")){
-				for (Entity e : world.getEnts()){
+			for (Entity e : world.getEnts()){
+				if (this.mode.equals("normal")){
 					e.stop();
+				} else if (this.mode.equals("engineering")){
+					if (e.engineering){
+						e.stop();
+					}
 				}
 			}
 			if (world.getEngineeringWorld() != null){
@@ -64,16 +68,20 @@ public class LevelExe {
 		world.setCanvas(canvas);
 
 		canvas.setFocusTraversable(true);
+		
+		Canvas levelStatsCanvas = new Canvas(LevelStats.WIDTH, LevelStats.HEIGHT);
 
 		GridPane layout = new GridPane();
+		layout.setVgap(5);
 		layout.setPadding(new Insets(10, 10, 10, 10));
 		layout.add(label, 0, 0);
 		layout.add(canvas, 0, 1);
+		layout.add(levelStatsCanvas, 0, 2);
 
 		GraphicsContext pen = canvas.getGraphicsContext2D();
 		world.setPen(pen);
 
-		Scene scene = new Scene(layout, World.BLOCK_WIDTH * world.width + 20, World.BLOCK_WIDTH * world.height + 40);
+		Scene scene = new Scene(layout, World.BLOCK_WIDTH * world.width + 20, World.BLOCK_WIDTH * world.height + 40 + LevelStats.HEIGHT + 10);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 
@@ -81,9 +89,16 @@ public class LevelExe {
 		player.draw(pen);
 		world.setPlayer(player);
 		
-		if (this.mode.equals("normal")){
-			for (Entity e : world.getEnts()){
+		LevelStats levelStats = new LevelStats(world, levelStatsCanvas.getGraphicsContext2D());
+		world.setLevelStats(levelStats);
+		
+		for (Entity e : world.getEnts()){
+			if (this.mode.equals("normal")){
 				e.start();
+			} else if (this.mode.equals("engineering")){
+				if (e.engineering){
+					e.start();
+				}
 			}
 		}
 		
@@ -140,7 +155,7 @@ public class LevelExe {
 						world.updateParallelBlocks();
 					}
 					if (world.getPlayerView()){
-						world.update(world.start[0]-PWS, world.start[1]-PWS, world.start[0]+PWS, world.start[1]+PWS);
+						world.update(world.getPlayer().getX()-PWS, world.getPlayer().getY()-PWS, world.getPlayer().getX()+PWS, world.getPlayer().getY()+PWS);
 					} else {
 						world.update(0, 0, 0, 0);
 					}
@@ -160,6 +175,8 @@ public class LevelExe {
 				world.update(0, 0, 0, 0);
 			}
 		});
+
+		levelStats.draw();
 
 		if (world.getEngineeringWorld() != null && this.mode.equals("engineering")){
 			world.getEngineeringWorld().startAnimations();

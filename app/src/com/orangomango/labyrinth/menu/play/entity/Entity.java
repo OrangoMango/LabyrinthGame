@@ -10,9 +10,10 @@ public abstract class Entity{
 	protected double x = 0;
 	protected double y = 0;
 	protected World world;
+	public boolean engineering = false;
 	
-        public static final String VERTICAL = "v";
-        public static final String HORIZONTAL = "h";
+	public static final String VERTICAL = "v";
+	public static final String HORIZONTAL = "h";
 
 	public double getX(){
 		return x;
@@ -61,6 +62,11 @@ public abstract class Entity{
 	}
 	
 	public void stop(){
+	}
+	
+	@Override
+	public String toString(){
+		return "Entity at X:"+getX()+" Y:"+getY();
 	}
 
 }

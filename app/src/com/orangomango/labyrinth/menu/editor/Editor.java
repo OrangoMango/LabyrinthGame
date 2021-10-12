@@ -281,6 +281,35 @@ public class Editor {
 						st.setScene(scene);
 						st.show();
 					});
+					MenuItem item5 = new MenuItem("Toggle water");
+					item5.setOnAction(clickEv -> {
+						boolean water = edblock.isWater();
+						StringBuilder sb = new StringBuilder();
+						if (edblock.getInfo() != null){
+							int counter = 0;
+							for (String s : edblock.getInfo().split(";")){
+								if (s.split("#")[0].equals("water")){
+									sb.append(water ? "water#false" : "water#true");
+								} else {
+									sb.append(s);
+									if (counter+1 == edblock.getInfo().split(";").length){
+										sb.append(water ? ";water#false" : ";water#true");
+										break;
+									}
+								}
+								if (counter+1 != edblock.getInfo().split(";").length){
+									sb.append(";");
+								}
+								counter++;
+							}
+						} else {
+							sb.append(water ? "water#false" : "water#true");
+						}
+						edblock.setInfo(sb.toString());
+						editableworld.setBlockOn(edblock);
+						editableworld.updateOnFile();
+						unsaved();
+					});
 					switch (edblock.getType()){
 						case EditableWorld.PORTAL:
 							contextMenu.getItems().add(item1);
@@ -295,6 +324,7 @@ public class Editor {
 							contextMenu.getItems().add(item4);
 							break;
 					}
+					contextMenu.getItems().add(item5);
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("normal")){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
@@ -467,6 +497,7 @@ public class Editor {
 						case 5:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.DOOR);
+							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/door_1.png;category#air;type#door");
 							break;
 					}
 					
@@ -518,8 +549,13 @@ public class Editor {
 	
 	public void createParallelBlock(EditableWorld w, int x, int y, String i){
 		EditableBlock edblock = EditableBlock.fromBlock(w.getBlockAt(x, y));
-		edblock.setType(EditableWorld.PARALLEL_BLOCK);
-		edblock.setInfo(i);
+		if (edblock.getType().equals(EditableWorld.AIR)){
+			edblock.setType(EditableWorld.PARALLEL_BLOCK);
+			edblock.setInfo(i);
+		} else { // Remove parallel block if already exists
+			edblock.setType(EditableWorld.AIR);
+			edblock.setInfo(null);
+		}
 		w.setBlockOn(edblock);
 	}
 
@@ -550,7 +586,8 @@ public class Editor {
 		// Setup the menu
 		MenuBar menuBar = new MenuBar();
 		
-		Menu fileMenu = new Menu("File");
+		Menu fileMenu = new Menu("_File");
+		fileMenu.setMnemonicParsing(true);
 		MenuItem mNew = new MenuItem("New");
 		mNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
 		mNew.setOnAction(e -> {
@@ -603,9 +640,10 @@ public class Editor {
 		});
 		fileMenu.getItems().addAll(mNew, mSave, mOpen);
 		
-		Menu editMenu = new Menu("Edit");
+		Menu editMenu = new Menu("_Edit");
+		editMenu.setMnemonicParsing(true);
 		MenuItem mAR = new MenuItem("Add row");
-		mAR.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.ALT_DOWN));
+		mAR.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 		mAR.setOnAction(e -> {
 			// Clone of toolbar button
 			if (checkValidityMax("h")) {
@@ -614,7 +652,7 @@ public class Editor {
 			}
 		});
 		MenuItem mAC = new MenuItem("Add column");
-		mAC.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN));
+		mAC.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCombination.CONTROL_DOWN));
 		mAC.setOnAction(e -> {
 			// Clone of toolbar button
 			if (checkValidityMax("w")) {
@@ -623,14 +661,14 @@ public class Editor {
 			}
 		});
 		MenuItem mRR = new MenuItem("Remove row");
-		mRR.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN));
+		mRR.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
 		mRR.setOnAction(e -> {
 			// Clone of toolbar button
 			checkValidity(edworld.removeRow());
 			unsaved();
 		});
 		MenuItem mRC = new MenuItem("Remove column");
-		mRC.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN));
+		mRC.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
 		mRC.setOnAction(e -> {
 			// Clone of toolbar button
 			checkValidity(edworld.removeColumn());
@@ -657,7 +695,8 @@ public class Editor {
 		mRedo.setDisable(true);
 		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mSSE, new SeparatorMenuItem(), mRun, new SeparatorMenuItem(), mUndo, mRedo);
 		
-		Menu modeMenu = new Menu("Mode");
+		Menu modeMenu = new Menu("_Mode");
+		modeMenu.setMnemonicParsing(true);
 		ToggleGroup modeGroup = new ToggleGroup();
 		RadioMenuItem mNormal = new RadioMenuItem("Normal mode");
 		mNormal.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN));
@@ -665,7 +704,7 @@ public class Editor {
 		mNormal.setSelected(true);
 		mNormal.setToggleGroup(modeGroup);
 		RadioMenuItem mEngineer = new RadioMenuItem("Engineering mode");
-		mEngineer.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+		mEngineer.setAccelerator(new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN));
 		mEngineer.setOnAction(e -> setMode("engineering"));
 		mEngineer.setToggleGroup(modeGroup);
 		modeMenu.getItems().addAll(mNormal, mEngineer);
@@ -853,7 +892,6 @@ public class Editor {
 					wallB.setTooltip(new Tooltip("Wall block. ID:N1"));
 					wallB.setToggleGroup(tg);
 					wallB.setOnAction(event -> SELECTED_BLOCK = 1);
-					wallB.setSelected(true);
 					ToggleButton portalB = new ToggleButton();
 					portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
 					portalB.setTooltip(new Tooltip("Portal block. ID:N4"));
@@ -1274,7 +1312,7 @@ public class Editor {
 			}
 			engToDisable.setDisable(true);
 			engToDisableB.setDisable(true);
-			SELECTED_BLOCK = 3;
+			SELECTED_BLOCK = 0;
 			this.edworld.setDrawingMode("engineering");
 			this.edworld.update(0, 0, 0, 0);
 		} else if (this.mode.equals("normal")){
@@ -1286,7 +1324,7 @@ public class Editor {
 			}
 			engToDisable.setDisable(false);
 			engToDisableB.setDisable(false);
-			SELECTED_BLOCK = 1;
+			SELECTED_BLOCK = 0;
 			this.edworld.setDrawingMode("normal");
 			this.edworld.update(0, 0, 0, 0);
 		}

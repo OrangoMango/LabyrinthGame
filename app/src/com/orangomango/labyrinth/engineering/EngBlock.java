@@ -5,10 +5,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 import javafx.animation.*;
 import javafx.util.Duration;
+import javafx.scene.effect.ColorAdjust;
 
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.editor.Editor;
+import com.orangomango.labyrinth.menu.editor.EditableWorld;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 
 public class EngBlock {
@@ -131,11 +133,13 @@ public class EngBlock {
 			return;
 		}
 		if (getCategory().equals(SIGNAL_OUTPUT)) {
+			this.world.foundBlocks = new EngBlock[0];
 			this.world.getConnected(getX(), getY(), "");
 			boolean found = false;
 			for (EngBlock b: this.world.getFoundBlocks()) {
 				if (b.getCategory().equals(SIGNAL_GENERATOR)) {
 					found = true;
+					break;
 				}
 			}
 			if (!found) {
@@ -230,7 +234,22 @@ public class EngBlock {
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/block_air.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
-	public void draw(GraphicsContext pen){
+	public void draw(GraphicsContext pen, World w){
+		
+		ColorAdjust effect = new ColorAdjust();
+		
+		if ((getType().equals(LED) && isActive()) || this.world.getBigWorld().getBlockAt(getX(), getY()).activeBlockAround(this.world.getBigWorld())){
+			effect.setBrightness(Block.LIGHT);
+		} else {
+			effect.setBrightness(Block.DARK);
+		}
+		
+		if (w instanceof EditableWorld){
+			effect.setBrightness(Block.LIGHT);
+		}
+		
+		pen.setEffect(effect);
+		
 		if (getType() == CABLE){
 			this.info = "attachments#" + this.world.getAtt(getX(), getY())[1];
 		}
@@ -251,7 +270,9 @@ public class EngBlock {
 				break;
 			case DOOR:
 				drawAirBlock(pen, getX(), getY());
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_4.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				if (w instanceof EditableWorld){
+					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_4.png"), getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				}
 				break;
 			case LED:
 				drawAirBlock(pen, getX(), getY());
@@ -261,6 +282,7 @@ public class EngBlock {
 				pen.setFill(Color.RED);
 				pen.fillRect(getX() * World.BLOCK_WIDTH, getY() * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 		}
+		pen.setEffect(null);
 	}
 
 	public static EngBlock fromInt(int x, int x1, int y1, String i) {
