@@ -16,6 +16,7 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import com.orangomango.labyrinth.menu.play.entity.*;
+import com.orangomango.labyrinth.engineering.EngBlock;
 
 
 public class Player {
@@ -29,6 +30,7 @@ public class Player {
 	private boolean healthRemovingStarted = false;
 	private boolean oxygenRemovingStarted = false;
 	private Timeline oxygenT = null;
+	private String direction = World.EAST;
 
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -76,19 +78,21 @@ public class Player {
 	public void removeOx(int v){
 		this.oxygen -= v;
 		if (this.oxygen <= 0 || this.oxygen >= 100){
-			if (this.oxygen < 0){
+			if (this.oxygen <= 0){
 				this.oxygen = 0;
+				System.out.println("Oxygen rm");
 				removeHealth(15);
 			} else if (this.oxygen > 100){
 				this.oxygen = 100;
 			}
-			oxygenT.stop();
-			oxygenRemovingStarted = false;
+			if (getHealth() <= 0){
+				oxygenT.stop();
+				oxygenRemovingStarted = false;
+			}
 		}
 	}
 	
 	public void removeOxCont(int v, int time){
-		System.out.println(oxygenRemovingStarted);
 		if (!oxygenRemovingStarted){
 			oxygenRemovingStarted = true;
 			oxygenT = new Timeline(new KeyFrame(Duration.millis(time), evt -> {
@@ -122,7 +126,22 @@ public class Player {
 	}
 	
 	public void draw(GraphicsContext pen, double x, double y) {
-		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player.png"), x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+		Image image1 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player_h.png");
+		Image image2 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player_v.png");
+		switch (this.direction){
+			case World.NORTH:
+				pen.drawImage(image2, 0, 0, image1.getWidth(), image1.getHeight(), x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
+				break;
+			case World.EAST:
+				pen.drawImage(image1, x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case World.SOUTH:
+				pen.drawImage(image2, x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case World.WEST:
+				pen.drawImage(image1, 0, 0, image1.getWidth(), image1.getHeight(), x * World.BLOCK_WIDTH + World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+		}
 	}
 
 	public void moveOn(String direction, int m, Stage stage, int[] rec) {
@@ -132,6 +151,20 @@ public class Player {
 		this.repeat = 0;
 		this.psx = null;
 		this.psy = null;
+		
+		if (direction == X){
+			if (m == POSITIVE){
+				this.direction = World.EAST;
+			} else if (m == NEGATIVE){
+				this.direction = World.WEST;
+			}
+		} else if (direction == Y){
+			if (m == POSITIVE){
+				this.direction = World.SOUTH;
+			} else if (m == NEGATIVE){
+				this.direction = World.NORTH;
+			}
+		}
 		
 		try {
 			if (direction == X) {
@@ -160,7 +193,7 @@ public class Player {
                     setY(y);
 		}
 		int rep2 = rep;
-		Timeline tl = new Timeline(new KeyFrame(Duration.millis(30), event -> {
+		Timeline tl = new Timeline(new KeyFrame(Duration.millis(60), event -> {
 			if (rep2 == 0){
 				LevelExe.PLAYER_MOVEMENT = true;
 				return;
@@ -214,7 +247,7 @@ public class Player {
 							return;
 						}
 					} else if (ent.isOnPlayer(this, ent.getX()+(direction == X ? m*-1 : 0), ent.getY()+(direction == Y ? m*-1 : 0)) && ent instanceof ParallelBlock){
-						if (!this.world.getEngineeringWorld().getBlockAt(((int)((ParallelBlock)ent).getX()), ((int)((ParallelBlock)ent).getY())).isActive()){
+						if (!this.world.getEngineeringWorld().getBlockAt(((int)((ParallelBlock)ent).getX()), ((int)((ParallelBlock)ent).getY())).isActive() && this.world.getEngineeringWorld().getBlockAt(((int)((ParallelBlock)ent).getX()), ((int)((ParallelBlock)ent).getY())).getType().equals(EngBlock.DOOR)){
 							this.repeat = rep2;
 							return;
 						}

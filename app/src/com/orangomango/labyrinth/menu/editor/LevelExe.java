@@ -81,7 +81,7 @@ public class LevelExe {
 		GraphicsContext pen = canvas.getGraphicsContext2D();
 		world.setPen(pen);
 
-		Scene scene = new Scene(layout, World.BLOCK_WIDTH * world.width + 20, World.BLOCK_WIDTH * world.height + 40 + LevelStats.HEIGHT + 10);
+		Scene scene = new Scene(layout, LevelStats.WIDTH < World.BLOCK_WIDTH * world.width ? World.BLOCK_WIDTH * world.width + 20 : LevelStats.WIDTH + 20, World.BLOCK_WIDTH * world.height + 40 + LevelStats.HEIGHT + 10);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 

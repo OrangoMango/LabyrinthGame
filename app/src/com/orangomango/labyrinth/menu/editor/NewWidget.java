@@ -39,7 +39,7 @@ public class NewWidget {
 	private static boolean FIRST_TIME = false;
 
 	private Spinner spinner1, spinner2, spinner3, spinner4;
-	private CheckBox allow;
+	private CheckBox allow, lights;
 	private Label pathL;
 	private EditableWorld ed;
 	private Editor editor;
@@ -225,6 +225,7 @@ public class NewWidget {
 		this.spinner2.setMaxWidth(90);
 		this.spinner3.setMaxWidth(90);
 		this.spinner4.setMaxWidth(90);
+		this.lights = new CheckBox("Turn on lights on all level");
 		l3.add(allow, 0, 1, 3, 1);
 		l3.add(lab1, 0, 2);
 		l3.add(lab2, 0, 3);
@@ -234,7 +235,8 @@ public class NewWidget {
 		l3.add(this.spinner2, 3, 2);
 		l3.add(this.spinner3, 1, 3);
 		l3.add(this.spinner4, 3, 3);
-		l3.add(boxes[2], 0, 4, 2, 1);
+		l3.add(this.lights, 0, 4, 3, 1);
+		l3.add(boxes[2], 0, 5, 2, 1);
 
 		// Scene 4
 		GridPane l4 = new GridPane();
@@ -349,7 +351,8 @@ public class NewWidget {
 			}
 			writer.newLine();
 			writer.write(String.format("%s,%s\n", this.sX, this.sY));
-			writer.write(String.format("%s,%s", this.eX, this.eY));
+			writer.write(String.format("%s,%s\n", this.eX, this.eY));
+			writer.write(this.lights.isSelected() ? "1" : "0");
 			writer.close();
 			if (!this.ed.equals(null)) {
 				Editor.DONE = true;

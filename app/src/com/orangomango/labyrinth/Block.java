@@ -167,7 +167,7 @@ public class Block {
 	}
 	
 	public boolean activeBlockAround(World w){
-		if (w.previewMode){
+		if (w.previewMode || w.allLights){
 			return true;
 		}
 		for (int y = getY()-LIGHT_AREA*2; y <= getY()+LIGHT_AREA*2; y++){

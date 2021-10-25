@@ -1232,7 +1232,7 @@ public class Editor {
 			writer.write("2x2\n");
 			writer.write("0,0,0,0\n");
 			writer.write("1,0\n");
-			writer.write("1,1");
+			writer.write("1,1\n0");
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();

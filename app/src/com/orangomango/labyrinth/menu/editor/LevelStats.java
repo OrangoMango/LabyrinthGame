@@ -2,8 +2,11 @@ package com.orangomango.labyrinth.menu.editor;
 
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 import com.orangomango.labyrinth.*;
+import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
+import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LevelStats {
 	private GraphicsContext pen;
@@ -26,8 +29,8 @@ public class LevelStats {
 		this.pen.setLineWidth(2);
 		this.pen.strokeRect(0, 0, WIDTH, HEIGHT);
 		this.pen.setLineWidth(1);
-		this.pen.strokeRect(10, 10, 20, 20);
-		this.pen.strokeRect(10, 40, 20, 20);
+		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/health.png"), 10, 10, 20, 20);
+		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/oxygen.png"), 10, 40, 20, 20);
 		int health = this.world.getPlayer().getHealth();
 		
 		/* RED - ORANGE - YELLOW - GREEN - LIME
@@ -62,3 +65,4 @@ public class LevelStats {
 		this.pen.strokeRect(40, 40, 175, 20);
 	}
 }
+

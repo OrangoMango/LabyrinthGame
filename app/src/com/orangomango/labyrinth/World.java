@@ -39,6 +39,7 @@ public class World {
 	private String drawingMode = "normal";
 	public boolean previewMode = false;
 	private LevelStats levelStats = null;
+	public boolean allLights = false;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -197,6 +198,15 @@ public class World {
 
 			start = configureFromString(startData);
 			end = configureFromString(endData);
+			
+			String lightsData = reader.readLine();
+			if (lightsData.equals("1")){
+				this.allLights = true;
+			} else if (lightsData.equals("0")){
+				this.allLights = false;
+			} else {
+				System.out.println("No light data available");
+			}
 
 			String engData = reader.readLine();
 			if (engData != null) {
