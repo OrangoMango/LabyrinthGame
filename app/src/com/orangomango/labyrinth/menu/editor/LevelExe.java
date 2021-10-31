@@ -149,7 +149,7 @@ public class LevelExe {
 				} else if (event.getCode() == KeyCode.SPACE && player.isOnBlock(World.PARALLEL_BLOCK)){
 					Block block = world.getBlockAt(player.getX(), player.getY());
 					EngBlock engB = world.getEngineeringWorld().getBlockAt(block.getX(), block.getY());
-					String engBlockType = block.parallelBlockData[2];
+					String engBlockType = block.parallelBlockData[block.checkInfoKey("type")];
 					if (engBlockType.equals(EngBlock.LEVER)){
 						engB.toggleActive();
 						world.updateParallelBlocks();

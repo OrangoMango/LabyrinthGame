@@ -8,6 +8,8 @@ package com.orangomango.labyrinth;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.scene.canvas.*;
 import javafx.stage.Stage;
@@ -40,6 +42,7 @@ public class World {
 	public boolean previewMode = false;
 	private LevelStats levelStats = null;
 	public boolean allLights = false;
+	private boolean canUpdate = true;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -56,7 +59,9 @@ public class World {
 	public final static String BAT_GEN = "bat_generator";
 	public final static String ELEVATOR = "elevator";
 	public final static String D_WARNING = "decoration_warning";
+	public final static String D_ARROW = "decoration_arrow";
 	public final static String PARALLEL_BLOCK = "parallel_block";
+	public final static String OXYGEN_POINT = "oxygen_point";
 
 	public static int BLOCK_WIDTH = 32;
 
@@ -151,10 +156,10 @@ public class World {
 		for (Block[] blockRow : this.world){
 			for (Block b : blockRow){
 				if (b.getType().equals(World.PARALLEL_BLOCK)){
-					String bType = b.parallelBlockData[2];
+					String bType = b.parallelBlockData[b.checkInfoKey("type")];
 					EngBlock eb = engW.getBlockAt(b.getX(), b.getY());
 					if (bType.equals(EngBlock.LEVER) || bType.equals(EngBlock.LED)){
-						b.setInfo("imagePath#engineering/blocks/"+bType+"_"+(eb.isActive() ? "on" : "off")+".png;category#air;type#"+bType);
+						b.addInfoParam("imagePath#engineering/blocks/"+bType+"_"+(eb.isActive() ? "on" : "off")+".png;category#air;type#"+bType);
 					}
 				}
 			}
@@ -162,11 +167,23 @@ public class World {
 	}
 
 	public void update(int x, int y, int x1, int y1) {
+		
+		this.updateLevelStats();
+		if (!canUpdate){
+			return;
+		}
+		canUpdate = false;
+		new Timer().schedule(new TimerTask(){
+			@Override
+			public void run(){
+				canUpdate = true;
+			}
+		}, 50); // 100 Seconds cooldown to avoid lag
+		
 		try {
 			if (x == 0 && y == 0 && x1 == 0 && y1 == 0) {
 				this.pen.clearRect(0, 0, this.width * BLOCK_WIDTH, this.height * BLOCK_WIDTH);
 				draw();
-				this.updateLevelStats();
 			} else {
 				if (getDrawingMode().equals("engineering")){
 					return;
@@ -293,19 +310,19 @@ public class World {
 			}
 			for (String v: Arrays.copyOfRange(current, iterator, iterator + w)) {
 				x[it2] = Block.fromInt(Integer.parseInt(v.split(":")[0]), it2, counter, v.split(":").length > 1 ? v.split(":")[1] : null);
-				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().equals("NoDataSet")) {
-					String[] d = x[it2].getInfo().split("#")[1].split(" ");
-					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1], Integer.parseInt(d[2]), d[3].equals("t") ? true : false));
+				if (x[it2].getType() == BAT_GEN && !x[it2].getInfo().split(";")[x[it2].checkInfoKey("data")].split("#")[1].equals("NoDataSet")) {
+					String[] d = x[it2].getInfo().split(";")[x[it2].checkInfoKey("data")].split("#")[1].split(" ");
+					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1], Integer.parseInt(d[2]), d[3].equals("t") ? true : false, (d.length >= 5) ? Integer.parseInt(d[4]) : 30));
 				} else if (x[it2].getType() == SHOOTER) {
-					String d = Character.toString(x[it2].getInfo().split("#")[1].charAt(0));
+					String d = Character.toString(x[it2].getInfo().split(";")[x[it2].checkInfoKey("direction")].split("#")[1].charAt(0));
 					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d));
-				} else if (x[it2].getType() == ELEVATOR && !x[it2].getInfo().equals("NoDataSet")) {
+				} else if (x[it2].getType() == ELEVATOR && !x[it2].getInfo().split(";")[x[it2].checkInfoKey("data")].split("#")[1].equals("NoDataSet")) {
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
 					addEnt(new Elevator(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
 				} else if (x[it2].getType() == C_SPIKE) {
 					addEnt(new CSpike(this, x[it2].getX(), x[it2].getY()));
 				} else if (x[it2].getType() == PARALLEL_BLOCK){
-					if (x[it2].parallelBlockData[2].equals(EngBlock.DOOR)){
+					if (x[it2].parallelBlockData[x[it2].checkInfoKey("type")].equals(EngBlock.DOOR)){
 						addEnt(new ParallelBlock(this, x[it2].getX(), x[it2].getY(), x[it2].getInfo(), new String[][]{{"engineering/blocks/door_1.png", "engineering/blocks/door_2.png", "engineering/blocks/door_3.png", "engineering/blocks/door_4.png"},{"engineering/blocks/door_4.png", "engineering/blocks/door_3.png", "engineering/blocks/door_2.png", "engineering/blocks/door_1.png"}}, "engineering/blocks/door_4.png", "engineering/blocks/door_1.png"));
 					}
 				}

@@ -6,6 +6,7 @@ import javafx.scene.image.*;
 import javafx.util.Duration;
 
 import com.orangomango.labyrinth.World;
+import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
@@ -38,7 +39,9 @@ public class ParallelBlock extends Entity{
 			parallelBlockData[counter] = infoPart.split("#")[1];
 			counter++;
 		}
-		this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[0]);
+		
+		System.out.println(">> "+"file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[Block.checkInfoKey(this.info, "imagePath")]);
+		this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[Block.checkInfoKey(this.info, "imagePath")]);
 		
 		t = new Timeline(new KeyFrame(Duration.millis(150), event -> {
 			boolean updateRequest = false;

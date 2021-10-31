@@ -36,7 +36,8 @@ public class EditableWorld extends World {
 			}
 			writer.newLine();
 			writer.write(start[0] + "," + start[1] + "\n");
-			writer.write(end[0] + "," + end[1]);
+			writer.write(end[0] + "," + end[1] + "\n");
+			writer.write(this.allLights ? "1" : "0");
 			if (getEngineeringWorld() != null){
 				writer.write("\nengineering_mode\n");
 				for (EngBlock[] bArr: getEngineeringWorld().getWorld()) {
@@ -231,9 +232,9 @@ public class EditableWorld extends World {
 		}
 		
 		for (Block b : this.world[newArray.length]){
-			if (b.getType().equals(PORTAL) && !b.getInfo().equals("NoPointSet")){
+			if (b.getType().equals(PORTAL) && !b.getInfo().split(";")[b.checkInfoKey("point")].split("#")[1].equals("NoPointSet")){
 				String[] data = b.getInfo().split("#")[1].split(" ");
-				getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+				getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).addInfoParam("point#NoPointSet");
 			}
 		}
 		

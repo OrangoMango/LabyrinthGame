@@ -67,7 +67,7 @@ public class Arrow extends Entity{
 			if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)) != null){
 				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getCategory() == World.AIR)){ // && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
 					if (isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
-						w.getPlayer().removeHealth(10);
+						w.getPlayer().removeHealth(34);
 					}
 					setX(getX()+stepX);
 					setY(getY()+stepY);

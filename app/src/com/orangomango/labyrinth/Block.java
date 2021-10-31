@@ -22,6 +22,7 @@ public class Block {
 	public static final double DARK = -0.25;
 	public static final double LIGHT = 0;
 	public static final int LIGHT_AREA = 1;
+	public static int MAX_INFO_LENGTH = 25;
 
 	/**
 	  Block class constructor
@@ -46,12 +47,21 @@ public class Block {
 			case World.ELEVATOR:
 			case World.BAT_GEN:
 			case World.D_WARNING:
+			case World.D_ARROW:
+			case World.OXYGEN_POINT:
 				this.category = World.AIR;
 				break;
 		}
 		if (this.info != null){
-			if (this.info.equals("NoDataSet") || this.info.equals("NoPointSet")){
-				this.category = World.AIR;
+			if (checkInfoKey("data") > 0){
+				if (this.info.split(";")[checkInfoKey("data")].split("#")[1].equals("NoDataSet")){
+					this.category = World.AIR;
+				}
+			}
+			if (checkInfoKey("point") > 0){
+				if (this.info.split(";")[checkInfoKey("point")].split("#")[1].equals("NoPointSet")){
+					this.category = World.AIR;
+				}
 			}
 			
 			int wc = 0;
@@ -63,7 +73,7 @@ public class Block {
 				}
 				wc++;
 			}
-			if (wc >= 0 && found){
+			if (found){
 				String iw = this.info.split(";")[wc];
 				if (iw.equals("water#true")){
 					this.water = true;
@@ -79,7 +89,7 @@ public class Block {
 					counter++;
 				}
 			}
-			this.category = parallelBlockData[1];
+			this.category = parallelBlockData[checkInfoKey("category")];
 		}
 	}
 
@@ -106,6 +116,65 @@ public class Block {
 		return this.water;
 	}
 	
+	public void addInfoParam(String param){
+		if (this.info == null){
+			setInfo(param);
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		int counter=0, counter2=0, toS=0;
+		for (String oldP : this.info.split(";")){
+			if (!param.contains(oldP.split("#")[0])){
+				sb.append(oldP);
+				if (counter+1 != this.info.split(";").length-toS){
+					sb.append(";");
+				}
+				counter++;
+			} else {
+				toS++;
+			}
+		}
+		System.out.println("1---> "+sb.toString());
+		if (counter > 0){
+			sb.append(";");
+		}
+		for (String pm : param.split(";")){
+			String key = pm.split("#")[0];
+			String value = pm.split("#")[1];
+			sb.append(key+"#"+value);
+			if (counter2+1 != param.split(";").length){
+				sb.append(";");
+			}
+			counter2++;
+		}
+		setInfo(sb.toString());
+		System.out.println("2---> "+sb.toString());
+	}
+	
+	public int checkInfoKey(String key){
+		int counter = 0;
+		for (String pair : this.getInfo().split(";")){
+			String Ckey = pair.split("#")[0];
+			if (Ckey.equals(key)){
+				return counter;
+			}
+			counter++;
+		}
+		return -1;
+	}
+	
+	public static int checkInfoKey(String inf, String key){
+		int counter = 0;
+		for (String pair : inf.split(";")){
+			String Ckey = pair.split("#")[0];
+			if (Ckey.equals(key)){
+				return counter;
+			}
+			counter++;
+		}
+		return -1;
+	}
+	
 	public void setInfo(String i){
 		this.info = i;
 		if (this.type.equals(World.PARALLEL_BLOCK)){
@@ -117,11 +186,13 @@ public class Block {
 					counter++;
 				}
 			}
-			this.category = parallelBlockData[1];
+			this.category = parallelBlockData[checkInfoKey("category")];
 		}
 	}
 	
-	public String getInfo(){return this.info;}
+	public String getInfo(){
+		return this.info;
+	}
 
 	/**
 	  Create a block instance from a given int (0 or 1)
@@ -153,6 +224,10 @@ public class Block {
 				return new Block(World.D_WARNING, x1, y1, i);
 			case 10:
 				return new Block(World.PARALLEL_BLOCK, x1, y1, i);
+			case 11:
+				return new Block(World.D_ARROW, x1, y1, i);
+			case 12:
+				return new Block(World.OXYGEN_POINT, x1, y1, i);
 			default:
 				return null;
 		}
@@ -219,7 +294,7 @@ public class Block {
 			throw new RuntimeException("Method only available for wall block");
 		}
 		if (getInfo().split("#")[1].equals("null")){
-			setInfo("conn#"+d);
+			addInfoParam("conn#"+d);
 			return;
 		}
 		
@@ -230,7 +305,7 @@ public class Block {
 				builder.append(c);
 			}
 		}
-		setInfo("conn#"+builder.toString());
+		addInfoParam("conn#"+builder.toString());
 	}
 	
 	public void removeConn(String d){
@@ -238,7 +313,7 @@ public class Block {
 			throw new RuntimeException("Method only available for wall block");
 		}
 		if (d.equals(getInfo().split("#")[1])){
-			setInfo("conn#null");
+			addInfoParam("conn#null");
 			return;
 		}
 		if (!getInfo().split("#")[1].contains(d)){
@@ -246,7 +321,7 @@ public class Block {
 		}
 		StringBuilder sb = new StringBuilder(getInfo().split("#")[1]);
 		sb.deleteCharAt(getInfo().split("#")[1].indexOf(d));
-		setInfo("conn#"+sb.toString());
+		addInfoParam("conn#"+sb.toString());
 	}
 	
 	public void draw(GraphicsContext pen, int px, int py, World w) {
@@ -268,7 +343,7 @@ public class Block {
 				} else {
 					effect.setBrightness(LIGHT);
 				}
-			} else if ((parallelBlockData[2].equals(EngBlock.LED) && w.getEngineeringWorld().getBlockAt(getX(), getY()).isActive()) || activeBlockAround(w)){
+			} else if ((parallelBlockData[checkInfoKey("type")].equals(EngBlock.LED) && w.getEngineeringWorld().getBlockAt(getX(), getY()).isActive()) || activeBlockAround(w)){
 				effect.setBrightness(LIGHT);
 			} else {
 				effect.setBrightness(DARK);
@@ -282,7 +357,6 @@ public class Block {
 		} else {
 	 		pen.setEffect(effect);
 	 	}
-		
 		
 		switch (getType()){
 			case World.WALL:
@@ -302,13 +376,13 @@ public class Block {
 			case World.PORTAL:
 				drawAirBlock(pen, px, py);
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-				if (this.info.equals("NoPointSet") && w instanceof EditableWorld){
+				if (this.info.split(";")[checkInfoKey("point")].split("#")[1].equals("NoPointSet") && w instanceof EditableWorld){
 					drawWarningSign(pen, px, py);
 				}
 				break;
 			case World.SHOOTER:
 				pen.setEffect(null);
-				String d = Character.toString(this.getInfo().split("#")[1].charAt(0));
+				String d = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
 				switch (d){
 					case World.NORTH:
 						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_v.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
@@ -330,14 +404,14 @@ public class Block {
 				drawAirBlock(pen, px, py);
 				if (w instanceof EditableWorld || w.previewMode){
 					String dir;
-					if (!this.info.equals("NoDataSet")){
+					if (!this.info.split(";")[checkInfoKey("data")].split("#")[1].equals("NoDataSet")){
 						dir = this.info.split("#")[1].split(" ")[1];
 					} else {
 						dir = Entity.HORIZONTAL;
 					}
 					Image batImg = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Entity.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png"));
 					pen.drawImage(batImg,  0, 0, batImg.getWidth(), batImg.getHeight(), World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-					if (this.info.equals("NoDataSet")){
+					if (this.info.split(";")[checkInfoKey("data")].split("#")[1].equals("NoDataSet")){
 						drawWarningSign(pen, px, py);
 					}
 				}
@@ -346,8 +420,8 @@ public class Block {
 				drawAirBlock(pen, px, py);
 				if (w instanceof EditableWorld || w.previewMode){
 				  pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/move_block.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-					if (this.info.equals("NoDataSet")){
-				  	drawWarningSign(pen, px, py);
+					if (this.info.split(";")[checkInfoKey("data")].split("#")[1].equals("NoDataSet")){
+						drawWarningSign(pen, px, py);
 					} else {
 						String direction = this.info.split("#")[1].split(" ")[1];
 						switch (direction){
@@ -373,9 +447,34 @@ public class Block {
 				break;
 			case World.PARALLEL_BLOCK:
 				drawAirBlock(pen, px, py);
-				if (!parallelBlockData[2].equals(EngBlock.DOOR) || (parallelBlockData[2].equals(EngBlock.DOOR) && (w instanceof EditableWorld || w.previewMode))){
-					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[0]), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				if (!parallelBlockData[checkInfoKey("type")].equals(EngBlock.DOOR) || (parallelBlockData[checkInfoKey("type")].equals(EngBlock.DOOR) && (w instanceof EditableWorld || w.previewMode))){
+					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[checkInfoKey("imagePath")]), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				}
+				break;
+			case World.D_ARROW:
+				drawAirBlock(pen, px, py);
+				pen.setEffect(null);
+				String direct = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
+				switch (direct){
+					case World.NORTH:
+						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_v.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+						break;
+					case World.SOUTH:
+						Image img = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_v.png");
+						pen.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), 0+px*World.BLOCK_WIDTH, py * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
+						break;
+					case World.WEST:
+						Image img2 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_h.png");
+						pen.drawImage(img2, 0, 0, img2.getWidth(), img2.getHeight(), px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+						break;
+					case World.EAST:
+						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_h.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+						break;
+				}
+				break;
+			case World.OXYGEN_POINT:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/oxygen_point.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			default:
 				pen.setFill(Color.RED);
@@ -415,6 +514,10 @@ public class Block {
 					return 9;
 				case World.PARALLEL_BLOCK:
 					return 10;
+				case World.D_ARROW:
+					return 11;
+				case World.OXYGEN_POINT:
+					return 12;
 				default:
 					return null;
 		}
@@ -440,6 +543,6 @@ public class Block {
 	*/
 	@Override
 	public String toString() {
-		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : this.info) + " Water: " + this.water;
+		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : (this.info.substring(0, (this.info.length() > MAX_INFO_LENGTH ? MAX_INFO_LENGTH : this.info.length()))+(this.info.length() > MAX_INFO_LENGTH ? "..." : ""))) + " Water: " + this.water;
 	}
 }

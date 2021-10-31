@@ -27,6 +27,8 @@ public class EngBlock {
 	
 	private int counter;
 	private Timeline t;
+	//private int activeTimes = 0;
+	//private boolean doActivate = false;
 
 	//Categories
 	public static final String SIGNAL_EXTENDER = "signal_extender";
@@ -70,6 +72,44 @@ public class EngBlock {
 	public void setInfo(String i){
 		this.info = i;
 	}
+	
+	public void addInfoParam(String param){
+		// See function: com.orangomango.labyrinth.Block#addInfoParam()
+		if (this.info == null){
+			setInfo(param);
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		int counter=0, counter2=0, toS=0;
+		for (String oldP : this.info.split(";")){
+			if (!param.contains(oldP.split("#")[0])){
+				sb.append(oldP);
+				if (counter+1 != this.info.split(";").length-toS){
+					sb.append(";");
+				}
+				counter++;
+			} else {
+				toS++;
+			}
+		}
+		if (counter > 0){
+			sb.append(";");
+		}
+		for (String pm : param.split(";")){
+			String key = pm.split("#")[0];
+			String value = pm.split("#")[1];
+			sb.append(key+"#"+value);
+			if (counter2+1 != param.split(";").length){
+				sb.append(";");
+			}
+			counter2++;
+		}
+		setInfo(sb.toString());
+	}
+	
+	public int checkInfoKey(String key){
+		return Block.checkInfoKey(this.info, key);
+	}
 
 	private boolean containsDirection(EngBlock b, String d) {
 		if (b.getCategory().equals(SIGNAL_OUTPUT)) {
@@ -88,7 +128,7 @@ public class EngBlock {
 		return false;
 	}
 
-	private void setActiveNESW(int x, int y, boolean a, String f) {
+	private void setActiveNESW(int x, int y, boolean a, String f) {		
 		if (this.world.getBlockAt(x, y - 1) != null && !f.equals("n")) {
 			if (this.world.getBlockAt(x, y - 1).isActivable()) {
 				this.world.getBlockAt(x, y - 1).toggleActive();
@@ -119,12 +159,14 @@ public class EngBlock {
 		}
 	}
 
-	public void toggleActive() {
+	public void toggleActive() {				
 		if (isActive()) {
 			setActive(false);
 		} else {
 			setActive(true);
 		}
+		
+		System.out.println("> "+isActive()+" <");
 	}
 
 	public void setActive(boolean a) {
@@ -148,6 +190,7 @@ public class EngBlock {
 		}
 		this.active = a;
 		if (getCategory().equals(SIGNAL_INPUT)) {
+			//doActivate = false;
 			setActiveNESW(getX(), getY(), a, "");
 		}
 	}

@@ -41,6 +41,12 @@ public class Editor {
 	private static boolean EDITOR = false;
         public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
+	
+	// Temp variables used to store info
+	private String dirSelection;
+	private EngBlock currentSelectedEngBlock;
+	private EditableWorld referenceWorld;
+	
 	private String mode = "normal";
 	private VBox vbf = new VBox();
 	private TilePane[] normalModePanes = new TilePane[3];
@@ -103,228 +109,322 @@ public class Editor {
 				if (mode.equals("engineering")){
 					engblock = editableworld.getEngineeringWorld().getBlockAtCoord((int) event.getX(), (int) event.getY());
 				}
-				if (event.getButton() == MouseButton.SECONDARY && mode.equals("normal")){
+				if (event.getButton() == MouseButton.SECONDARY){
 					ContextMenu contextMenu = new ContextMenu();
-					Menu item1 = new Menu("Set other portal end");
-					MenuItem rmPoint = new MenuItem("Remove pointing");
-					rmPoint.setOnAction(rmEvent -> {
-						String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
-						editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo("NoPointSet");
-						editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
-						editableworld.updateOnFile();
-						unsaved();
-					});
-					if (edblock.getInfo() != null){
-					  rmPoint.setDisable(edblock.getInfo().equals("NoPointSet"));
-					}
-					item1.getItems().add(rmPoint);
-					for (int y = 0; y<editableworld.height; y++){
-						for (int x = 0; x<editableworld.width; x++){
-							Block b = editableworld.getBlockAt(x, y);
-							if (b.getType() == EditableWorld.PORTAL){
-								MenuItem menuitem = new MenuItem(b.toString());
-								menuitem.setOnAction(itemEvent -> {
-									if (!edblock.getInfo().equals("NoPointSet")){
-										String[] data = edblock.getInfo().split("#")[1].split(" ");
-										editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
-									}
-									if (!b.getInfo().equals("NoPointSet")){
-										String[] data = b.getInfo().split("#")[1].split(" ");
-										editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
-									}
-									editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).setInfo(String.format("point#%s %s", b.getX(), b.getY()));
-									b.setInfo(String.format("point#%s %s", edblock.getX(), edblock.getY()));
-									editableworld.updateOnFile();
-									unsaved();
-								});
-								if (b.getX() == edblock.getX() && b.getY() == edblock.getY() && b.getX() == edblock.getX()){
-									menuitem.setDisable(true);
-								}
-								item1.getItems().add(menuitem);
-							}
-						}
-					}
-					MenuItem item2 = new MenuItem("Set bat data");
-					item2.setOnAction(batEvent -> {
-						Stage st = new Stage();
-						st.setTitle("Bat preferences");
-						GridPane pane = new GridPane();
-						pane.setPadding(new Insets(10,10,10,10));
-						pane.setHgap(20);
-						pane.setVgap(20);
-						Label l1 = new Label("Set path length: ");
-						Spinner sp = new Spinner(2,NewWidget.MAX_WORLD_SIZE,2);
-						Label l2 = new Label("Set direction:");
-						ToggleGroup gr = new ToggleGroup();
-						RadioButton b1 = new RadioButton("Vertical");
-						RadioButton b2 = new RadioButton("Horizontal");
-						b2.setSelected(true);
-						b1.setToggleGroup(gr);
-						b2.setToggleGroup(gr);
-						Label l3 = new Label("Set speed (ms) [200]:");
-						Slider slider = new Slider(80, 300, 200);
-						slider.setPrefWidth(180);
-						slider.setShowTickLabels(true);
-						slider.setShowTickMarks(true);
-						slider.setOnMouseDragged(evt -> l3.setText("Set speed (ms) ["+Math.round((int)slider.getValue())+"]"));
-						CheckBox invert = new CheckBox("Invert movement");
-						Button ok = new Button("Save changes");
-						ok.setOnAction(ev -> {
-							int pl = (int) sp.getValue();
-							String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
-							int speed = (int)slider.getValue();
-							edblock.setInfo(String.format("data#%s %s %s %s", pl, dir, speed, invert.isSelected() ? "t" : "f"));
-							editableworld.setBlockOn(edblock);
+					if (mode.equals("normal")){
+						Menu item1 = new Menu("Set other portal end");
+						MenuItem rmPoint = new MenuItem("Remove pointing");
+						rmPoint.setOnAction(rmEvent -> {
+							String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
+							editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).addInfoParam("point#NoPointSet");
+							editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).addInfoParam("point#NoPointSet");
 							editableworld.updateOnFile();
 							unsaved();
-							st.close();
 						});
-						Button canc = new Button("Cancel");
-						canc.setOnAction(e -> st.close());
-						pane.add(l1, 0, 0);
-						pane.add(sp, 1, 0);
-						pane.add(l2, 0, 1);
-						pane.add(b1, 0, 2);
-						pane.add(b2, 0, 3);
-						pane.add(l3, 0, 4);
-						pane.add(slider, 1, 4);
-						pane.add(invert, 0, 5);
-						pane.add(ok, 0, 6);
-						pane.add(canc, 1, 6);
-						Scene scene = new Scene(pane, 420, 300);
-						scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
-						st.setScene(scene);
-						st.show();
-					});
-					Menu item3 = new Menu("Rotate");
-					MenuItem r = new MenuItem("Rotate 90deg right");
-					r.setOnAction(rr -> {
-						String d = Character.toString(edblock.getInfo().split("#")[1].charAt(0));
-						switch (d) {
-							case EditableWorld.NORTH:
-								edblock.setInfo("direction#"+EditableWorld.EAST);
-								break;
-							case EditableWorld.EAST:
-								edblock.setInfo("direction#"+EditableWorld.SOUTH);
-								break;
-							case EditableWorld.SOUTH:
-								edblock.setInfo("direction#"+EditableWorld.WEST);
-								break;
-							case EditableWorld.WEST:
-								edblock.setInfo("direction#"+EditableWorld.NORTH);
-								break;
-						}
-						editableworld.setBlockOn(edblock);
-						editableworld.updateOnFile();
-						unsaved();
-					});
-					MenuItem l = new MenuItem("Rotate 90deg left");
-					l.setOnAction(rl -> {
-						String d = Character.toString(edblock.getInfo().split("#")[1].charAt(0));
-						switch (d){
-							case EditableWorld.NORTH:
-								edblock.setInfo("direction#"+EditableWorld.WEST);
-								break;
-							case EditableWorld.EAST:
-								edblock.setInfo("direction#"+EditableWorld.NORTH);
-								break;
-							case EditableWorld.SOUTH:
-								edblock.setInfo("direction#"+EditableWorld.EAST);
-								break;
-							case EditableWorld.WEST:
-								edblock.setInfo("direction#"+EditableWorld.SOUTH);
-								break;
-						}
-						editableworld.setBlockOn(edblock);
-						editableworld.updateOnFile();
-						unsaved();
-					});
-					item3.getItems().addAll(r, l);
-					MenuItem item4 = new MenuItem("Set movable block data");
-					item4.setOnAction(clickEv -> {
-						Stage st = new Stage();
-						st.setTitle("Movable block preferences");
-						GridPane pane = new GridPane();
-						pane.setPadding(new Insets(10,10,10,10));
-						pane.setHgap(20);
-						pane.setVgap(20);
-						Label l1 = new Label("Set path length: ");
-						Spinner sp = new Spinner(2,NewWidget.MAX_WORLD_SIZE,2);
-						Label l2 = new Label("Set direction:");
-						ToggleGroup gr = new ToggleGroup();
-						RadioButton b1 = new RadioButton("Vertical");
-						RadioButton b2 = new RadioButton("Horizontal");
-						b2.setSelected(true);
-						b1.setToggleGroup(gr);
-						b2.setToggleGroup(gr);
-						Button ok = new Button("Save changes");
-						ok.setOnAction(ev -> {
-							int pl = (int) sp.getValue();
-							String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
-							edblock.setInfo(String.format("data#%s %s", pl, dir));
-							editableworld.setBlockOn(edblock);
-							editableworld.updateOnFile();
-							unsaved();
-							st.close();
-						});
-						Button canc = new Button("Cancel");
-						canc.setOnAction(e -> st.close());
-						pane.add(l1, 0, 0);
-						pane.add(sp, 1, 0);
-						pane.add(l2, 0, 1);
-						pane.add(b1, 0, 2);
-						pane.add(b2, 0, 3);
-						pane.add(ok, 0, 4);
-						pane.add(canc, 1, 4);
-						Scene scene = new Scene(pane, 350, 250);
-						scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
-						st.setScene(scene);
-						st.show();
-					});
-					MenuItem item5 = new MenuItem("Toggle water");
-					item5.setOnAction(clickEv -> {
-						boolean water = edblock.isWater();
-						StringBuilder sb = new StringBuilder();
 						if (edblock.getInfo() != null){
-							int counter = 0;
-							for (String s : edblock.getInfo().split(";")){
-								if (s.split("#")[0].equals("water")){
-									sb.append(water ? "water#false" : "water#true");
-								} else {
-									sb.append(s);
-									if (counter+1 == edblock.getInfo().split(";").length){
-										sb.append(water ? ";water#false" : ";water#true");
-										break;
-									}
-								}
-								if (counter+1 != edblock.getInfo().split(";").length){
-									sb.append(";");
-								}
-								counter++;
-							}
-						} else {
-							sb.append(water ? "water#false" : "water#true");
+							if (edblock.checkInfoKey("point") > 0)
+								rmPoint.setDisable(edblock.getInfo().split(";")[edblock.checkInfoKey("point")].split("#")[1].equals("NoPointSet"));
 						}
-						edblock.setInfo(sb.toString());
-						editableworld.setBlockOn(edblock);
-						editableworld.updateOnFile();
-						unsaved();
-					});
-					switch (edblock.getType()){
-						case EditableWorld.PORTAL:
-							contextMenu.getItems().add(item1);
-							break;
-						case EditableWorld.BAT_GEN:
-							contextMenu.getItems().add(item2);
-							break;
-						case EditableWorld.SHOOTER:
-							contextMenu.getItems().add(item3);
-							break;
-						case EditableWorld.ELEVATOR:
-							contextMenu.getItems().add(item4);
-							break;
+						item1.getItems().add(rmPoint);
+						for (int y = 0; y<editableworld.height; y++){
+							for (int x = 0; x<editableworld.width; x++){
+								Block b = editableworld.getBlockAt(x, y);
+								if (b.getType() == EditableWorld.PORTAL){
+									MenuItem menuitem = new MenuItem(b.toString());
+									menuitem.setOnAction(itemEvent -> {
+										if (!edblock.getInfo().split(";")[edblock.checkInfoKey("point")].split("#")[1].equals("NoPointSet")){
+											String[] data = edblock.getInfo().split(";")[edblock.checkInfoKey("point")].split("#")[1].split(" ");
+											editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+										}
+										if (!b.getInfo().split(";")[b.checkInfoKey("point")].split("#")[1].equals("NoPointSet")){
+											String[] data = b.getInfo().split(";")[b.checkInfoKey("point")].split("#")[1].split(" ");
+											editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).addInfoParam("point#NoPointSet");
+										}
+										editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY()).addInfoParam(String.format("point#%s %s", b.getX(), b.getY()));
+										b.addInfoParam(String.format("point#%s %s", edblock.getX(), edblock.getY()));
+										editableworld.updateOnFile();
+										unsaved();
+									});
+									if (b.getX() == edblock.getX() && b.getY() == edblock.getY() && b.getX() == edblock.getX()){
+										menuitem.setDisable(true);
+									}
+									item1.getItems().add(menuitem);
+								}
+							}
+						}
+						MenuItem item2 = new MenuItem("Set bat data");
+						item2.setOnAction(batEvent -> {
+							Stage st = new Stage();
+							st.setTitle("Bat preferences");
+							GridPane pane = new GridPane();
+							pane.setPadding(new Insets(10,10,10,10));
+							pane.setHgap(20);
+							pane.setVgap(20);
+							Label l1 = new Label("Set path length: ");
+							Spinner sp = new Spinner(2,NewWidget.MAX_WORLD_SIZE,2);
+							Label l2 = new Label("Set direction:");
+							ToggleGroup gr = new ToggleGroup();
+							RadioButton b1 = new RadioButton("Vertical");
+							RadioButton b2 = new RadioButton("Horizontal");
+							b2.setSelected(true);
+							b1.setToggleGroup(gr);
+							b2.setToggleGroup(gr);
+							Label l3 = new Label("Set speed (ms) [200]:");
+							Slider slider = new Slider(80, 300, 200);
+							slider.setPrefWidth(180);
+							slider.setShowTickLabels(true);
+							slider.setShowTickMarks(true);
+							slider.setOnMouseDragged(evt -> l3.setText("Set speed (ms) ["+Math.round((int)slider.getValue())+"]:"));
+							Label l4 = new Label("Set damage [30]:");
+							Slider slider2 = new Slider(1, 100, 30);
+							slider2.setPrefWidth(180);
+							slider2.setShowTickLabels(true);
+							slider2.setShowTickMarks(true);
+							slider2.setOnMouseDragged(evt -> l4.setText("Set damage ["+Math.round((int)slider2.getValue())+"]:"));
+							CheckBox invert = new CheckBox("Invert movement");
+							Button ok = new Button("Save changes");
+							ok.setOnAction(ev -> {
+								int pl = (int) sp.getValue();
+								String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
+								int speed = (int)slider.getValue();
+								int damage = (int)slider2.getValue();
+								edblock.addInfoParam(String.format("data#%s %s %s %s %s", pl, dir, speed, invert.isSelected() ? "t" : "f", damage));
+								editableworld.setBlockOn(edblock);
+								editableworld.updateOnFile();
+								unsaved();
+								st.close();
+							});
+							Button canc = new Button("Cancel");
+							canc.setOnAction(e -> st.close());
+							pane.add(l1, 0, 0);
+							pane.add(sp, 1, 0);
+							pane.add(l2, 0, 1);
+							pane.add(b1, 0, 2);
+							pane.add(b2, 0, 3);
+							pane.add(l3, 0, 4);
+							pane.add(slider, 1, 4);
+							pane.add(l4, 0, 5);
+							pane.add(slider2, 1, 5);
+							pane.add(invert, 0, 6);
+							pane.add(ok, 0, 7);
+							pane.add(canc, 1, 7);
+							Scene scene = new Scene(pane, 420, 370);
+							scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+							st.setScene(scene);
+							st.show();
+						});
+						Menu item3 = new Menu("Rotate");
+						MenuItem r = new MenuItem("Rotate 90deg right");
+						r.setOnAction(rr -> {
+							String d = Character.toString(edblock.getInfo().split("#")[1].charAt(0));
+							switch (d) {
+								case EditableWorld.NORTH:
+									edblock.addInfoParam("direction#"+EditableWorld.EAST);
+									break;
+								case EditableWorld.EAST:
+									edblock.addInfoParam("direction#"+EditableWorld.SOUTH);
+									break;
+								case EditableWorld.SOUTH:
+									edblock.addInfoParam("direction#"+EditableWorld.WEST);
+									break;
+								case EditableWorld.WEST:
+									edblock.addInfoParam("direction#"+EditableWorld.NORTH);
+									break;
+							}
+							editableworld.setBlockOn(edblock);
+							editableworld.updateOnFile();
+							unsaved();
+						});
+						MenuItem l = new MenuItem("Rotate 90deg left");
+						l.setOnAction(rl -> {
+							String d = Character.toString(edblock.getInfo().split("#")[1].charAt(0));
+							switch (d){
+								case EditableWorld.NORTH:
+									edblock.addInfoParam("direction#"+EditableWorld.WEST);
+									break;
+								case EditableWorld.EAST:
+									edblock.addInfoParam("direction#"+EditableWorld.NORTH);
+									break;
+								case EditableWorld.SOUTH:
+									edblock.addInfoParam("direction#"+EditableWorld.EAST);
+									break;
+								case EditableWorld.WEST:
+									edblock.addInfoParam("direction#"+EditableWorld.SOUTH);
+									break;
+							}
+							editableworld.setBlockOn(edblock);
+							editableworld.updateOnFile();
+							unsaved();
+						});
+						item3.getItems().addAll(r, l);
+						MenuItem item4 = new MenuItem("Set movable block data");
+						item4.setOnAction(clickEv -> {
+							Stage st = new Stage();
+							st.setTitle("Movable block preferences");
+							GridPane pane = new GridPane();
+							pane.setPadding(new Insets(10,10,10,10));
+							pane.setHgap(20);
+							pane.setVgap(20);
+							Label l1 = new Label("Set path length: ");
+							Spinner sp = new Spinner(2,NewWidget.MAX_WORLD_SIZE,2);
+							Label l2 = new Label("Set direction:");
+							ToggleGroup gr = new ToggleGroup();
+							RadioButton b1 = new RadioButton("Vertical");
+							RadioButton b2 = new RadioButton("Horizontal");
+							b2.setSelected(true);
+							b1.setToggleGroup(gr);
+							b2.setToggleGroup(gr);
+							Button ok = new Button("Save changes");
+							ok.setOnAction(ev -> {
+								int pl = (int) sp.getValue();
+								String dir = ((RadioButton)gr.getSelectedToggle()).getText().equals("Horizontal") ? "h" : "v";
+								edblock.addInfoParam(String.format("data#%s %s", pl, dir));
+								editableworld.setBlockOn(edblock);
+								editableworld.updateOnFile();
+								unsaved();
+								st.close();
+							});
+							Button canc = new Button("Cancel");
+							canc.setOnAction(e -> st.close());
+							pane.add(l1, 0, 0);
+							pane.add(sp, 1, 0);
+							pane.add(l2, 0, 1);
+							pane.add(b1, 0, 2);
+							pane.add(b2, 0, 3);
+							pane.add(ok, 0, 4);
+							pane.add(canc, 1, 4);
+							Scene scene = new Scene(pane, 350, 250);
+							scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+							st.setScene(scene);
+							st.show();
+						});
+						MenuItem item5 = new MenuItem("Toggle water");				
+						
+						item5.setOnAction(clickEv -> {
+							boolean water = edblock.isWater();
+							StringBuilder sb = new StringBuilder();
+							if (edblock.getInfo() != null){
+								int counter = 0;
+								for (String s : edblock.getInfo().split(";")){
+									if (s.split("#")[0].equals("water")){
+										sb.append(water ? "water#false" : "water#true");
+									} else {
+										sb.append(s);
+										if (counter+1 == edblock.getInfo().split(";").length){
+											sb.append(water ? ";water#false" : ";water#true");
+											break;
+										}
+									}
+									if (counter+1 != edblock.getInfo().split(";").length){
+										sb.append(";");
+									}
+									counter++;
+								}
+							} else {
+								sb.append(water ? "water#false" : "water#true");
+							}
+							System.out.println("______ "+sb.toString());
+							edblock.setInfo(sb.toString());
+							editableworld.setBlockOn(edblock);
+							editableworld.updateOnFile();
+							unsaved();
+						});
+						
+						MenuItem item7 = new MenuItem("Set shooter block data");
+
+						switch (edblock.getType()){
+							case EditableWorld.PORTAL:
+								contextMenu.getItems().add(item1);
+								break;
+							case EditableWorld.BAT_GEN:
+								contextMenu.getItems().add(item2);
+								break;
+							case EditableWorld.SHOOTER:
+								contextMenu.getItems().add(item7);
+							case EditableWorld.D_ARROW:
+								contextMenu.getItems().add(item3);
+								break;
+							case EditableWorld.ELEVATOR:
+								contextMenu.getItems().add(item4);
+								break;
+						}
+						contextMenu.getItems().add(item5);
+					
+					} else if (mode.equals("engineering")){
+						dirSelection = null; // This parameter can also not be added to the function "updateEngBlockConn()"
+						currentSelectedEngBlock = engblock;
+						referenceWorld = editableworld;
+						Menu item6 = new Menu("Change cable connections");
+						// 0 Connections
+						MenuItem con0 = new MenuItem("0 Connections");
+						con0.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable.png")));
+						con0.setOnAction(et -> {dirSelection = " "; updateEngBlockConn(dirSelection);});
+						// 1 Connection
+						Menu con1 = new Menu("1 Connection");
+						con1.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-e.png")));
+						MenuItem con_n = new MenuItem("conn-n");
+						con_n.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-n.png")));
+						con_n.setOnAction(et -> {dirSelection = "n"; updateEngBlockConn(dirSelection);});
+						MenuItem con_e = new MenuItem("conn-e");
+						con_e.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-e.png")));
+						con_e.setOnAction(et -> {dirSelection = "e"; updateEngBlockConn(dirSelection);});
+						MenuItem con_s = new MenuItem("conn-s");
+						con_s.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-s.png")));
+						con_s.setOnAction(et -> {dirSelection = "s"; updateEngBlockConn(dirSelection);});
+						MenuItem con_w = new MenuItem("conn-w");
+						con_w.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-w.png")));
+						con_w.setOnAction(et -> {dirSelection = "w"; updateEngBlockConn(dirSelection);});
+						con1.getItems().addAll(con_n, con_e, con_s, con_w);
+						// 2 Connections
+						Menu con2 = new Menu("2 Connections");
+						con2.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-sw.png")));
+						MenuItem con_ne = new MenuItem("conn-ne");
+						con_ne.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-ne.png")));
+						con_ne.setOnAction(et -> {dirSelection = "ne"; updateEngBlockConn(dirSelection);});
+						MenuItem con_es = new MenuItem("conn-es");
+						con_es.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-es.png")));
+						con_es.setOnAction(et -> {dirSelection = "es"; updateEngBlockConn(dirSelection);});
+						MenuItem con_sw = new MenuItem("conn-sw");
+						con_sw.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-sw.png")));
+						con_sw.setOnAction(et -> {dirSelection = "sw"; updateEngBlockConn(dirSelection);});
+						MenuItem con_nw = new MenuItem("conn-nw");
+						con_nw.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-nw.png")));
+						con_nw.setOnAction(et -> {dirSelection = "nw"; updateEngBlockConn(dirSelection);});
+						MenuItem con_ns = new MenuItem("conn-ns");
+						con_ns.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-ns.png")));
+						con_ns.setOnAction(et -> {dirSelection = "ns"; updateEngBlockConn(dirSelection);});
+						MenuItem con_ew = new MenuItem("conn-ew");
+						con_ew.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-ew.png")));
+						con_ew.setOnAction(et -> {dirSelection = "ew"; updateEngBlockConn(dirSelection);});
+						con2.getItems().addAll(con_ne, con_es, con_sw, con_nw, con_ns, con_ew);
+						// 3 Connections
+						Menu con3 = new Menu("3 Connections");
+						con3.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-nsw.png")));
+						MenuItem con_nes = new MenuItem("conn-nes");
+						con_nes.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-nes.png")));
+						con_nes.setOnAction(et -> {dirSelection = "nes"; updateEngBlockConn(dirSelection);});
+						MenuItem con_esw = new MenuItem("conn-esw");
+						con_esw.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-esw.png")));
+						con_esw.setOnAction(et -> {dirSelection = "esw"; updateEngBlockConn(dirSelection);});
+						MenuItem con_nsw = new MenuItem("conn-nsw");
+						con_nsw.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-nsw.png")));
+						con_nsw.setOnAction(et -> {dirSelection = "nsw"; updateEngBlockConn(dirSelection);});
+						MenuItem con_nwe = new MenuItem("conn-nwe");
+						con_nwe.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-nwe.png")));
+						con_nwe.setOnAction(et -> {dirSelection = "nwe"; updateEngBlockConn(dirSelection);});
+						con3.getItems().addAll(con_nes, con_esw, con_nsw, con_nwe);
+						// 4 Connections
+						MenuItem con4 = new MenuItem("4 Connections");
+						con4.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-nesw.png")));
+						con4.setOnAction(et -> {dirSelection = "nesw"; updateEngBlockConn(dirSelection);});
+						
+						item6.getItems().addAll(con0, con1, con2, con3, con4);
+						
+						if (engblock.getType().equals(EngBlock.CABLE)){
+							//contextMenu.getItems().add(item6); // Feature will be added in 3.5/3.6
+						}
 					}
-					contextMenu.getItems().add(item5);
+
 					contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
 				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("normal")){
 					if (edblock.getType() == EditableWorld.AIR && (edblock.isOnStart(editableworld) || edblock.isOnEnd(editableworld))) {
@@ -336,9 +436,9 @@ public class Editor {
 						alert.showAndWait();
 						return;
 					}
-					if (edblock.getType() == EditableWorld.PORTAL && !edblock.getInfo().equals("NoPointSet")){
+					if (edblock.getType() == EditableWorld.PORTAL && !edblock.getInfo().split(";")[edblock.checkInfoKey("point")].split("#")[1].equals("NoPointSet")){
 						String[] data = editableworld.getBlockAtCoord((int)event.getX(), (int)event.getY()).getInfo().split("#")[1].split(" ");
-						editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).setInfo("NoPointSet");
+						editableworld.getBlockAt(Integer.parseInt(data[0]), Integer.parseInt(data[1])).addInfoParam("point#NoPointSet");
 					}
 					// Check clone on EditableWorld class
 					if (edblock.getType() == EditableWorld.WALL){
@@ -419,9 +519,9 @@ public class Editor {
 								    c++;
 							    }
 							    if (c != 4){
-								edblock.setInfo("conn#"+b.toString());
+								edblock.addInfoParam("conn#"+b.toString());
 							    } else {
-								    edblock.setInfo("conn#null");
+								    edblock.addInfoParam("conn#null");
 							    }
 							}
 							
@@ -436,7 +536,7 @@ public class Editor {
 							edblock.toggleType(EditableWorld.SPIKE);
 							break;
 						case 4:
-							edblock.setInfo("NoPointSet");
+							edblock.addInfoParam("point#NoPointSet");
 							edblock.toggleType(EditableWorld.PORTAL);
 							break;
 						case 5:
@@ -444,11 +544,11 @@ public class Editor {
 							edblock.toggleType(EditableWorld.SHOOTER);
 							break;
 						case 6:
-							edblock.setInfo("NoDataSet");
+							edblock.addInfoParam("data#NoDataSet");
 							edblock.toggleType(EditableWorld.BAT_GEN);
 							break;
 						case 7:
-							edblock.setInfo("NoDataSet");
+							edblock.addInfoParam("data#NoDataSet");
 							edblock.toggleType(EditableWorld.ELEVATOR);
 							break;
 						case 8:
@@ -458,6 +558,15 @@ public class Editor {
 						case 9:
 							edblock.setInfo(null);
 							edblock.toggleType(EditableWorld.D_WARNING);
+							break;
+						// 10: Parallel block
+						case 11:
+							edblock.setInfo("direction#"+EditableWorld.WEST);
+							edblock.toggleType(EditableWorld.D_ARROW);
+							break;
+						case 12:
+							edblock.setInfo(null);
+							edblock.toggleType(EditableWorld.OXYGEN_POINT);
 							break;
 					}
 					
@@ -479,6 +588,9 @@ public class Editor {
 						case 1:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.CABLE);
+							if (!edblock.getType().equals(EditableWorld.AIR)){
+								createParallelBlock(editableworld, engblock.getX(), engblock.getY(), ""); // Maybe delete parallel block
+							}
 							break;
 						case 2:
 							engblock.setInfo(null);
@@ -488,6 +600,9 @@ public class Editor {
 						case 3:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.GENERATOR);
+							if (!edblock.getType().equals(EditableWorld.AIR)){
+								createParallelBlock(editableworld, engblock.getX(), engblock.getY(), ""); // Maybe delete parallel block
+							}
 							break;
 						case 4:
 							engblock.setInfo(null);
@@ -524,6 +639,7 @@ public class Editor {
 			} else {
 				Eblock = null;
 			}
+			Block.MAX_INFO_LENGTH = (int)Math.round(this.stage.getWidth()*0.032);
 			if (this.mode.equals("normal")){
 				this.pointingOn.setText("Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position"))+" ["+getFileName()+"]");
 			} else if (this.mode.equals("engineering")){
@@ -549,14 +665,28 @@ public class Editor {
 	
 	public void createParallelBlock(EditableWorld w, int x, int y, String i){
 		EditableBlock edblock = EditableBlock.fromBlock(w.getBlockAt(x, y));
+		System.out.println("PB");
 		if (edblock.getType().equals(EditableWorld.AIR)){
+			System.out.println("Creating parallel block");
 			edblock.setType(EditableWorld.PARALLEL_BLOCK);
-			edblock.setInfo(i);
-		} else { // Remove parallel block if already exists
+			edblock.addInfoParam(i);
+		} else if (edblock.getType().equals(EditableWorld.PARALLEL_BLOCK)) { // Remove parallel block if already exists
+			System.out.println("Parallel block (else)");
 			edblock.setType(EditableWorld.AIR);
 			edblock.setInfo(null);
 		}
 		w.setBlockOn(edblock);
+	}
+	
+	private void updateEngBlockConn(String d){
+		System.out.println("-----> "+d);
+		System.out.println("-----> "+currentSelectedEngBlock);
+		currentSelectedEngBlock.addInfoParam("attachments#"+d);
+		currentSelectedEngBlock.addInfoParam("modified#1");
+		System.out.println(currentSelectedEngBlock);
+		referenceWorld.getEngineeringWorld().setBlockOn(currentSelectedEngBlock);
+		referenceWorld.updateOnFile();
+		unsaved();
 	}
 
     /**
@@ -891,6 +1021,7 @@ public class Editor {
 					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-nesw.png")));
 					wallB.setTooltip(new Tooltip("Wall block. ID:N1"));
 					wallB.setToggleGroup(tg);
+					wallB.setSelected(SELECTED_BLOCK == 1 && mode.equals("normal"));
 					wallB.setOnAction(event -> SELECTED_BLOCK = 1);
 					ToggleButton portalB = new ToggleButton();
 					portalB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_portal.png")));
@@ -902,7 +1033,12 @@ public class Editor {
 					moveB.setTooltip(new Tooltip("Elevator block. ID:N7"));
 					moveB.setToggleGroup(tg);
 					moveB.setOnAction(event -> SELECTED_BLOCK = 7);
-					db.getChildren().addAll(wallB, portalB, moveB);
+					ToggleButton oxyB = new ToggleButton();
+					oxyB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/oxygen_point.png")));
+					oxyB.setTooltip(new Tooltip("Oxygen point block. ID:N12"));
+					oxyB.setToggleGroup(tg);
+					oxyB.setOnAction(event -> SELECTED_BLOCK = 12);
+					db.getChildren().addAll(wallB, portalB, moveB, oxyB);
 					Label header = new Label(" Default Blocks");
 					header.setStyle(style);
 					return new VBox(header, db);
@@ -922,7 +1058,12 @@ public class Editor {
 					warB.setTooltip(new Tooltip("Warning decoration. ID:N9"));
 					warB.setToggleGroup(tg);
 					warB.setOnAction(event -> SELECTED_BLOCK = 9);
-					deb.getChildren().addAll(voidB, warB);
+					ToggleButton arrB = new ToggleButton();
+					arrB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_h.png")));
+					arrB.setTooltip(new Tooltip("Arrow decoration. ID:N10"));
+					arrB.setToggleGroup(tg);
+					arrB.setOnAction(event -> SELECTED_BLOCK = 11);
+					deb.getChildren().addAll(voidB, warB, arrB);
 					Label header1 = new Label(" Decoration Blocks");
 					header1.setStyle(style);
 					return new VBox(header1, deb);
@@ -967,6 +1108,7 @@ public class Editor {
 					cableB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-es.png")));
 					cableB.setTooltip(new Tooltip("Cable block. ID:E1"));
 					cableB.setToggleGroup(tg);
+					cableB.setSelected(SELECTED_BLOCK == 1 && mode.equals("engineering"));
 					cableB.setOnAction(event -> SELECTED_BLOCK = 1);
 					engp1.getChildren().add(cableB);
 					Label h1 = new Label("Signal extender");
@@ -1098,9 +1240,24 @@ public class Editor {
 		} catch (IOException e) {}
 		return null;
 	}
+	
+	private void checkAndDeleteCache(){
+		File f = new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache");
+		String[] fPaths = f.list();
+		if (fPaths.length > 22){ // 20 cached files + 2 default files
+			Logger.warning("More than 20 cached files! Deleting some of them");
+			for (String fp : fPaths){
+				if (fp.startsWith("cache")){
+					File toDel = new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + fp);
+					toDel.delete();
+				}
+			}
+		}
+	}
     
     /**
-     * Open a world file by opening a new tab containing the opened world. Will be created a copy of the world file in the cache folder. When the user saves the cache file (where the user edits the world) will be replaced with the original file.
+     * Open a world file by opening a new tab containing the opened world. Will be created a copy of the world file in the cache folder.
+     * When the user saves the cached file (where the user edits the world) will be replaced with the original file.
      * @param f the world File
     */
 	public void open(File f) {
@@ -1126,6 +1283,7 @@ public class Editor {
 
 			Logger.info(Arrays.toString(CURRENT_FILE_PATHS) + " " + Arrays.toString(WORKING_FILE_PATHS));
 
+			checkAndDeleteCache();
 			copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
 			if (this.tabs != null && getCurrentFilePath() != null) {
 				Tab newTab = new Tab(f.getName());
@@ -1312,7 +1470,7 @@ public class Editor {
 			}
 			engToDisable.setDisable(true);
 			engToDisableB.setDisable(true);
-			SELECTED_BLOCK = 0;
+			SELECTED_BLOCK = 1;
 			this.edworld.setDrawingMode("engineering");
 			this.edworld.update(0, 0, 0, 0);
 		} else if (this.mode.equals("normal")){
@@ -1324,9 +1482,10 @@ public class Editor {
 			}
 			engToDisable.setDisable(false);
 			engToDisableB.setDisable(false);
-			SELECTED_BLOCK = 0;
+			SELECTED_BLOCK = 1;
 			this.edworld.setDrawingMode("normal");
 			this.edworld.update(0, 0, 0, 0);
 		}
+		this.edworld.updateWalls();
 	}
 }

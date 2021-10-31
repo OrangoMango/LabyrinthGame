@@ -7,6 +7,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.ContentDisplay;
+import javafx.geometry.Insets;
+import javafx.scene.image.*;
 
 import java.io.*;
 
@@ -38,8 +41,11 @@ public class Menu {
 		GridPane layout = new GridPane();
 		layout.setHgap(20);
 		layout.setVgap(20);
+		layout.setPadding(new Insets(5, 5, 5, 5));
 
 		Button playBtn = new Button("Play");
+		playBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_play.png")));
+		playBtn.setContentDisplay(ContentDisplay.TOP);
 		playBtn.setOnAction(event -> {
 			if (!PLAY) {
 				PlayScreen screen = new PlayScreen(this.toShowWorld);
@@ -48,11 +54,15 @@ public class Menu {
 		});
 
 		Button editorBtn = new Button("Editor");
+		editorBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_editor.png")));
+		editorBtn.setContentDisplay(ContentDisplay.TOP);
 		editorBtn.setOnAction(event -> {
 			startEditor(null);
 		});
 
 		Button levelsBtn = new Button("My levels");
+		levelsBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_levels.png")));
+		levelsBtn.setContentDisplay(ContentDisplay.TOP);
 		levelsBtn.setOnAction(event -> {
 			if (!MYLEVELS) {
 				HomeWindow hw = new HomeWindow();

@@ -31,6 +31,7 @@ public class Player {
 	private boolean oxygenRemovingStarted = false;
 	private Timeline oxygenT = null;
 	private String direction = World.EAST;
+	private Timeline tl;
 
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -48,6 +49,13 @@ public class Player {
 		this.oxygen = 100;
 		setX(this.world.start[0]);
 		setY(this.world.start[1]);
+		if (oxygenT != null){
+			oxygenT.stop();
+		}
+		if (this.tl != null){
+			this.tl.stop();
+		}
+		LevelExe.PLAYER_MOVEMENT = true;
 	}
 	
 	public void removeHealth(int v){
@@ -80,8 +88,7 @@ public class Player {
 		if (this.oxygen <= 0 || this.oxygen >= 100){
 			if (this.oxygen <= 0){
 				this.oxygen = 0;
-				System.out.println("Oxygen rm");
-				removeHealth(15);
+				removeHealth(25);
 			} else if (this.oxygen > 100){
 				this.oxygen = 100;
 			}
@@ -89,6 +96,11 @@ public class Player {
 				oxygenT.stop();
 				oxygenRemovingStarted = false;
 			}
+		}
+		if (this.world.getPlayerView()){
+			this.world.update(getX()-LevelExe.PWS, getY()-LevelExe.PWS, getX()+LevelExe.PWS, getY()+LevelExe.PWS);
+		} else {
+			this.world.update(0, 0, 0, 0);
 		}
 	}
 	
@@ -193,7 +205,7 @@ public class Player {
                     setY(y);
 		}
 		int rep2 = rep;
-		Timeline tl = new Timeline(new KeyFrame(Duration.millis(60), event -> {
+		this.tl = new Timeline(new KeyFrame(Duration.millis(40), event -> {
 			if (rep2 == 0){
 				LevelExe.PLAYER_MOVEMENT = true;
 				return;
@@ -212,7 +224,7 @@ public class Player {
 						LevelExe.exStage.show();
 					return;
 				} else if (this.isOnBlock(World.PORTAL)){
-					if (!world.getBlockAt(this.getX(), this.getY()).getInfo().equals("NoPointSet")){
+					if (!world.getBlockAt(this.getX(), this.getY()).getInfo().split(";")[world.getBlockAt(this.getX(), this.getY()).checkInfoKey("point")].split("#")[1].equals("NoPointSet")){
 						String[] coord = world.getBlockAt(this.getX(), this.getY()).getInfo().split("#");
 						String[] numbers = coord[1].split(" ");
 						int tx = Integer.parseInt(numbers[0]);
@@ -220,12 +232,20 @@ public class Player {
 						this.setX(tx);
 						this.setY(ty);
 					}
+				} else if (this.isOnBlock(World.OXYGEN_POINT)){
+					if (oxygenT != null){
+						oxygenRemovingStarted = false;
+						oxygenT.stop();
+						removeOxCont(-10, 500);
+					}
 				}
 				if (rec[0] == 1){
 					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
 				} else {
 					this.world.update(0, 0, 0, 0);
 				}
+				System.out.println("PoB: "+world.getBlockAt(getX(), getY())+" "+world.getBlockAt(getX(), getY()).isWater());
+				tl.stop();
 				return;
 			} else {
 				LevelExe.PLAYER_MOVEMENT = false;
@@ -264,6 +284,21 @@ public class Player {
 					this.world.update(0, 0, 0, 0);
 				}
 			}
+			if (this.world.getBlockAt(getX(), getY()).isWater()){
+				System.out.println("Removing ox cause on water");
+				if (oxygenT != null){
+					oxygenRemovingStarted = false;
+					oxygenT.stop();
+				}
+				removeOxCont(10, 1000);
+			} else {
+				System.out.println("Adding ox cause not on water");
+				if (oxygenT != null){
+					oxygenRemovingStarted = false;
+					oxygenT.stop();
+					removeOxCont(-10, 500);
+				}
+			}
 			if (this.isOnBlock(World.SPIKE)){
 				this.die();
 				if (rec[0] == 1){
@@ -277,19 +312,6 @@ public class Player {
 				if (this.world.getBlockAt(getX(), getY()).getCategory().equals(World.WALL)){
 					this.repeat = rep2;
 					return;
-				}
-			}
-			if (this.world.getBlockAt(getX(), getY()).isWater()){
-				if (oxygenT != null){
-					oxygenRemovingStarted = false;
-					oxygenT.stop();
-				}
-				removeOxCont(10, 1000);
-			} else {
-				if (oxygenT != null){
-					oxygenRemovingStarted = false;
-					oxygenT.stop();
-					removeOxCont(-10, 500);
 				}
 			}
 			

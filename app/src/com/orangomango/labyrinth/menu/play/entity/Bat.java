@@ -21,7 +21,7 @@ public class Bat extends Entity {
 	private String direction;
 	private int speed;
 
-	public Bat(World w, double x, double y, int pl, String d, int s, boolean invert) {
+	public Bat(World w, double x, double y, int pl, String d, int s, boolean invert, int dmg) {
 		setData(w);
 		this.direction = d;
 		setX(x);
@@ -48,7 +48,7 @@ public class Bat extends Entity {
 				setY(getY() + 0.25 * M);
 			}
 			if (isOnPlayer(w.getPlayer())){
-				w.getPlayer().removeHealth(10);
+				w.getPlayer().removeHealth(dmg);
 			}
 		}));
 		t.setCycleCount(Animation.INDEFINITE);
