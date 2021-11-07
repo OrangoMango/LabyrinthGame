@@ -323,7 +323,6 @@ public class Editor {
 							} else {
 								sb.append(water ? "water#false" : "water#true");
 							}
-							System.out.println("______ "+sb.toString());
 							edblock.setInfo(sb.toString());
 							editableworld.setBlockOn(edblock);
 							editableworld.updateOnFile();
@@ -698,13 +697,10 @@ public class Editor {
 	
 	public void createParallelBlock(EditableWorld w, int x, int y, String i){
 		EditableBlock edblock = EditableBlock.fromBlock(w.getBlockAt(x, y));
-		System.out.println("PB");
 		if (edblock.getType().equals(EditableWorld.AIR)){
-			System.out.println("Creating parallel block");
 			edblock.setType(EditableWorld.PARALLEL_BLOCK);
 			edblock.addInfoParam(i);
 		} else if (edblock.getType().equals(EditableWorld.PARALLEL_BLOCK)) { // Remove parallel block if already exists
-			System.out.println("Parallel block (else)");
 			edblock.setType(EditableWorld.AIR);
 			edblock.setInfo(null);
 		}
@@ -712,11 +708,8 @@ public class Editor {
 	}
 	
 	private void updateEngBlockConn(String d){
-		System.out.println("-----> "+d);
-		System.out.println("-----> "+currentSelectedEngBlock);
 		currentSelectedEngBlock.addInfoParam("attachments#"+d);
 		currentSelectedEngBlock.addInfoParam("modified#1");
-		System.out.println(currentSelectedEngBlock);
 		referenceWorld.getEngineeringWorld().setBlockOn(currentSelectedEngBlock);
 		referenceWorld.updateOnFile();
 		unsaved();
@@ -1493,7 +1486,7 @@ public class Editor {
 				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld, this.edworld.width, this.edworld.height));
 				this.edworld.updateOnFile();
 				unsaved();
-				System.out.println("Engineering mode created successfully");
+				Logger.info("Engineering mode created successfully");
 			}
 			vbf.setDisable(false);
 			for (TilePane t: normalModePanes){

@@ -14,6 +14,7 @@ import java.io.*;
 
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
+import com.orangomango.labyrinth.Logger;
 
 public class SESetup {
   private EditableWorld world;
@@ -71,7 +72,7 @@ public class SESetup {
 
   public void change(int sX, int sY, int eX, int eY) {
     if (sX == eX && sY == eY) {
-      System.out.println("SSE Error (1)");
+      Logger.warning("SSE Error (1)");
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setHeaderText("Start position is on same position of end");
       alert.setTitle("SSE Error");
@@ -80,7 +81,7 @@ public class SESetup {
       return;
     }
     if (this.world.getBlockAt(sX, sY).getType() != EditableWorld.AIR || this.world.getBlockAt(eX, eY).getType() != EditableWorld.AIR) {
-      System.out.println("SSE Error (2)");
+      Logger.warning("SSE Error (2)");
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setHeaderText("Start or end position is on a block different from air");
       alert.setTitle("SSE Error");

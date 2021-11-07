@@ -279,7 +279,6 @@ public class Player {
 			}
 			if (this.world.getBlockAt(getX(), getY()).isWater()){
 				if (oxygenT != null && !oxygenSwitch){
-					System.out.println("STOPPPP");
 					oxygenRemovingStarted = false;
 					oxygenT.stop();
 				}

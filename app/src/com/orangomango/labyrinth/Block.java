@@ -117,9 +117,7 @@ public class Block {
 	}
 	
 	public void addInfoParam(String param){
-		System.out.println("Info is: "+this.info);
 		if (this.info == null){
-			System.out.println("Setting info to "+param+" because it's null");
 			setInfo(param);
 			return;
 		}
@@ -131,13 +129,11 @@ public class Block {
 				sb.append(prefix);
 				prefix = ";";
 				sb.append(oldP);
-				System.out.println("Added old info part: "+oldP);
 				counter++;
 			} else {
 				toS++;
 			}
 		}
-		System.out.println("counter:"+counter+" toS:"+toS);
 		if (toS != this.info.split(";").length){
 			sb.append(";");
 		}
@@ -145,7 +141,6 @@ public class Block {
 			String key = pm.split("#")[0];
 			String value = pm.split("#")[1];
 			sb.append(key+"#"+value);
-			System.out.println("Mod info part in: "+key+"#"+value);
 			if (counter2+1 != param.split(";").length){
 				sb.append(";");
 			}
@@ -181,12 +176,10 @@ public class Block {
 	public void setInfo(String i){
 		this.info = i;
 		if (this.type.equals(World.PARALLEL_BLOCK)){
-			System.out.println("Actual info: "+this.info);
 			if (this.info != null){
 				int counter = 0;
 				parallelBlockData = new String[this.info.split(";").length];
 				for (String infoPart : this.info.split(";")){
-					System.out.println("\n|"+infoPart+"|\n");
 					parallelBlockData[counter] = infoPart.split("#")[1];
 					counter++;
 				}

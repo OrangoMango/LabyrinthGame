@@ -165,8 +165,6 @@ public class EngBlock {
 		} else {
 			setActive(true);
 		}
-		
-		System.out.println("> "+isActive()+" <");
 	}
 
 	public void setActive(boolean a) {

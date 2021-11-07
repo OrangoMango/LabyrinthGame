@@ -228,15 +228,15 @@ public class World {
 			String engData = reader.readLine();
 			if (engData != null) {
 				if (engData.equals("engineering_mode")) {
-					System.out.println("Eng mode available");
+					Logger.info("Eng mode available");
 					String engWorldData = reader.readLine();
 					EngBlock[][] engWorld = parseEngWorldData(engWorldData, this.height, this.width);  // array, y, x
 					this.engW = new EngWorld(this, engWorld, this.width, this.height);
 				} else {
-					System.out.println("Engineering mode not available (missing string)");
+					Logger.info("Engineering mode not available (missing string)");
 				}
 			} else {
-				System.out.println("Engineering mode not available (null)");
+				Logger.info("Engineering mode not available (null)");
 			}
 
 			reader.close();

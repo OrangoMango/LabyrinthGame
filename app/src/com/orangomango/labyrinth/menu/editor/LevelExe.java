@@ -185,7 +185,6 @@ public class LevelExe {
 				if (engblock.getCategory().equals(EngBlock.SIGNAL_INPUT)){
 					engblock.toggleActive();
 				}
-				System.out.println(engblock);
 				world.update(0, 0, 0, 0);
 			}
 		});
