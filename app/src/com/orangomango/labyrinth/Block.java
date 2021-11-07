@@ -117,38 +117,41 @@ public class Block {
 	}
 	
 	public void addInfoParam(String param){
+		System.out.println("Info is: "+this.info);
 		if (this.info == null){
+			System.out.println("Setting info to "+param+" because it's null");
 			setInfo(param);
 			return;
 		}
 		StringBuilder sb = new StringBuilder();
 		int counter=0, counter2=0, toS=0;
+		String prefix = "";
 		for (String oldP : this.info.split(";")){
 			if (!param.contains(oldP.split("#")[0])){
+				sb.append(prefix);
+				prefix = ";";
 				sb.append(oldP);
-				if (counter+1 != this.info.split(";").length-toS){
-					sb.append(";");
-				}
+				System.out.println("Added old info part: "+oldP);
 				counter++;
 			} else {
 				toS++;
 			}
 		}
-		System.out.println("1---> "+sb.toString());
-		if (counter > 0){
+		System.out.println("counter:"+counter+" toS:"+toS);
+		if (toS != this.info.split(";").length){
 			sb.append(";");
 		}
 		for (String pm : param.split(";")){
 			String key = pm.split("#")[0];
 			String value = pm.split("#")[1];
 			sb.append(key+"#"+value);
+			System.out.println("Mod info part in: "+key+"#"+value);
 			if (counter2+1 != param.split(";").length){
 				sb.append(";");
 			}
 			counter2++;
 		}
 		setInfo(sb.toString());
-		System.out.println("2---> "+sb.toString());
 	}
 	
 	public int checkInfoKey(String key){
@@ -178,10 +181,12 @@ public class Block {
 	public void setInfo(String i){
 		this.info = i;
 		if (this.type.equals(World.PARALLEL_BLOCK)){
+			System.out.println("Actual info: "+this.info);
 			if (this.info != null){
 				int counter = 0;
 				parallelBlockData = new String[this.info.split(";").length];
 				for (String infoPart : this.info.split(";")){
+					System.out.println("\n|"+infoPart+"|\n");
 					parallelBlockData[counter] = infoPart.split("#")[1];
 					counter++;
 				}
@@ -360,7 +365,7 @@ public class Block {
 		
 		switch (getType()){
 			case World.WALL:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-"+wallOpposite(getInfo().split("#")[1])+".png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-"+wallOpposite(getInfo().split(";")[checkInfoKey("conn")].split("#")[1])+".png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.AIR:
 				drawAirBlock(pen, px, py);
@@ -381,24 +386,8 @@ public class Block {
 				}
 				break;
 			case World.SHOOTER:
-				pen.setEffect(null);
 				String d = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				switch (d){
-					case World.NORTH:
-						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_v.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-						break;
-					case World.SOUTH:
-						Image img = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_v.png");
-						pen.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), 0+px*World.BLOCK_WIDTH, py * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
-						break;
-					case World.EAST:
-						Image img2 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png");
-						pen.drawImage(img2, 0, 0, img2.getWidth(), img2.getHeight(), px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-						break;
-					case World.WEST:
-						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-						break;
-				}
+				World.drawRotatedImage(pen, new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, d);
 				break;
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
@@ -453,24 +442,8 @@ public class Block {
 				break;
 			case World.D_ARROW:
 				drawAirBlock(pen, px, py);
-				pen.setEffect(null);
 				String direct = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				switch (direct){
-					case World.NORTH:
-						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_v.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-						break;
-					case World.SOUTH:
-						Image img = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_v.png");
-						pen.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), 0+px*World.BLOCK_WIDTH, py * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
-						break;
-					case World.WEST:
-						Image img2 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_h.png");
-						pen.drawImage(img2, 0, 0, img2.getWidth(), img2.getHeight(), px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-						break;
-					case World.EAST:
-						pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_h.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-						break;
-				}
+				World.drawRotatedImage(pen, new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct);
 				break;
 			case World.OXYGEN_POINT:
 				drawAirBlock(pen, px, py);

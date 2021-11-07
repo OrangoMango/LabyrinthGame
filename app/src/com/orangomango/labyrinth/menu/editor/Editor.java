@@ -331,6 +331,39 @@ public class Editor {
 						});
 						
 						MenuItem item7 = new MenuItem("Set shooter block data");
+						item7.setOnAction(clickEv -> {
+							Stage st = new Stage();
+							st.setTitle("Shooter block data");
+							GridPane pane = new GridPane();
+							pane.setPadding(new Insets(10,10,10,10));
+							pane.setHgap(20);
+							pane.setVgap(20);
+							Label l1 = new Label("Set damage [30]:");
+							Slider slider = new Slider(1, 100, 30);
+							slider.setPrefWidth(180);
+							slider.setShowTickLabels(true);
+							slider.setShowTickMarks(true);
+							slider.setOnMouseDragged(evt -> l1.setText("Set damage ["+Math.round((int)slider.getValue())+"]:"));
+							Button ok = new Button("Save changes");
+							ok.setOnAction(ev -> {
+								int dam = (int) slider.getValue();
+								edblock.addInfoParam(String.format("damage#%s", dam));
+								editableworld.setBlockOn(edblock);
+								editableworld.updateOnFile();
+								unsaved();
+								st.close();
+							});
+							Button canc = new Button("Cancel");
+							canc.setOnAction(e -> st.close());
+							pane.add(l1, 0, 0);
+							pane.add(slider, 1, 0);
+							pane.add(ok, 0, 1);
+							pane.add(canc, 1, 1);
+							Scene scene = new Scene(pane, 350, 130);
+							scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+							st.setScene(scene);
+							st.show();
+						});
 
 						switch (edblock.getType()){
 							case EditableWorld.PORTAL:
@@ -1059,8 +1092,8 @@ public class Editor {
 					warB.setToggleGroup(tg);
 					warB.setOnAction(event -> SELECTED_BLOCK = 9);
 					ToggleButton arrB = new ToggleButton();
-					arrB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow_h.png")));
-					arrB.setTooltip(new Tooltip("Arrow decoration. ID:N10"));
+					arrB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow.png")));
+					arrB.setTooltip(new Tooltip("Arrow decoration. ID:N11"));
 					arrB.setToggleGroup(tg);
 					arrB.setOnAction(event -> SELECTED_BLOCK = 11);
 					deb.getChildren().addAll(voidB, warB, arrB);
@@ -1080,7 +1113,7 @@ public class Editor {
 					spikeB.setToggleGroup(tg);
 					spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
 					ToggleButton shootB = new ToggleButton();
-					shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter_h.png")));
+					shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png")));
 					shootB.setTooltip(new Tooltip("Shooter block. ID:N5"));
 					shootB.setToggleGroup(tg);
 					shootB.setOnAction(event -> SELECTED_BLOCK = 5);

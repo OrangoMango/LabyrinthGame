@@ -12,8 +12,7 @@ import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
 
 public class Arrow extends Entity{
 	private String direction = "";
-	private Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow_h.png");
-	private Image image2 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow_v.png");
+	private Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow.png");
 	private Timeline t;
 	private boolean SHOW = false;
 	private double stepX = 0.0;
@@ -21,9 +20,10 @@ public class Arrow extends Entity{
 	private double startX = 0.0;
 	private double startY = 0.0;
 	
-	public Arrow(World w, int x, int y, String direction){
+	public Arrow(World w, int x, int y, String direction, int damage){
 		setData(w);
 		this.direction = direction;
+		this.layer = true;
 		setX(x);
 		setY(y);
 			
@@ -42,7 +42,7 @@ public class Arrow extends Entity{
 				startY = getY()+1;
 				setY(startY);
 				break;
-      case World.EAST:
+			case World.EAST:
 				stepX = 0.25;
 				stepY = 0.0;
 				startX = getX()+1;
@@ -67,7 +67,7 @@ public class Arrow extends Entity{
 			if (w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)) != null){
 				if ((w.getBlockAt((int)Math.round(getX()+stepX), (int)Math.round(getY()+stepY)).getCategory() == World.AIR)){ // && !isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
 					if (isOnPlayer(w.getPlayer(), getX()+stepX, getY()+stepY)){
-						w.getPlayer().removeHealth(34);
+						w.getPlayer().removeHealth(damage);
 					}
 					setX(getX()+stepX);
 					setY(getY()+stepY);
@@ -89,9 +89,9 @@ public class Arrow extends Entity{
 	}
 	
 	public void start(){
-	  if (!SHOW){
-	  	SHOW = true;
-	  }
+		if (!SHOW){
+			SHOW = true;
+		}
 		this.t.play();
 	}
 	
@@ -106,20 +106,7 @@ public class Arrow extends Entity{
 	
 	public void draw(GraphicsContext pen, double px, double py){
 		if (SHOW){
-			switch (this.direction){
-				case World.WEST:
-			    pen.drawImage(this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-			    break;
-			  case World.EAST:
-			  	pen.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), px * World.BLOCK_WIDTH + World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-			  	break;
-			  case World.NORTH:
-			  	pen.drawImage(this.image2, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-			    break;
-			  case World.SOUTH:
-			  	pen.drawImage(this.image2, 0, 0, this.image.getWidth(), this.image.getHeight(), px * World.BLOCK_WIDTH + 0, World.BLOCK_WIDTH + py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
-			    break;
-			}
+			World.drawRotatedImage(pen, this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction);
 		}
 	}
 }

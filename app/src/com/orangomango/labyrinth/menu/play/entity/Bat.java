@@ -24,6 +24,7 @@ public class Bat extends Entity {
 	public Bat(World w, double x, double y, int pl, String d, int s, boolean invert, int dmg) {
 		setData(w);
 		this.direction = d;
+		this.layer = true;
 		setX(x);
 		setY(y);
 		startX = x;

@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.control.Alert;
 
 import java.io.*;
+import java.util.Arrays;
 
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Block;
@@ -28,6 +29,8 @@ public class LevelExe {
 	private int yGap = 0;
 	private String mode;
 	public static final int PWS = 4;  // Player World Space(right)
+	private boolean pressedKeys = false;
+	private boolean releasedKeys = true;
 
 	public LevelExe(String path, String filename, boolean saved, String mode) {
 		if (OPEN) {
@@ -138,30 +141,41 @@ public class LevelExe {
 					xGap = 0;
 					yGap = 0;
 				}
-				if (event.getCode() == KeyCode.UP) {
-					player.moveOn(Player.Y, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
-				} else if (event.getCode() == KeyCode.DOWN) {
-					player.moveOn(Player.Y, Player.POSITIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
-				} else if (event.getCode() == KeyCode.RIGHT) {
-					player.moveOn(Player.X, Player.POSITIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
-				} else if (event.getCode() == KeyCode.LEFT) {
-					player.moveOn(Player.X, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
-				} else if (event.getCode() == KeyCode.SPACE && player.isOnBlock(World.PARALLEL_BLOCK)){
-					Block block = world.getBlockAt(player.getX(), player.getY());
-					EngBlock engB = world.getEngineeringWorld().getBlockAt(block.getX(), block.getY());
-					String engBlockType = block.parallelBlockData[block.checkInfoKey("type")];
-					if (engBlockType.equals(EngBlock.LEVER)){
-						engB.toggleActive();
-						world.updateParallelBlocks();
-					}
-					if (world.getPlayerView()){
-						world.update(world.getPlayer().getX()-PWS, world.getPlayer().getY()-PWS, world.getPlayer().getX()+PWS, world.getPlayer().getY()+PWS);
+				if (releasedKeys){
+					if (event.getCode() == KeyCode.UP) {
+						player.moveOn(Player.Y, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
+					} else if (event.getCode() == KeyCode.DOWN) {
+						player.moveOn(Player.Y, Player.POSITIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
+					} else if (event.getCode() == KeyCode.RIGHT) {
+						player.moveOn(Player.X, Player.POSITIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
+					} else if (event.getCode() == KeyCode.LEFT) {
+						player.moveOn(Player.X, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});
+					} else if (event.getCode() == KeyCode.SPACE && player.isOnBlock(World.PARALLEL_BLOCK)){
+						Block block = world.getBlockAt(player.getX(), player.getY());
+						EngBlock engB = world.getEngineeringWorld().getBlockAt(block.getX(), block.getY());
+						String engBlockType = block.parallelBlockData[block.checkInfoKey("type")];
+						if (engBlockType.equals(EngBlock.LEVER)){
+							engB.toggleActive();
+							world.updateParallelBlocks();
+						}
+						if (world.getPlayerView()){
+							world.update(world.getPlayer().getX()-PWS, world.getPlayer().getY()-PWS, world.getPlayer().getX()+PWS, world.getPlayer().getY()+PWS);
+						} else {
+							world.update(0, 0, 0, 0);
+						}
 					} else {
-						world.update(0, 0, 0, 0);
+						System.out.println(event.getCode());
 					}
-				} else {
-					System.out.println(event.getCode());
+					pressedKeys = true;
+					releasedKeys = false;
 				}
+			}
+		});
+		
+		canvas.setOnKeyReleased(event -> {
+			if (pressedKeys){
+				pressedKeys = false;
+				releasedKeys = true;
 			}
 		});
 		
@@ -177,6 +191,11 @@ public class LevelExe {
 		});
 
 		levelStats.draw();
+		
+		if (world.getBlockAt(player.getX(), player.getY()).isWater() && this.mode.equals("normal")){
+			player.oxygenSwitch = true;
+			player.removeOxCont(10, 1000);
+		}
 
 		if (world.getEngineeringWorld() != null && this.mode.equals("engineering")){
 			world.getEngineeringWorld().startAnimations();

@@ -24,7 +24,7 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.Logger;
 
 public class LoadingScreen {
-	public static final int LEVELS = 9;
+	public static final int LEVELS = 10;
 	private static final String[] IMGNAMES = new String[] {
 		"editor" + File.separator + "ac",
 		"editor" + File.separator + "ar",
@@ -39,8 +39,7 @@ public class LoadingScreen {
 		"editor" + File.separator + "button_play",
 		"editor" + File.separator + "button_levels",		
 		"editor" + File.separator + "warning",
-		"editor" + File.separator + "arrow_sign_h",
-		"editor" + File.separator + "arrow_sign_v",
+		"editor" + File.separator + "arrow_sign",
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_spike_closed",
 		"blocks" + File.separator + "block_wall-null",
@@ -61,23 +60,19 @@ public class LoadingScreen {
 		"blocks" + File.separator + "block_wall-ew",
 		"blocks" + File.separator + "block_portal",
 		"blocks" + File.separator + "block_air",
-		"blocks" + File.separator + "block_shooter_v",
-		"blocks" + File.separator + "block_shooter_h",
+		"blocks" + File.separator + "block_shooter",
 		"blocks" + File.separator + "decoration_warning",
-		"blocks" + File.separator + "decoration_arrow_h",
-		"blocks" + File.separator + "decoration_arrow_v",
+		"blocks" + File.separator + "decoration_arrow",
 		"blocks" + File.separator + "oxygen_point",
 		"blocks" + File.separator + "end",
 		"entities" + File.separator + "move_block",
-		"entities" + File.separator + "player_h",
-		"entities" + File.separator + "player_v",
+		"entities" + File.separator + "player",
 		"entities" + File.separator + "bat_side_1",
 		"entities" + File.separator + "bat_side_2",
 		"entities" + File.separator + "bat_front_1",
 		"entities" + File.separator + "bat_front_2",
 		"entities" + File.separator + "bat_front_3",
-		"entities" + File.separator + "arrow_v",
-		"entities" + File.separator + "arrow_h",
+		"entities" + File.separator + "arrow",
 		"entities" + File.separator + "health",
 		"entities" + File.separator + "oxygen",
 		"engineering" + File.separator + "blocks" + File.separator + "generator_1",

@@ -11,6 +11,7 @@ public abstract class Entity{
 	protected double y = 0;
 	protected World world;
 	public boolean engineering = false;
+	public boolean layer = false;
 	
 	public static final String VERTICAL = "v";
 	public static final String HORIZONTAL = "h";

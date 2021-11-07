@@ -34,12 +34,7 @@ public class CSpike extends Entity{
 					}
 					this.timeOnSpike = -50;
 					if (isOnPlayer(w.getPlayer())){
-						w.getPlayer().die();
-						if (w.getPlayerView()){
-							w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
-						} else {
-							w.update(0, 0, 0, 0);
-						}
+						w.getPlayer().die(w.getPlayerView(), PWS);
 					}
 				}
 			} else {

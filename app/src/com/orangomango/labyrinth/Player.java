@@ -29,6 +29,7 @@ public class Player {
 	public Double psy = null;
 	private boolean healthRemovingStarted = false;
 	private boolean oxygenRemovingStarted = false;
+	public boolean oxygenSwitch = false;
 	private Timeline oxygenT = null;
 	private String direction = World.EAST;
 	private Timeline tl;
@@ -44,7 +45,7 @@ public class Player {
 		world = w;
 	}
 	
-	public void die(){
+	public void die(Boolean pw, int dist){
 		this.health = 100;
 		this.oxygen = 100;
 		setX(this.world.start[0]);
@@ -55,6 +56,13 @@ public class Player {
 		if (this.tl != null){
 			this.tl.stop();
 		}
+		if (pw != null && dist >= 0){
+			if (pw){
+				world.update(getX()-dist, getY()-dist, getX()+dist, getY()+dist);
+			} else {
+				world.update(0, 0, 0, 0);
+			}
+		}
 		LevelExe.PLAYER_MOVEMENT = true;
 	}
 	
@@ -63,7 +71,7 @@ public class Player {
 			this.health -= v;
 			this.healthRemovingStarted = true;
 			if (this.health <= 0){
-				this.die();
+				this.die(null, -1);
 			}
 			new Timer().schedule(new TimerTask(){
 				@Override
@@ -92,7 +100,7 @@ public class Player {
 			} else if (this.oxygen > 100){
 				this.oxygen = 100;
 			}
-			if (getHealth() <= 0){
+			if (getHealth() <= 0 || this.oxygen >= 100){
 				oxygenT.stop();
 				oxygenRemovingStarted = false;
 			}
@@ -138,22 +146,8 @@ public class Player {
 	}
 	
 	public void draw(GraphicsContext pen, double x, double y) {
-		Image image1 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player_h.png");
-		Image image2 = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player_v.png");
-		switch (this.direction){
-			case World.NORTH:
-				pen.drawImage(image2, 0, 0, image1.getWidth(), image1.getHeight(), x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH + World.BLOCK_WIDTH, World.BLOCK_WIDTH, -World.BLOCK_WIDTH);
-				break;
-			case World.EAST:
-				pen.drawImage(image1, x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-				break;
-			case World.SOUTH:
-				pen.drawImage(image2, x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-				break;
-			case World.WEST:
-				pen.drawImage(image1, 0, 0, image1.getWidth(), image1.getHeight(), x * World.BLOCK_WIDTH + World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-				break;
-		}
+		Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player.png");
+		World.drawRotatedImage(pen, image, x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction);
 	}
 
 	public void moveOn(String direction, int m, Stage stage, int[] rec) {
@@ -213,15 +207,15 @@ public class Player {
 			if (this.repeat == rep2){
 				LevelExe.PLAYER_MOVEMENT = true;
 				if (this.isOnEnd()) {
+					LevelExe.OPEN = false;
+					stage.close();
+					if (LevelExe.exStage != null)
+						LevelExe.exStage.show();
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setHeaderText("You completed the level!");
 					alert.setTitle("Level complete");
 					alert.setContentText(null);
 					alert.show();
-					LevelExe.OPEN = false;
-					stage.close();
-					if (LevelExe.exStage != null)
-						LevelExe.exStage.show();
 					return;
 				} else if (this.isOnBlock(World.PORTAL)){
 					if (!world.getBlockAt(this.getX(), this.getY()).getInfo().split(";")[world.getBlockAt(this.getX(), this.getY()).checkInfoKey("point")].split("#")[1].equals("NoPointSet")){
@@ -244,7 +238,6 @@ public class Player {
 				} else {
 					this.world.update(0, 0, 0, 0);
 				}
-				System.out.println("PoB: "+world.getBlockAt(getX(), getY())+" "+world.getBlockAt(getX(), getY()).isWater());
 				tl.stop();
 				return;
 			} else {
@@ -262,7 +255,7 @@ public class Player {
 						return;
 					} else if (ent.isOnPlayer(this) && ent instanceof CSpike){
 						if (((CSpike)ent).isOpened()){
-							this.die();
+							this.die(null, -1);
 							this.repeat = rep2;
 							return;
 						}
@@ -285,34 +278,25 @@ public class Player {
 				}
 			}
 			if (this.world.getBlockAt(getX(), getY()).isWater()){
-				System.out.println("Removing ox cause on water");
-				if (oxygenT != null){
+				if (oxygenT != null && !oxygenSwitch){
+					System.out.println("STOPPPP");
 					oxygenRemovingStarted = false;
 					oxygenT.stop();
 				}
+				oxygenSwitch = true;
 				removeOxCont(10, 1000);
 			} else {
-				System.out.println("Adding ox cause not on water");
-				if (oxygenT != null){
+				if (oxygenT != null && oxygenSwitch){
 					oxygenRemovingStarted = false;
 					oxygenT.stop();
-					removeOxCont(-10, 500);
 				}
+				oxygenSwitch = false;
+				removeOxCont(-10, 500);
 			}
 			if (this.isOnBlock(World.SPIKE)){
-				this.die();
-				if (rec[0] == 1){
-					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
-				} else {
-					this.world.update(0, 0, 0, 0);
-				}
+				this.die(rec[0] == 1, rec[1]);
 				this.repeat = rep2;
 				return;
-			} else if (this.isOnBlock(World.PARALLEL_BLOCK)){
-				if (this.world.getBlockAt(getX(), getY()).getCategory().equals(World.WALL)){
-					this.repeat = rep2;
-					return;
-				}
 			}
 			
 			this.repeat++;

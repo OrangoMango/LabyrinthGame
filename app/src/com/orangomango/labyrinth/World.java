@@ -178,7 +178,7 @@ public class World {
 			public void run(){
 				canUpdate = true;
 			}
-		}, 50); // 100 Seconds cooldown to avoid lag
+		}, 50); // 50 Seconds cooldown to avoid lag
 		
 		try {
 			if (x == 0 && y == 0 && x1 == 0 && y1 == 0) {
@@ -315,7 +315,7 @@ public class World {
 					addEnt(new Bat(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1], Integer.parseInt(d[2]), d[3].equals("t") ? true : false, (d.length >= 5) ? Integer.parseInt(d[4]) : 30));
 				} else if (x[it2].getType() == SHOOTER) {
 					String d = Character.toString(x[it2].getInfo().split(";")[x[it2].checkInfoKey("direction")].split("#")[1].charAt(0));
-					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d));
+					addEnt(new Arrow(this, x[it2].getX(), x[it2].getY(), d, x[it2].checkInfoKey("damage") >= 0 ? Integer.parseInt(x[it2].getInfo().split(";")[x[it2].checkInfoKey("damage")].split("#")[1]) : 30));
 				} else if (x[it2].getType() == ELEVATOR && !x[it2].getInfo().split(";")[x[it2].checkInfoKey("data")].split("#")[1].equals("NoDataSet")) {
 					String[] d = x[it2].getInfo().split("#")[1].split(" ");
 					addEnt(new Elevator(this, x[it2].getX(), x[it2].getY(), Integer.parseInt(d[0]), d[1]));
@@ -334,6 +334,37 @@ public class World {
 		}
 		return output;
 	}
+	
+	public static void drawRotatedImage(GraphicsContext pen, Image img, double x, double y, int w, String d){
+		// NORTH: 0 - EAST: 90 - SOUTH: 180 - WEST: -90 (Square images only)
+		
+		switch (d){
+			case NORTH:
+				pen.drawImage(img, x, y, w, w);
+				break;
+			case EAST:
+				pen.translate(x+w, y);
+				pen.rotate(90);
+				pen.drawImage(img, 0, 0, w, w);
+				pen.rotate(-90);
+				pen.translate(-x-w, -y);
+				break;
+			case SOUTH:
+				pen.translate(x+w, y+w);
+				pen.rotate(180);
+				pen.drawImage(img, 0, 0, w, w);
+				pen.rotate(-180);
+				pen.translate(-x-w, -y-w);
+				break;
+			case WEST:
+				pen.translate(x, y+w);
+				pen.rotate(-90);
+				pen.drawImage(img, 0, 0, w, w);
+				pen.rotate(90);
+				pen.translate(-x, -y-w);
+				break;
+		}
+	}
 
 	public void draw() {
 		if (getDrawingMode().equals("normal")){
@@ -344,9 +375,16 @@ public class World {
 			}
 			drawStart(0, 0);
 			drawEnd(0, 0);
+			for (Entity e: this.ents) {
+				if (!e.layer){
+					e.draw(this.pen);
+				}
+			}
 			this.player.draw(this.pen);
 			for (Entity e: this.ents) {
-				e.draw(this.pen);
+				if (e.layer){
+					e.draw(this.pen);
+				}
 			}
 		} else if (getDrawingMode().equals("engineering")){
 			for (EngBlock[] blocks: engW.getWorld()) {
@@ -391,7 +429,9 @@ public class World {
 		}
 		for (Entity e: this.ents) {
 			if ((e.getX() >= x && e.getX()<= x1) && (e.getY() >= y && e.getY()<= y1)) {
-				e.draw(this.pen, e.getX() - x, e.getY() - y);
+				if (!e.layer){
+					e.draw(this.pen, e.getX() - x, e.getY() - y);
+				}
 			}
 		}
 		if ((this.player.getX() >= x && this.player.getX()<= x1) && (this.player.getY() >= y && this.player.getY()<= y1)) {
@@ -403,6 +443,13 @@ public class World {
 		if (this.player.psx != null && this.player.psy != null) {
 			if ((this.player.psx >= x && this.player.psx<= x1) && (this.player.psy >= y && this.player.psy<= y1)) {
 				this.player.draw(this.pen, this.player.psx - x, this.player.psy - y);
+			}
+		}
+		for (Entity e: this.ents) {
+			if ((e.getX() >= x && e.getX()<= x1) && (e.getY() >= y && e.getY()<= y1)) {
+				if (e.layer){
+					e.draw(this.pen, e.getX() - x, e.getY() - y);
+				}
 			}
 		}
 	}

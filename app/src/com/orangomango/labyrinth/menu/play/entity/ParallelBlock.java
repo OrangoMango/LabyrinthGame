@@ -40,7 +40,6 @@ public class ParallelBlock extends Entity{
 			counter++;
 		}
 		
-		System.out.println(">> "+"file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[Block.checkInfoKey(this.info, "imagePath")]);
 		this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[Block.checkInfoKey(this.info, "imagePath")]);
 		
 		t = new Timeline(new KeyFrame(Duration.millis(150), event -> {
