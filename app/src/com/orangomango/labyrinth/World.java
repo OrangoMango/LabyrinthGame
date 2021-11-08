@@ -169,7 +169,7 @@ public class World {
 	public void update(int x, int y, int x1, int y1) {
 		
 		this.updateLevelStats();
-		if (!canUpdate){
+		if (!canUpdate && !(this instanceof EditableWorld)){
 			return;
 		}
 		canUpdate = false;
