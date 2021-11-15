@@ -50,18 +50,18 @@ public class Player {
 		this.oxygen = 100;
 		setX(this.world.start[0]);
 		setY(this.world.start[1]);
+		if (pw != null && dist >= 0){
+			if (pw){
+				world.update(getX()-dist, getY()-dist, getX()+dist, getY()+dist, true);
+			} else {
+				world.update(0, 0, 0, 0, true);
+			}
+		}
 		if (oxygenT != null){
 			oxygenT.stop();
 		}
 		if (this.tl != null){
 			this.tl.stop();
-		}
-		if (pw != null && dist >= 0){
-			if (pw){
-				world.update(getX()-dist, getY()-dist, getX()+dist, getY()+dist);
-			} else {
-				world.update(0, 0, 0, 0);
-			}
 		}
 		LevelExe.PLAYER_MOVEMENT = true;
 	}
@@ -234,9 +234,9 @@ public class Player {
 					}
 				}
 				if (rec[0] == 1){
-					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1]);
+					this.world.update(getX()-rec[1], getY()-rec[1], getX()+rec[1], getY()+rec[1], true);
 				} else {
-					this.world.update(0, 0, 0, 0);
+					this.world.update(0, 0, 0, 0, true);
 				}
 				tl.stop();
 				return;

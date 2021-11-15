@@ -141,6 +141,16 @@ public class LevelExe {
 					xGap = 0;
 					yGap = 0;
 				}
+				
+				if (event.getCode() == KeyCode.U){
+					if (world.getPlayerView()){
+						world.update(world.getPlayer().getX()-PWS, world.getPlayer().getY()-PWS, world.getPlayer().getX()+PWS, world.getPlayer().getY()+PWS, true);
+					} else {
+						world.update(0, 0, 0, 0, true);
+					}
+					System.out.println("Force updated!");
+				}
+				
 				if (releasedKeys){
 					if (event.getCode() == KeyCode.UP) {
 						player.moveOn(Player.Y, Player.NEGATIVE, stage, new int[]{world.getPlayerView() ? 1 : -1, PWS});

@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
+import static com.orangomango.labyrinth.World.WorldList;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
 import com.orangomango.labyrinth.Logger;
 import com.orangomango.labyrinth.engineering.*;
@@ -863,7 +864,10 @@ public class Editor {
 		mEngineer.setAccelerator(new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN));
 		mEngineer.setOnAction(e -> setMode("engineering"));
 		mEngineer.setToggleGroup(modeGroup);
-		modeMenu.getItems().addAll(mNormal, mEngineer);
+		MenuItem mArcade = new MenuItem("Convert to arcade mode");
+		mArcade.setAccelerator(new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN));
+		mArcade.setOnAction(e -> {setArcadeMode(); mArcade.setDisable(true);});
+		modeMenu.getItems().addAll(mNormal, mEngineer, new SeparatorMenuItem(), mArcade);
 		
 		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu);
 
@@ -1023,15 +1027,26 @@ public class Editor {
 		tabs.getTabs().add(editTab);
 		splitpane.getItems().add(tabs);
 
+		TabPane blocksTabPane = new TabPane();
+		Tab blocksTab = new Tab("Blocks");
+		blocksTab.setClosable(false);
+
 		Pagination pages = new Pagination();
 		pages.setPageCount(4);
 		pages.setCurrentPageIndex(0);
 		pages.setMaxPageIndicatorCount(4);
 		
+		blocksTab.setContent(pages);
+		
+		Tab worldsTab = new Tab("Arcade patterns");
+		worldsTab.setClosable(false);
+		
+		blocksTabPane.getTabs().addAll(blocksTab, worldsTab);
+		
 		ToggleGroup tg = new ToggleGroup();
 		
 		pages.setPageFactory((pageIndex) -> {
-			
+						
 			String style = "-fx-font-weight: bold;\n-fx-font-family: \"Courier New\";\n-fx-font-size: 14;";
 			String style2 = "-fx-font-weight: bold;\n-fx-font-family: \"Courier New\";\n-fx-font-size: 11;";
 			
@@ -1039,7 +1054,7 @@ public class Editor {
 				case 0:
 					TilePane db = new TilePane();
 					normalModePanes[0] = db;
-					db.setDisable(this.mode.equals("normal") ? false : true);
+					db.setDisable(this.mode.equals("engineering") ? true : false);
 					db.setPadding(new Insets(5, 5, 5, 5));
 					db.setHgap(5);
 					db.setVgap(5);
@@ -1070,7 +1085,7 @@ public class Editor {
 					return new VBox(header, db);
 				case 1:
 					TilePane deb = new TilePane();
-					deb.setDisable(this.mode.equals("normal") ? false : true);
+					deb.setDisable(this.mode.equals("engineering") ? true : false);
 					normalModePanes[1] = deb;
 					deb.setPadding(new Insets(5, 5, 5, 5));
 					deb.setHgap(5);
@@ -1095,7 +1110,7 @@ public class Editor {
 					return new VBox(header1, deb);
 				case 2:
 					TilePane dab = new TilePane();
-					dab.setDisable(this.mode.equals("normal") ? false : true);
+					dab.setDisable(this.mode.equals("engineering") ? true : false);
 					normalModePanes[2] = dab;
 					dab.setPadding(new Insets(5, 5, 5, 5));
 					dab.setHgap(5);
@@ -1198,7 +1213,7 @@ public class Editor {
 					vbf.getChildren().addAll(header3, vb1, vb2, vb3, vb4);
 					vbf.setPadding(new Insets(5, 5, 5, 5));
 					vbf.setSpacing(5);
-					vbf.setDisable(this.mode.equals("normal") ? true : false);
+					vbf.setDisable(this.mode.equals("engineering") ? false : true);
 					
 					return vbf;
 				default:
@@ -1206,13 +1221,13 @@ public class Editor {
 			}
 		});
 
-		splitpane.getItems().add(pages);
+		splitpane.getItems().add(blocksTabPane);
 
-		// Set the divider on 80%
-		splitpane.setDividerPositions(0.8f);
-		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
-		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.8f));
-		splitpane.getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> splitpane.setDividerPositions(0.8f));
+		// Set the divider on 72%
+		splitpane.setDividerPositions(0.72f);
+		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.72f));
+		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.72f));
+		splitpane.getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> splitpane.setDividerPositions(0.72f));
 
 		layout.add(menuBar, 0, 0);
 		layout.add(toolbar, 0, 1);
@@ -1479,6 +1494,11 @@ public class Editor {
 		return fileName.toString();
 	}
 	
+	private void setArcadeMode(){
+		WorldList wl = new WorldList((com.orangomango.labyrinth.World)this.edworld);
+		//wl.updateOnFile("/home/paul/Desktop/test.arc");
+	}
+	
 	private void setMode(String m){
 		this.mode = m;
 		if (this.mode.equals("engineering")){
@@ -1511,6 +1531,7 @@ public class Editor {
 			SELECTED_BLOCK = 1;
 			this.edworld.setDrawingMode("normal");
 			this.edworld.update(0, 0, 0, 0);
+			this.mode = "normal";
 		}
 		this.edworld.updateWalls();
 	}

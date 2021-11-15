@@ -110,7 +110,7 @@ public class PlayScreen {
 		tab.setClosable(false);
 		ScrollPane sp = new ScrollPane();
 		sp.requestFocus();
-		Canvas canvas = new Canvas(LEVELS*60, 300);
+		Canvas canvas = new Canvas(LEVELS*60, 250);
 		sp.setContent(canvas);
 		
 		canvas.setOnMousePressed(event -> {
@@ -119,25 +119,21 @@ public class PlayScreen {
 				switch (i%4){
 					case 0:
 						if (x >= 60+240*i/4-BUTTON_WIDTH/2 && y >= 70-BUTTON_WIDTH/2 && x <= 60+240*i/4+BUTTON_WIDTH/2 && y <= 70+BUTTON_WIDTH/2){
-							System.out.println("Rectangle "+i);
 							openLevel(i+1, stage, tabpane);
 						}
 						break;
 					case 1:
 						if (x >= 60+240*(i-1)/4-BUTTON_WIDTH/2 && y >= 190-BUTTON_WIDTH/2 && x <= 60+240*(i-1)/4+BUTTON_WIDTH/2 && y <= 190+BUTTON_WIDTH/2){
-							System.out.println("Rectangle "+i);
 							openLevel(i+1, stage, tabpane);
 						}
 						break;
 					case 2:
 						if (x >= 180+240*(i-2)/4-BUTTON_WIDTH/2 && y >= 190-BUTTON_WIDTH/2 && x <= 180+240*(i-2)/4+BUTTON_WIDTH/2 && y <= 190+BUTTON_WIDTH/2){
-							System.out.println("Rectangle "+i);
 							openLevel(i+1, stage, tabpane);
 						}
 						break;
 					case 3:
 						if (x >= 180+240*(i-3)/4-BUTTON_WIDTH/2 && y >= 70-BUTTON_WIDTH/2 && x <= 180+240*(i-3)/4+BUTTON_WIDTH/2 && y <= 70+BUTTON_WIDTH/2){
-							System.out.println("Rectangle "+i);
 							openLevel(i+1, stage, tabpane);
 						}
 						break;

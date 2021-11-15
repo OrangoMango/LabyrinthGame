@@ -1,7 +1,7 @@
 /**
    Labirinth game - world class
    @author OrangoMango
-   @version 3.4
+   @version 3.5
 */
 
 package com.orangomango.labyrinth;
@@ -64,6 +64,59 @@ public class World {
 	public final static String OXYGEN_POINT = "oxygen_point";
 
 	public static int BLOCK_WIDTH = 32;
+	
+	public static class WorldList{
+		private World[] worlds;
+		public WorldList(World... ws){
+			this.worlds = ws;
+		}
+		
+		public void addWorld(World w){
+			worlds = Arrays.copyOf(worlds, worlds.length+1);
+			worlds[worlds.length-1] = w;
+		}
+		
+		public void updateOnFile(String filePath){
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+				int cont = 1;
+				for (World world : worlds){
+					writer.write("#World "+cont+"\n");
+					writer.write(world.width + "x" + world.height + "\n");
+					int counter = 0;
+					for (Block[] bArr: world.world) {
+						for (Block block: bArr) {
+							writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
+							if (counter + 1 != world.height * world.width) {
+								writer.write(",");
+							}
+							counter++;
+						}
+					}
+					writer.newLine();
+					writer.write(world.start[0] + "," + world.start[1] + "\n");
+					writer.write(world.end[0] + "," + world.end[1] + "\n");
+					writer.write(world.allLights ? "1" : "0");
+					if (world.getEngineeringWorld() != null){
+						writer.write("\nengineering_mode\n");
+						for (EngBlock[] bArr: world.getEngineeringWorld().getWorld()) {
+							for (EngBlock block: bArr) {
+								writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
+								if (counter + 1 != world.height * world.width) {
+									writer.write(",");
+								}
+								counter++;
+							}
+						}
+					}
+					writer.close();
+					cont++;
+				}
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
+		}
+	}
 
 	public World(String path) {
 		filePath = path;
@@ -166,10 +219,9 @@ public class World {
 		}
 	}
 
-	public void update(int x, int y, int x1, int y1) {
-		
+	public void update(int x, int y, int x1, int y1, boolean skip) {
 		this.updateLevelStats();
-		if (!canUpdate && !(this instanceof EditableWorld)){
+		if (!canUpdate && !(this instanceof EditableWorld) && !skip){
 			return;
 		}
 		canUpdate = false;
@@ -195,6 +247,7 @@ public class World {
 			Logger.warning("World pen is null");
 		}
 	}
+	public void update(int x, int y, int x1, int y1){ update(x, y, x1, y1, false); }
 
 	private Block[][] readWorld(String path) {
 		File file = new File(path);
