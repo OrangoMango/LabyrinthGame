@@ -42,6 +42,8 @@ public class Editor {
 	private static boolean EDITOR = false;
         public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
+        private boolean arcade = false;
+        private MenuItem mArcade;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -864,7 +866,7 @@ public class Editor {
 		mEngineer.setAccelerator(new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN));
 		mEngineer.setOnAction(e -> setMode("engineering"));
 		mEngineer.setToggleGroup(modeGroup);
-		MenuItem mArcade = new MenuItem("Convert to arcade mode");
+		this.mArcade = new MenuItem("Convert to arcade mode");
 		mArcade.setAccelerator(new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN));
 		mArcade.setOnAction(e -> {setArcadeMode(); mArcade.setDisable(true);});
 		modeMenu.getItems().addAll(mNormal, mEngineer, new SeparatorMenuItem(), mArcade);
@@ -1341,6 +1343,9 @@ public class Editor {
 			}
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
+                        this.arcade = CURRENT_FILE_PATH.endsWith(".arc");
+                        System.out.println(this.arcade);
+                        this.mArcade.setDisable(this.arcade);
 			saved();
 		} catch (Exception e) {
 			Logger.error("Could not load world file");
@@ -1496,7 +1501,7 @@ public class Editor {
 	
 	private void setArcadeMode(){
 		WorldList wl = new WorldList((com.orangomango.labyrinth.World)this.edworld);
-		//wl.updateOnFile("/home/paul/Desktop/test.arc");
+		wl.updateOnFile(CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf("."))+".arc");
 	}
 	
 	private void setMode(String m){
