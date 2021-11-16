@@ -80,6 +80,7 @@ public class World {
 			try {
 				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 				int cont = 1;
+				writer.write("#NumWorlds:"+worlds.length+"\n");
 				for (World world : worlds){
 					writer.write("#World "+cont+"\n");
 					writer.write(world.width + "x" + world.height + "\n");
@@ -136,6 +137,18 @@ public class World {
 				world = readWorld(filePath);
 			} catch (IOException ioe){}
 		}
+	}
+	
+	public static int getArcadeLevels(String fileName){
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(fileName));
+			String line1 = reader.readLine();
+			if (line1.startsWith("#NumWorlds")){
+				int num = Integer.parseInt(line1.split(":")[1]);
+				return num;
+			}
+		} catch (IOException ex){}
+		return -1;
 	}
 
 	public void setLevelStats(LevelStats ls){
