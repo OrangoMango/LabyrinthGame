@@ -122,6 +122,21 @@ public class World {
 		filePath = path;
 		world = readWorld(filePath);
 	}
+	
+	public World(String content, boolean isWorldContent){	
+		if (!isWorldContent){
+			Logger.error("Internal Error: boolean variable isWorldConent is false, should be true");
+		} else {
+			try {
+				File tempFile = File.createTempFile("temp-world", ".wld");
+				filePath = tempFile.getAbsolutePath();
+				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+				writer.write(content);
+				writer.close();
+				world = readWorld(filePath);
+			} catch (IOException ioe){}
+		}
+	}
 
 	public void setLevelStats(LevelStats ls){
 		this.levelStats = ls;
@@ -248,6 +263,21 @@ public class World {
 		}
 	}
 	public void update(int x, int y, int x1, int y1){ update(x, y, x1, y1, false); }
+	
+	private String readData(BufferedReader reader){
+		try {
+			String line;
+			do {
+				line = reader.readLine();
+				if (line == null){
+					return null;
+				}
+			} while (line.startsWith("#"));
+			return line;
+		} catch (IOException ex){
+			return null;
+		}
+	}
 
 	private Block[][] readWorld(String path) {
 		File file = new File(path);
@@ -255,21 +285,21 @@ public class World {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 
 			// Get world width and height from file
-			String data = reader.readLine();
+			String data = readData(reader);
 			this.width = Integer.parseInt(data.split("x")[0]);
 			this.height = Integer.parseInt(data.split("x")[1]);
 
 			// Get world layout
-			String wData = reader.readLine();
+			String wData = readData(reader);
 			Block[][] Fworld = parseWorldData(wData, height, width);
 
-			String startData = reader.readLine();
-			String endData = reader.readLine();
+			String startData = readData(reader);
+			String endData = readData(reader);
 
 			start = configureFromString(startData);
 			end = configureFromString(endData);
 			
-			String lightsData = reader.readLine();
+			String lightsData = readData(reader);
 			if (lightsData.equals("1")){
 				this.allLights = true;
 			} else if (lightsData.equals("0")){
@@ -278,11 +308,11 @@ public class World {
 				System.out.println("No light data available");
 			}
 
-			String engData = reader.readLine();
+			String engData = readData(reader);
 			if (engData != null) {
 				if (engData.equals("engineering_mode")) {
 					Logger.info("Eng mode available");
-					String engWorldData = reader.readLine();
+					String engWorldData = readData(reader);
 					EngBlock[][] engWorld = parseEngWorldData(engWorldData, this.height, this.width);  // array, y, x
 					this.engW = new EngWorld(this, engWorld, this.width, this.height);
 				} else {

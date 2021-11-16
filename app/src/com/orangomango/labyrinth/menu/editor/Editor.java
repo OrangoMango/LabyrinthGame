@@ -44,6 +44,7 @@ public class Editor {
 	private Label pointingOn;
         private boolean arcade = false;
         private MenuItem mArcade;
+        private Tab worldsTab;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -783,7 +784,7 @@ public class Editor {
 				FileChooser chooser = new FileChooser();
 				chooser.setInitialDirectory(new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator));
 				chooser.setTitle("Open world");
-				chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
+				chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("World file", "*.wld"), new FileChooser.ExtensionFilter("Arcade file", "*.arc"));
 				File f = chooser.showOpenDialog(this.stage);
 				if (f.equals(null)) {
 					throw new Exception("Null file opened");
@@ -919,7 +920,7 @@ public class Editor {
 				FileChooser chooser = new FileChooser();
 				chooser.setInitialDirectory(new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels" + File.separator));
 				chooser.setTitle("Open world");
-				chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
+				chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("World file", "*.wld"), new FileChooser.ExtensionFilter("Arcade file", "*.arc"));
 				File f = chooser.showOpenDialog(this.stage);
 				if (f.equals(null)) {
 					throw new Exception("Null file opened");
@@ -1022,6 +1023,7 @@ public class Editor {
 				WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
 				saved = SAVES[index];
 				edworld = WORLDS[index];
+				this.setMode("normal");
 				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 			}
 		});
@@ -1040,8 +1042,9 @@ public class Editor {
 		
 		blocksTab.setContent(pages);
 		
-		Tab worldsTab = new Tab("Arcade patterns");
+		worldsTab = new Tab("Arcade patterns");
 		worldsTab.setClosable(false);
+		worldsTab.setDisable(!this.arcade);
 		
 		blocksTabPane.getTabs().addAll(blocksTab, worldsTab);
 		
@@ -1346,6 +1349,9 @@ public class Editor {
                         this.arcade = CURRENT_FILE_PATH.endsWith(".arc");
                         System.out.println(this.arcade);
                         this.mArcade.setDisable(this.arcade);
+                        if (this.worldsTab != null){
+                        	this.worldsTab.setDisable(!this.arcade);
+                        }
 			saved();
 		} catch (Exception e) {
 			Logger.error("Could not load world file");
