@@ -41,11 +41,11 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-        public static Editor EDITOR_INSTANCE = null;
+    public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
-        private boolean arcade = false;
-        private MenuItem mArcade;
-        private Tab worldsTab;
+    private boolean arcade = false;
+    private MenuItem mArcade;
+    private Tab worldsTab;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -869,7 +869,7 @@ public class Editor {
 		mEngineer.setOnAction(e -> setMode("engineering"));
 		mEngineer.setToggleGroup(modeGroup);
 		this.mArcade = new MenuItem("Convert to arcade mode");
-		this.mArcade.setDisable(!this.arcade);
+		this.mArcade.setDisable(this.arcade);
 		this.mArcade.setAccelerator(new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN));
 		this.mArcade.setOnAction(e -> {setArcadeMode(); mArcade.setDisable(true);});
 		modeMenu.getItems().addAll(mNormal, mEngineer, new SeparatorMenuItem(), mArcade);
@@ -1512,7 +1512,7 @@ public class Editor {
 	private void prepareArcadeMode(boolean arc){
 		this.arcade = arc;
 		System.out.println("Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
-		this.mArcade.setDisable(!this.arcade);
+		this.mArcade.setDisable(this.arcade);
 		if (this.worldsTab != null){
 			this.worldsTab.setDisable(!this.arcade);
 		}

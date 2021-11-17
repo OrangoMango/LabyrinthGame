@@ -123,26 +123,33 @@ public class World {
 	public World(String path) {
 		filePath = path;
 		world = readWorld(filePath);
-		this.worldList = new WorldList(world);
-		/*for (int x = 0; x < getArcadeLevels(filePath), x++){
-			//World tWorld = ;
+		this.worldList = new WorldList(this);
+		for (int x = 0; x < getArcadeLevels(filePath), x++){
+			World tWorld = new World(readWorld(filePath, getFilePathIndex("#World "+(x+1)));
 			this.worldList.addWorld(tWorld);
-		}*/
+		}
 	}
 	
-	public World(String content, boolean isWorldContent){	
-		if (!isWorldContent){
-			Logger.error("Internal Error: boolean variable isWorldConent is false, should be true");
-		} else {
-			try {
-				File tempFile = File.createTempFile("temp-world", ".wld");
-				filePath = tempFile.getAbsolutePath();
-				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-				writer.write(content);
-				writer.close();
-				world = readWorld(filePath);
-			} catch (IOException ioe){}
-		}
+	private int getFilePathIndex(String search){
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			String found = "";
+			int counter = 0;
+			while (!found.equals(search)){
+				found = reader.readLine();
+				counter++;
+			}
+			return counter == 0 ? -1 : counter;
+		} catch (IOException ex){}
+	}
+	
+	public World(Block[][] content){	
+		try {
+			File tempFile = File.createTempFile("temp-world", ".wld");
+			filePath = tempFile.getAbsolutePath();
+			world = content;
+			(new EditableWorld()).updateOnFile();
+		} catch (IOException ioe){}
 	}
 	
 	public static int getArcadeLevels(String fileName){
@@ -302,6 +309,10 @@ public class World {
 		File file = new File(path);
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
+
+			for (int i = 0; i < position; i++){
+				reader.readLine();
+			}
 
 			// Get world width and height from file
 			String data = readData(reader);

@@ -11,11 +11,8 @@ import com.orangomango.labyrinth.engineering.EngBlock;
 
 public class EditableWorld extends World {
 
-	public boolean arcade;
-
 	public EditableWorld(String path) {
 		super(path);
-		this.arcade = path.endsWith(".arc");
 	}
 
 	public Block getBlockAtCoord(int x, int y) {
