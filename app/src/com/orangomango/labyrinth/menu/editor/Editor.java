@@ -869,8 +869,9 @@ public class Editor {
 		mEngineer.setOnAction(e -> setMode("engineering"));
 		mEngineer.setToggleGroup(modeGroup);
 		this.mArcade = new MenuItem("Convert to arcade mode");
-		mArcade.setAccelerator(new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN));
-		mArcade.setOnAction(e -> {setArcadeMode(); mArcade.setDisable(true);});
+		this.mArcade.setDisable(!this.arcade);
+		this.mArcade.setAccelerator(new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN));
+		this.mArcade.setOnAction(e -> {setArcadeMode(); mArcade.setDisable(true);});
 		modeMenu.getItems().addAll(mNormal, mEngineer, new SeparatorMenuItem(), mArcade);
 		
 		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu);
@@ -1025,7 +1026,7 @@ public class Editor {
 				saved = SAVES[index];
 				edworld = WORLDS[index];
 				this.setMode("normal");
-				this.prepareArcadeMode(false);
+				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
 				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 			}
 		});
@@ -1348,7 +1349,7 @@ public class Editor {
 			}
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
-            prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
+            		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
 			saved();
 		} catch (Exception e) {
 			Logger.error("Could not load world file");
@@ -1505,15 +1506,16 @@ public class Editor {
 	private void setArcadeMode(){
 		WorldList wl = new WorldList((com.orangomango.labyrinth.World)this.edworld);
 		wl.updateOnFile(CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf("."))+".arc");
+		open(new File(CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf("."))+".arc"));
 	}
 	
 	private void prepareArcadeMode(boolean arc){
 		this.arcade = arc;
 		System.out.println("Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
-        this.mArcade.setDisable(this.arcade);
-        if (this.worldsTab != null){
-        	this.worldsTab.setDisable(!this.arcade);
-        }
+		this.mArcade.setDisable(!this.arcade);
+		if (this.worldsTab != null){
+			this.worldsTab.setDisable(!this.arcade);
+		}
 	}
 	
 	private void setMode(String m){

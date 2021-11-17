@@ -43,6 +43,7 @@ public class World {
 	private LevelStats levelStats = null;
 	public boolean allLights = false;
 	private boolean canUpdate = true;
+	public WorldList worldList;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -122,6 +123,11 @@ public class World {
 	public World(String path) {
 		filePath = path;
 		world = readWorld(filePath);
+		this.worldList = new WorldList(world);
+		/*for (int x = 0; x < getArcadeLevels(filePath), x++){
+			//World tWorld = ;
+			this.worldList.addWorld(tWorld);
+		}*/
 	}
 	
 	public World(String content, boolean isWorldContent){	
@@ -292,7 +298,7 @@ public class World {
 		}
 	}
 
-	private Block[][] readWorld(String path) {
+	private Block[][] readWorld(String path, int position) {
 		File file = new File(path);
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -342,6 +348,9 @@ public class World {
 			Logger.error("Could not read world");
 			return null;
 		}
+	}
+	private Block[][] readWorld(String path){
+		return readWorld(path, 0);
 	}
 
 	private int[] configureFromString(String data) {
