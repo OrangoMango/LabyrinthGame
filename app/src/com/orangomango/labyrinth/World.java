@@ -81,6 +81,15 @@ public class World {
                 public int getLength(){
                     return worlds.length;
                 }
+                
+                @Override
+                public String toString(){
+                	StringBuilder output = new StringBuilder();
+                	for (World wld : worlds){
+                		output.append(wld).append("\n");
+                	}
+                	return output.toString();
+                }
 		
 		public void updateOnFile(String filePath){
 			try {
@@ -89,34 +98,7 @@ public class World {
 				writer.write("#NumWorlds:"+worlds.length+"\n");
 				for (World world : worlds){
 					writer.write("#World "+cont+"\n");
-					writer.write(world.width + "x" + world.height + "\n");
-					int counter = 0;
-					for (Block[] bArr: world.world) {
-						for (Block block: bArr) {
-							writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
-							if (counter + 1 != world.height * world.width) {
-								writer.write(",");
-							}
-							counter++;
-						}
-					}
-					writer.newLine();
-					writer.write(world.start[0] + "," + world.start[1] + "\n");
-					writer.write(world.end[0] + "," + world.end[1] + "\n");
-					writer.write(world.allLights ? "1" : "0");
-					if (world.getEngineeringWorld() != null){
-						writer.write("\nengineering_mode\n");
-						for (EngBlock[] bArr: world.getEngineeringWorld().getWorld()) {
-							for (EngBlock block: bArr) {
-								writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
-								if (counter + 1 != world.height * world.width) {
-									writer.write(",");
-								}
-								counter++;
-							}
-						}
-					}
-					writer.close();
+					world.writeToFile(writer);
 					cont++;
 				}
 			} catch (IOException e) {
@@ -129,13 +111,15 @@ public class World {
 		filePath = path;
 		world = readWorld(filePath);
 		this.worldList = new WorldList(this);
-                System.out.println("--- "+getFilePathIndex("#World "+(1)));
 		for (int x = 0; x < getArcadeLevels(filePath); x++){
-                        System.out.println("--- "+getFilePathIndex("#World "+(x+1)));
+                        if (x == 0){
+                        	continue;
+                        }
 			World tWorld = new World(filePath, getFilePathIndex("#World "+(x+1)));
 			this.worldList.addWorld(tWorld);
 		}
-                System.out.println("Arcade length: "+this.worldList.getLength());
+        	System.out.println("Arcade length: "+this.worldList.getLength());
+        	//System.out.println("Arcade list: "+this.worldList);
 	}
         
         public World(String path, int index){
@@ -143,16 +127,55 @@ public class World {
             world = readWorld(filePath, index);
         }
 	
+	public void writeToFile(BufferedWriter writer){
+		try {
+			writer.write(this.width + "x" + this.height + "\n");
+			int counter = 0;
+			for (Block[] bArr: this.world) {
+				for (Block block: bArr) {
+					writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
+					if (counter + 1 != this.height * this.width) {
+						writer.write(",");
+					}
+					counter++;
+				}
+			}
+			writer.newLine();
+			writer.write(this.start[0] + "," + this.start[1] + "\n");
+			writer.write(this.end[0] + "," + this.end[1] + "\n");
+			writer.write(this.allLights ? "1" : "0");
+			if (this.getEngineeringWorld() != null){
+				writer.write("\nengineering_mode\n");
+				for (EngBlock[] bArr: this.getEngineeringWorld().getWorld()) {
+					for (EngBlock block: bArr) {
+						writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
+						if (counter + 1 != this.height * this.width) {
+							writer.write(",");
+						}
+						counter++;
+					}
+				}
+			}
+			writer.close();
+		} catch (IOException ioe){}
+	}
+	
 	private int getFilePathIndex(String search){
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			String found = "";
 			int counter = 0;
-			while (found != null && !found.equals(search)){
+			int index = 0;
+			boolean f = false;
+			while (found != null){
 				found = reader.readLine();
 				counter++;
+				if (found != null && found.contains(search) && !f){ // The first in the file
+					index = counter;
+					f = true;
+				}
 			}
-			return counter == 0 ? -1 : counter;
+			return index == 0 ? -1 : index;
 		} catch (IOException ex){
                     return -1;
                 }

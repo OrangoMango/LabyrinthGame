@@ -1511,7 +1511,7 @@ public class Editor {
 	
 	private void prepareArcadeMode(boolean arc){
 		this.arcade = arc;
-		System.out.println("Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
+		//System.out.println("File: "+CURRENT_FILE_PATH+" Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
 		this.mArcade.setDisable(this.arcade);
 		if (this.worldsTab != null){
 			this.worldsTab.setDisable(!this.arcade);
