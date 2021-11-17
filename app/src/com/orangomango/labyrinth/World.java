@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Random;
 
 import javafx.scene.canvas.*;
 import javafx.stage.Stage;
@@ -76,6 +77,10 @@ public class World {
 			worlds = Arrays.copyOf(worlds, worlds.length+1);
 			worlds[worlds.length-1] = w;
 		}
+                
+                public int getLength(){
+                    return worlds.length;
+                }
 		
 		public void updateOnFile(String filePath){
 			try {
@@ -124,32 +129,33 @@ public class World {
 		filePath = path;
 		world = readWorld(filePath);
 		this.worldList = new WorldList(this);
-		for (int x = 0; x < getArcadeLevels(filePath), x++){
-			World tWorld = new World(readWorld(filePath, getFilePathIndex("#World "+(x+1)));
+                System.out.println("--- "+getFilePathIndex("#World "+(1)));
+		for (int x = 0; x < getArcadeLevels(filePath); x++){
+                        System.out.println("--- "+getFilePathIndex("#World "+(x+1)));
+			World tWorld = new World(filePath, getFilePathIndex("#World "+(x+1)));
 			this.worldList.addWorld(tWorld);
 		}
+                System.out.println("Arcade length: "+this.worldList.getLength());
 	}
+        
+        public World(String path, int index){
+            filePath = path;
+            world = readWorld(filePath, index);
+        }
 	
 	private int getFilePathIndex(String search){
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			String found = "";
 			int counter = 0;
-			while (!found.equals(search)){
+			while (found != null && !found.equals(search)){
 				found = reader.readLine();
 				counter++;
 			}
 			return counter == 0 ? -1 : counter;
-		} catch (IOException ex){}
-	}
-	
-	public World(Block[][] content){	
-		try {
-			File tempFile = File.createTempFile("temp-world", ".wld");
-			filePath = tempFile.getAbsolutePath();
-			world = content;
-			(new EditableWorld()).updateOnFile();
-		} catch (IOException ioe){}
+		} catch (IOException ex){
+                    return -1;
+                }
 	}
 	
 	public static int getArcadeLevels(String fileName){
