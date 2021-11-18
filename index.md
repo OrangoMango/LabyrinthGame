@@ -22,10 +22,13 @@ sh run.sh
 ```
 
 # Screenshots
-* Gameplay (*Use arrows to move*)<br>
+* Gameplay (*Use arrows to move*)
+
 ![slvl8](https://user-images.githubusercontent.com/61402409/133892713-7ceba2d7-258f-4487-8f28-ba2a4403cf81.png)
 ![slvl6](https://user-images.githubusercontent.com/61402409/133892711-703bad4a-b670-46ee-86e9-e811b87e280d.png)
-* Editor (*Click on the block to change its type*)<br>
+* Editor (*Click on the block to change its type*)
+
 ![editor3_4](https://user-images.githubusercontent.com/61402409/133609868-f92db532-ac04-4317-a8bd-41371f69a173.png)
-* `My levels` interface (*Edit, delete and run levels*)<br>
+* `My levels` interface (*Edit, delete and run levels*)
+
 ![labgame](https://user-images.githubusercontent.com/61402409/121567737-37915380-ca1f-11eb-8de0-25b3fea0f7ad.png)
