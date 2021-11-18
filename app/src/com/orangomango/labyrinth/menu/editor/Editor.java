@@ -41,11 +41,11 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-    public static Editor EDITOR_INSTANCE = null;
+    	public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
-    private boolean arcade = false;
-    private MenuItem mArcade;
-    private Tab worldsTab;
+   	private boolean arcade = false;
+   	private MenuItem mArcade;
+   	private Tab worldsTab;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -1018,19 +1018,6 @@ public class Editor {
 		editTab.setClosable(false);
 		editTab.setContent(getEditorTabContent());
 
-		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
-			if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0) {
-				int index = this.tabs.getSelectionModel().getSelectedIndex();
-				CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
-				WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
-				saved = SAVES[index];
-				edworld = WORLDS[index];
-				this.setMode("normal");
-				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
-				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
-			}
-		});
-
 		tabs.getTabs().add(editTab);
 		splitpane.getItems().add(tabs);
 
@@ -1048,8 +1035,22 @@ public class Editor {
 		worldsTab = new Tab("Arcade patterns");
 		worldsTab.setClosable(false);
 		worldsTab.setDisable(!this.arcade);
+		prepareArcadeMode(this.arcade);
 		
 		blocksTabPane.getTabs().addAll(blocksTab, worldsTab);
+		
+		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
+			if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0) {
+				int index = this.tabs.getSelectionModel().getSelectedIndex();
+				CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
+				WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
+				saved = SAVES[index];
+				edworld = WORLDS[index];
+				this.setMode("normal");
+				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
+				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
+			}
+		});
 		
 		ToggleGroup tg = new ToggleGroup();
 		
@@ -1513,8 +1514,22 @@ public class Editor {
 		this.arcade = arc;
 		//System.out.println("File: "+CURRENT_FILE_PATH+" Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
 		this.mArcade.setDisable(this.arcade);
+		TilePane tilePane = new TilePane();
+		tilePane.setHgap(10);
+		tilePane.setVgap(10);
+		System.out.println("---> "+ getArcadeLevels(CURRENT_FILE_PATH));
+		for (int i = 1; i <= getArcadeLevels(CURRENT_FILE_PATH); i++){
+			final int now = i;
+			Button btn = new Button("World "+i);
+			btn.setOnAction(e -> {
+				System.out.println("Clicked: "+now);
+			});
+			tilePane.getChildren().add(btn);
+		}
+		System.out.println("WorldsTab: "+this.worldsTab);
 		if (this.worldsTab != null){
 			this.worldsTab.setDisable(!this.arcade);
+			this.worldsTab.setContent(tilePane);
 		}
 	}
 	

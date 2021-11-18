@@ -24,34 +24,7 @@ public class EditableWorld extends World {
 	public void updateOnFile() {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(this.filePath));
-			writer.write(this.width + "x" + this.height + "\n");
-			int counter = 0;
-			for (Block[] bArr: this.world) {
-				for (Block block: bArr) {
-					writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
-					if (counter + 1 != this.height * this.width) {
-						writer.write(",");
-					}
-					counter++;
-				}
-			}
-			writer.newLine();
-			writer.write(start[0] + "," + start[1] + "\n");
-			writer.write(end[0] + "," + end[1] + "\n");
-			writer.write(this.allLights ? "1" : "0");
-			if (getEngineeringWorld() != null){
-				writer.write("\nengineering_mode\n");
-				for (EngBlock[] bArr: getEngineeringWorld().getWorld()) {
-					for (EngBlock block: bArr) {
-						writer.write(Integer.toString(block.toInt())+((block.getInfo() == null) ? "" : ":"+block.getInfo()));
-						if (counter + 1 != this.height * this.width) {
-							writer.write(",");
-						}
-						counter++;
-					}
-				}
-			}
-			writer.close();
+			super.writeToFile(writer);
 		} catch (IOException e) {
 			Logger.error(e.getMessage());
 		}

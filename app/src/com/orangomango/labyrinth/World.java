@@ -77,6 +77,10 @@ public class World {
 			worlds = Arrays.copyOf(worlds, worlds.length+1);
 			worlds[worlds.length-1] = w;
 		}
+		
+		public World getWorldAt(int index){
+			return worlds[index];
+		}
                 
                 public int getLength(){
                     return worlds.length;
@@ -157,7 +161,9 @@ public class World {
 				}
 			}
 			writer.close();
-		} catch (IOException ioe){}
+		} catch (IOException ioe){
+			Logger.error(ioe.getMessage());
+		}
 	}
 	
 	private int getFilePathIndex(String search){
@@ -230,6 +236,10 @@ public class World {
 	public Player getPlayer() {
 		return this.player;
 	}
+	
+	/*public String getFilePath(){
+		return this.filePath;
+	}*/
 
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
@@ -256,10 +266,10 @@ public class World {
 		this.drawingMode = d;
 	}
 
-	public void changeToWorld(String path) {
+	public void changeToWorld(String path, int index) {
 		filePath = path;
 		this.ents = new Entity[0];
-		world = readWorld(filePath);
+		world = readWorld(filePath, index);
 		try {
 			this.canvas.setHeight(this.height * BLOCK_WIDTH);
 			this.canvas.setWidth(this.width * BLOCK_WIDTH);
@@ -273,6 +283,9 @@ public class World {
 			Logger.warning("World player is null");
 		}
 		update(0, 0, 0, 0);
+	}
+	public void changeToWorld(String path){
+		changeToWorld(path, 0);
 	}
 	
 	public void updateParallelBlocks(){
