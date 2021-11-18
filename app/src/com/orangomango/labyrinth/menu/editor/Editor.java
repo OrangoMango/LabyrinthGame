@@ -1522,7 +1522,10 @@ public class Editor {
 			final int now = i;
 			Button btn = new Button("World "+i);
 			btn.setOnAction(e -> {
-				System.out.println("Clicked: "+now);
+				int idx = this.tabs.getSelectionModel().getSelectedIndex();
+				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath(), this.edworld.getFilePathIndex("#World "+now));
+				this.setMode("normal");
+				System.out.println(this.edworld.worldList.getWorldAt(now-1).getFilePath()+" "+ this.edworld.getFilePathIndex("#World "+now));
 			});
 			tilePane.getChildren().add(btn);
 		}

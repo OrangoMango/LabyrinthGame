@@ -120,6 +120,7 @@ public class World {
                         	continue;
                         }
 			World tWorld = new World(filePath, getFilePathIndex("#World "+(x+1)));
+			tWorld.setFilePath(tWorld.createTempCopyFilePath());
 			this.worldList.addWorld(tWorld);
 		}
         	System.out.println("Arcade length: "+this.worldList.getLength());
@@ -130,7 +131,19 @@ public class World {
             filePath = path;
             world = readWorld(filePath, index);
         }
-	
+        
+        public String createTempCopyFilePath(){
+        	try {
+        		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(99999), ".wld");
+        		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        		writeToFile(writer);
+        		return file.getAbsolutePath();
+        	} catch (IOException ioe){
+        		Logger.error("Error when creating temp file: "+ioe.getMessage());
+        		return null;
+        	}
+        }
+        	
 	public void writeToFile(BufferedWriter writer){
 		try {
 			writer.write(this.width + "x" + this.height + "\n");
@@ -166,7 +179,7 @@ public class World {
 		}
 	}
 	
-	private int getFilePathIndex(String search){
+	public int getFilePathIndex(String search){
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			String found = "";
@@ -237,9 +250,14 @@ public class World {
 		return this.player;
 	}
 	
-	/*public String getFilePath(){
+	// Warning: Make attention when calling this method
+	public void setFilePath(String path){
+		this.filePath = path;
+	}
+	
+	public String getFilePath(){
 		return this.filePath;
-	}*/
+	}
 
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
