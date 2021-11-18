@@ -4,7 +4,8 @@
 # Features
 * Play a labyrinth 
 * Create a level with the editor (Many block types available and obstacles to avoid)
-* **Beta:** Engineering mode, create your own electric circuits to add action on your level
+* Engineering mode, create your own electric circuits to add action on your level
+* **Beta:** Arcade mode
 * *(Other features will be added very soon)*
 
 # Run program
