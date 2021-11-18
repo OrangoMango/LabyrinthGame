@@ -1,5 +1,5 @@
 # LabyrinthGame
-[TO BE CONTINUED] Easy java game (Feb 2021)
+TO BE CONTINUED] Easy java game. Features: Play a labyrinth and create one with the editor. Some other features will be added very soon. (Feb 2021)
 
 # Features
 * Play a labyrinth 
