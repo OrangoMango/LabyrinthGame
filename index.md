@@ -13,6 +13,7 @@ TO BE CONTINUED] Easy java game. Features: Play a labyrinth and create one with 
 * Java JDK version 11+
 * JavaFX 11+ (Download link: https://gluonhq.com/products/javafx)
 * Windows/Linux/MacOS operating system
+
 ## How to do
 * Change the first line of the `run.sh` file according to your javafx path location
 * Execute the `run.sh` file in the `app/` folder with the command:
