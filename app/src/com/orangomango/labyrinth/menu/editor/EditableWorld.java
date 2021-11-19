@@ -25,6 +25,7 @@ public class EditableWorld extends World {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(this.filePath));
 			super.writeToFile(writer);
+			writer.close();
 		} catch (IOException e) {
 			Logger.error(e.getMessage());
 		}

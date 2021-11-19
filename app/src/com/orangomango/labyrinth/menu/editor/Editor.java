@@ -766,6 +766,7 @@ public class Editor {
                                 if (!CURRENT_FILE_PATH.endsWith(".arc")){
                                     copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
                                 } else {
+                                	System.out.println("\n\n"+this.edworld.worldList+"\n\n");
                                     this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
                                 }
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -905,7 +906,8 @@ public class Editor {
                                 if (!CURRENT_FILE_PATH.endsWith(".arc")){
                                     copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
                                 } else {
-                                    this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+                                	System.out.println("Arcade mode av");
+                                  	this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
                                 }
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
@@ -1514,8 +1516,13 @@ public class Editor {
 	
 	private void setArcadeMode(){
 		WorldList wl = new WorldList(new com.orangomango.labyrinth.World(this.edworld.getFilePath()));
-		wl.updateOnFile(CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf("."))+".arc");
-		open(new File(CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf("."))+".arc"));
+		String pt = CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf("."))+".arc";
+		File f = new File(pt);
+		/*try {
+			f.createNewFile();
+		} catch (IOException ioe) {}*/
+		wl.updateOnFile(pt);
+		open(f);
 	}
 	
 	private void prepareArcadeMode(boolean arc){
@@ -1535,8 +1542,7 @@ public class Editor {
 			btn.setOnAction(e -> {
 				//System.out.println(this.edworld.worldList.getWorldAt(now-1).getFilePath()+" "+ this.edworld.getFilePathIndex("#World "+now));
 				//System.out.println(this.edworld.worldList);
-                                System.out.println(CURRENT_FILE_PATH+"\n"+WORKING_FILE_PATH);
-                                int idx = this.tabs.getSelectionModel().getSelectedIndex();
+                              System.out.println(CURRENT_FILE_PATH+"\n"+WORKING_FILE_PATH);
 				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath());
 				this.setMode("normal");
 			});

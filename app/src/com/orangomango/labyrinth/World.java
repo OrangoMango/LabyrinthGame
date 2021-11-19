@@ -106,6 +106,7 @@ public class World {
 					world.writeToFile(writer);
 					cont++;
 				}
+				writer.close();
 			} catch (IOException e) {
 				Logger.error(e.getMessage());
 			}
@@ -126,9 +127,9 @@ public class World {
 		}
                 //this.worldList.getWorldAt(0).setFilePath(this.createTempCopyFilePath());
         	System.out.println("Arcade length: "+this.worldList.getLength());
-                for (int i = 0; i < this.worldList.getLength(); i++){
+                /*for (int i = 0; i < this.worldList.getLength(); i++){
                     System.out.println("\n"+this.worldList.getWorldAt(i)+"\n");
-                }
+                }*/
         	//System.out.println("Arcade list: "+this.worldList);
 	}
         
@@ -142,6 +143,7 @@ public class World {
         		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
         		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         		writeToFile(writer);
+        		writer.close();
         		return file.getAbsolutePath();
         	} catch (IOException ioe){
         		Logger.error("Error when creating temp file: "+ioe.getMessage());
@@ -178,7 +180,6 @@ public class World {
 					}
 				}
 			}
-			writer.close();
 		} catch (IOException ioe){
 			Logger.error(ioe.getMessage());
 		}
@@ -375,6 +376,8 @@ public class World {
 			for (int i = 0; i < position; i++){
 				reader.readLine();
 			}
+			
+			System.out.println(path+" <<<<<<<<<<<<<<<<");
 
 			// Get world width and height from file
 			String data = readData(reader);
