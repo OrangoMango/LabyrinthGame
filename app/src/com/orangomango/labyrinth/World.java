@@ -89,6 +89,7 @@ public class World {
                 @Override
                 public String toString(){
                 	StringBuilder output = new StringBuilder();
+                        output.append("List length: "+getLength()+"\n");
                 	for (World wld : worlds){
                 		output.append(wld).append("\n");
                 	}
@@ -114,7 +115,7 @@ public class World {
 	public World(String path) {
 		filePath = path;
 		world = readWorld(filePath);
-		this.worldList = new WorldList(this);
+		this.worldList = new WorldList(new World(filePath, 0));
 		for (int x = 0; x < getArcadeLevels(filePath); x++){
                         if (x == 0){
                         	continue;
@@ -123,7 +124,11 @@ public class World {
 			tWorld.setFilePath(tWorld.createTempCopyFilePath());
 			this.worldList.addWorld(tWorld);
 		}
+                //this.worldList.getWorldAt(0).setFilePath(this.createTempCopyFilePath());
         	System.out.println("Arcade length: "+this.worldList.getLength());
+                for (int i = 0; i < this.worldList.getLength(); i++){
+                    System.out.println("\n"+this.worldList.getWorldAt(i)+"\n");
+                }
         	//System.out.println("Arcade list: "+this.worldList);
 	}
         
@@ -134,7 +139,7 @@ public class World {
         
         public String createTempCopyFilePath(){
         	try {
-        		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(99999), ".wld");
+        		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
         		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         		writeToFile(writer);
         		return file.getAbsolutePath();
@@ -284,10 +289,10 @@ public class World {
 		this.drawingMode = d;
 	}
 
-	public void changeToWorld(String path, int index) {
+	public void changeToWorld(String path) {
 		filePath = path;
 		this.ents = new Entity[0];
-		world = readWorld(filePath, index);
+		world = readWorld(filePath);
 		try {
 			this.canvas.setHeight(this.height * BLOCK_WIDTH);
 			this.canvas.setWidth(this.width * BLOCK_WIDTH);
@@ -301,11 +306,8 @@ public class World {
 			Logger.warning("World player is null");
 		}
 		update(0, 0, 0, 0);
-	}
-	public void changeToWorld(String path){
-		changeToWorld(path, 0);
-	}
-	
+        }
+        
 	public void updateParallelBlocks(){
 		for (Block[] blockRow : this.world){
 			for (Block b : blockRow){
@@ -674,7 +676,7 @@ public class World {
 			}
 			builder.append("\n");
 		}
-		builder.append(String.format("Width: %s, Height: %s.\nStart at: %s, End at: %s", width, height, Arrays.toString(start), Arrays.toString(end)));
+		builder.append(String.format("Width: %s, Height: %s.\nStart at: %s, End at: %s\nFile path: %s", width, height, Arrays.toString(start), Arrays.toString(end), this.filePath));
 
 		return builder.toString();
 	}

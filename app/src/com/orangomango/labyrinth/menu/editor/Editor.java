@@ -1512,20 +1512,24 @@ public class Editor {
 	
 	private void prepareArcadeMode(boolean arc){
 		this.arcade = arc;
+                //System.out.println("Arcade mode: "+arc);
 		//System.out.println("File: "+CURRENT_FILE_PATH+" Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
 		this.mArcade.setDisable(this.arcade);
 		TilePane tilePane = new TilePane();
+                tilePane.setPadding(new Insets(5, 5, 5, 5));
 		tilePane.setHgap(10);
 		tilePane.setVgap(10);
-		System.out.println("---> "+ getArcadeLevels(CURRENT_FILE_PATH));
+		//System.out.println("---> "+ getArcadeLevels(CURRENT_FILE_PATH));
 		for (int i = 1; i <= getArcadeLevels(CURRENT_FILE_PATH); i++){
 			final int now = i;
 			Button btn = new Button("World "+i);
+                        btn.setTooltip(new Tooltip(this.edworld.worldList.getLength() > 1 ? this.edworld.worldList.getWorldAt(i-1).getFilePath() : "NoSuchFile"));
 			btn.setOnAction(e -> {
-				int idx = this.tabs.getSelectionModel().getSelectedIndex();
-				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath(), this.edworld.getFilePathIndex("#World "+now));
+				//System.out.println(this.edworld.worldList.getWorldAt(now-1).getFilePath()+" "+ this.edworld.getFilePathIndex("#World "+now));
+				//System.out.println(this.edworld.worldList);
+                                int idx = this.tabs.getSelectionModel().getSelectedIndex();
+				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath());
 				this.setMode("normal");
-				System.out.println(this.edworld.worldList.getWorldAt(now-1).getFilePath()+" "+ this.edworld.getFilePathIndex("#World "+now));
 			});
 			tilePane.getChildren().add(btn);
 		}
