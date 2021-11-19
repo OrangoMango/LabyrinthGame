@@ -27,4 +27,4 @@ sh run.sh
 * Editor (*Click on the block to change its type*)<br>
 ![editor3_4](https://user-images.githubusercontent.com/61402409/133609868-f92db532-ac04-4317-a8bd-41371f69a173.png)
 * `My levels` interface (*Edit, delete and run levels*)<br>
-![labgame](https://user-images.githubusercontent.com/61402409/121567737-37915380-ca1f-11eb-8de0-25b3fea0f7ad.png)
+![labgame](https://user-images.githubusercontent.com/61402409/140701165-33e45054-6fc1-4e30-be81-86d574e2815b.png)
