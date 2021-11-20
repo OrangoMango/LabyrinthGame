@@ -46,6 +46,8 @@ public class Editor {
    	private boolean arcade = false;
    	private MenuItem mArcade;
    	private Tab worldsTab;
+   	private RadioMenuItem mNormal, mEngineer;
+   	private Button runArcBtn;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -763,12 +765,11 @@ public class Editor {
 		    try {
 				// Clone of toolbar button
 				saved();
-                                if (!CURRENT_FILE_PATH.endsWith(".arc")){
-                                    copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
-                                } else {
-                                	System.out.println("\n\n"+this.edworld.worldList+"\n\n");
-                                    this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+                                if (CURRENT_FILE_PATH.endsWith(".arc")){
+                                	this.edworld.worldList.sync();
+                                    	this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
                                 }
+                                copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
 				alert.setTitle("File saved");
@@ -864,12 +865,12 @@ public class Editor {
 		Menu modeMenu = new Menu("_Mode");
 		modeMenu.setMnemonicParsing(true);
 		ToggleGroup modeGroup = new ToggleGroup();
-		RadioMenuItem mNormal = new RadioMenuItem("Normal mode");
+		mNormal = new RadioMenuItem("Normal mode");
 		mNormal.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN));
 		mNormal.setOnAction(e -> setMode("normal"));
 		mNormal.setSelected(true);
 		mNormal.setToggleGroup(modeGroup);
-		RadioMenuItem mEngineer = new RadioMenuItem("Engineering mode");
+		mEngineer = new RadioMenuItem("Engineering mode");
 		mEngineer.setAccelerator(new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN));
 		mEngineer.setOnAction(e -> setMode("engineering"));
 		mEngineer.setToggleGroup(modeGroup);
@@ -903,12 +904,12 @@ public class Editor {
 			try {
 				// Clone of menu button
 				saved();
-                                if (!CURRENT_FILE_PATH.endsWith(".arc")){
-                                    copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
-                                } else {
-                                	System.out.println("Arcade mode av");
-                                  	this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+                                if (CURRENT_FILE_PATH.endsWith(".arc")){
+                                	//System.out.println(">>\n"+this.edworld.worldList+"\n<<");
+                                	this.edworld.worldList.sync();
+                                    	this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
                                 }
+                                copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
 				alert.setTitle("File saved");
@@ -992,6 +993,16 @@ public class Editor {
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved, this.mode);
 			LevelExe.setOnFinish(null);
 		});
+		
+		runArcBtn = new Button("Run arcade pattern");
+		runArcBtn.setTooltip(new Tooltip("Run current arcade pattern"));
+		runArcBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/run.png")));
+		runArcBtn.setOnAction(event -> {
+			// Clone of menu button
+			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved, this.mode);
+			LevelExe.setOnFinish(null);
+		});
+		runArcBtn.setDisable(!this.arcade);
 
 		Button sseBtn = new Button();
 		engToDisableB = sseBtn;
@@ -999,7 +1010,7 @@ public class Editor {
 		sseBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/sse.png")));
 		sseBtn.setOnAction(event -> {new SESetup(edworld, edworld.width, edworld.height, edworld.start, edworld.end); unsaved();});
 
-		toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn);
+		toolbar.getItems().addAll(newBtn, saveBtn, openBtn, new Separator(), addCBtn, addRBtn, rmCBtn, rmRBtn, new Separator(), sseBtn, new Separator(), runBtn, runArcBtn);
 
 		// Setup world editor
 		ScrollPane scrollpane = new ScrollPane();
@@ -1253,7 +1264,7 @@ public class Editor {
 		layout.add(splitpane, 0, 2);
 		layout.add(pointingOn, 0, 3, 2, 1);
 
-		Scene scene = new Scene(layout, 850, 550);
+		Scene scene = new Scene(layout, 900, 550);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		this.stage.setScene(scene);
 	}
@@ -1530,6 +1541,7 @@ public class Editor {
                 //System.out.println("Arcade mode: "+arc);
 		//System.out.println("File: "+CURRENT_FILE_PATH+" Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
 		this.mArcade.setDisable(this.arcade);
+		this.runArcBtn.setDisable(!this.arcade);
 		TilePane tilePane = new TilePane();
                 tilePane.setPadding(new Insets(5, 5, 5, 5));
 		tilePane.setHgap(10);
@@ -1542,7 +1554,7 @@ public class Editor {
 			btn.setOnAction(e -> {
 				//System.out.println(this.edworld.worldList.getWorldAt(now-1).getFilePath()+" "+ this.edworld.getFilePathIndex("#World "+now));
 				//System.out.println(this.edworld.worldList);
-                              System.out.println(CURRENT_FILE_PATH+"\n"+WORKING_FILE_PATH);
+                              	//System.out.println(CURRENT_FILE_PATH+"\n"+WORKING_FILE_PATH);
 				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath());
 				this.setMode("normal");
 			});
@@ -1572,6 +1584,7 @@ public class Editor {
 			}
 			engToDisable.setDisable(true);
 			engToDisableB.setDisable(true);
+			mEngineer.setSelected(true);
 			SELECTED_BLOCK = 1;
 			this.edworld.setDrawingMode("engineering");
 			this.edworld.update(0, 0, 0, 0);
@@ -1584,6 +1597,7 @@ public class Editor {
 			}
 			engToDisable.setDisable(false);
 			engToDisableB.setDisable(false);
+			mNormal.setSelected(true);
 			SELECTED_BLOCK = 1;
 			this.edworld.setDrawingMode("normal");
 			this.edworld.update(0, 0, 0, 0);

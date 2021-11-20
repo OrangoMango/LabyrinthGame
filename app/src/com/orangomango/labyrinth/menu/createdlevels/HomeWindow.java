@@ -11,6 +11,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.Alert;
 import javafx.scene.canvas.*;
 
@@ -102,23 +103,9 @@ public class HomeWindow {
 				});
 				ToggleGroup tg = new ToggleGroup();
 				RadioButton nm = new RadioButton("Normal Mode");
-				nm.setOnAction(event -> {
-					int tempW = World.BLOCK_WIDTH;
-					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
-					temp.setDrawingMode("normal");
-					temp.update(0, 0, 0, 0);
-					World.BLOCK_WIDTH = tempW;
-				});
 				nm.setToggleGroup(tg);
 				nm.setSelected(true);
 				RadioButton em = new RadioButton("Engineering mode");
-				em.setOnAction(event -> {
-					int tempW = World.BLOCK_WIDTH;
-					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
-					temp.setDrawingMode("engineering");
-					temp.update(0, 0, 0, 0);
-					World.BLOCK_WIDTH = tempW;
-				});
 				em.setDisable(temp.getEngineeringWorld() == null);
 				em.setToggleGroup(tg);
 				HBox hb = new HBox();
@@ -135,8 +122,57 @@ public class HomeWindow {
 				temp.draw();
 				World.BLOCK_WIDTH = tempW;
 				
+				Pagination pages = new Pagination();
+				if (World.getArcadeLevels(temp.getFilePath()) > 0){
+					pages.setPageCount(World.getArcadeLevels(temp.getFilePath()));
+					pages.setCurrentPageIndex(0);
+					pages.setMaxPageIndicatorCount(3);
+					pages.setPageFactory(index -> {
+						temp.worldList.getWorldAt(index).previewMode = true;
+						em.setDisable(temp.worldList.getWorldAt(index).getEngineeringWorld() == null);
+						temp.worldList.getWorldAt(index).setDrawingMode("normal");
+						nm.setSelected(true);
+						int tempWid = World.BLOCK_WIDTH;
+						World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
+						Canvas PCanvas = new Canvas(temp.worldList.getWorldAt(index).width*World.BLOCK_WIDTH, temp.worldList.getWorldAt(index).height*World.BLOCK_WIDTH);
+						temp.worldList.getWorldAt(index).setCanvas(PCanvas);
+						GraphicsContext PPen = PCanvas.getGraphicsContext2D();
+						temp.worldList.getWorldAt(index).setPen(PPen);
+						temp.worldList.getWorldAt(index).setPlayer(new Player(temp.worldList.getWorldAt(index).start[0], temp.worldList.getWorldAt(index).start[1], temp.worldList.getWorldAt(index)));
+						temp.worldList.getWorldAt(index).draw();
+						World.BLOCK_WIDTH = tempWid;
+						return PCanvas;
+					});
+				}
+				
+				nm.setOnAction(event -> {
+					int tempWid = World.BLOCK_WIDTH;
+					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
+					if (World.getArcadeLevels(temp.getFilePath()) < 0){
+						temp.setDrawingMode("normal");
+						temp.update(0, 0, 0, 0);
+					} else {
+						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).setDrawingMode("normal");
+						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).update(0, 0, 0, 0);
+					}
+					World.BLOCK_WIDTH = tempWid;
+				});
+				
+				em.setOnAction(event -> {
+					int tempWid = World.BLOCK_WIDTH;
+					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
+					if (World.getArcadeLevels(temp.getFilePath()) < 0){
+						temp.setDrawingMode("engineering");
+						temp.update(0, 0, 0, 0);
+					} else {
+						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).setDrawingMode("engineering");
+						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).update(0, 0, 0, 0);
+					}
+					World.BLOCK_WIDTH = tempWid;
+				});
+				
 				innerpane.add(plabel, 0, 0);
-				innerpane.add(canvas, 1, 0, 1, 5);
+				innerpane.add(World.getArcadeLevels(temp.getFilePath()) > 0 ? pages : canvas, 1, 0, 1, 4);
 				innerpane.add(edit, 2, 0);
 				innerpane.add(mod, 0, 1);
 				innerpane.add(size, 0, 2);

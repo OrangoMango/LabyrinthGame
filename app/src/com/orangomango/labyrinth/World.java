@@ -95,6 +95,13 @@ public class World {
                 	}
                 	return output.toString();
                 }
+                
+                public void sync(){
+                	System.out.println(">> "+worlds.length);
+                	for (int count = 0; count < worlds.length; count++){
+                		worlds[count] = new World(worlds[count].getFilePath());
+                	}
+                }
 		
 		public void updateOnFile(String filePath){
 			try {
@@ -104,6 +111,9 @@ public class World {
 				for (World world : worlds){
 					writer.write("#World "+cont+"\n");
 					world.writeToFile(writer);
+					if (cont+1 == worlds.length){
+						writer.newLine();
+					}
 					cont++;
 				}
 				writer.close();
@@ -377,7 +387,7 @@ public class World {
 				reader.readLine();
 			}
 			
-			System.out.println(path+" <<<<<<<<<<<<<<<<");
+			//System.out.println(path+" <<<<<<<<<<<<<<<<");
 
 			// Get world width and height from file
 			String data = readData(reader);
@@ -412,9 +422,11 @@ public class World {
 					this.engW = new EngWorld(this, engWorld, this.width, this.height);
 				} else {
 					Logger.info("Engineering mode not available (missing string)");
+					this.engW = null;
 				}
 			} else {
 				Logger.info("Engineering mode not available (null)");
+				this.engW = null;
 			}
 
 			reader.close();
