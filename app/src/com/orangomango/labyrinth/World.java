@@ -78,6 +78,18 @@ public class World {
 			worlds[worlds.length-1] = w;
 		}
 		
+		public void deleteWorld(int index){
+			World[] output = new World[getLength()-1];
+			int counter = 0;
+			for (World wld : this.worlds){
+				if (counter != index){
+					output[counter] = wld;
+				}
+				counter++;
+			}
+			this.worlds = output;
+		}
+		
 		public World getWorldAt(int index){
 			return worlds[index];
 		}
@@ -107,13 +119,11 @@ public class World {
 			try {
 				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 				int cont = 1;
-				writer.write("#NumWorlds:"+worlds.length+"\n");
+				writer.write("#NumWorlds:"+worlds.length);
 				for (World world : worlds){
+					writer.newLine();
 					writer.write("#World "+cont+"\n");
 					world.writeToFile(writer);
-					if (cont+1 == worlds.length){
-						writer.newLine();
-					}
 					cont++;
 				}
 				writer.close();
@@ -193,6 +203,24 @@ public class World {
 		} catch (IOException ioe){
 			Logger.error(ioe.getMessage());
 		}
+	}
+	
+	public static void writeNewFile(BufferedWriter writer, int w, int h, int[] startP, int[] endP, boolean lights){
+		try {
+			writer.write(String.format("%sx%s", w, h));
+			writer.newLine();
+			for (int i = 0; i<w * h; i++) {
+				if (i != w * h - 1) {
+					writer.write("0,");
+				} else {
+					writer.write("0");
+				}
+			}
+			writer.newLine();
+			writer.write(String.format("%s,%s\n", startP[0], startP[1]));
+			writer.write(String.format("%s,%s\n", endP[0], endP[1]));
+			writer.write(lights ? "1" : "0");
+		} catch (IOException ioe){}
 	}
 	
 	public int getFilePathIndex(String search){

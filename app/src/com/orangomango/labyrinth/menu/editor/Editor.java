@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
+import com.orangomango.labyrinth.World;
 import static com.orangomango.labyrinth.World.WorldList;
 import static com.orangomango.labyrinth.World.getArcadeLevels;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
@@ -764,12 +765,12 @@ public class Editor {
 		mSave.setOnAction(e -> {
 		    try {
 				// Clone of toolbar button
-				saved();
-                                if (CURRENT_FILE_PATH.endsWith(".arc")){
+                                if (this.arcade){
                                 	this.edworld.worldList.sync();
                                     	this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
                                 }
                                 copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
+				saved();
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
 				alert.setTitle("File saved");
@@ -903,13 +904,13 @@ public class Editor {
 		saveBtn.setOnAction(event -> {
 			try {
 				// Clone of menu button
-				saved();
-                                if (CURRENT_FILE_PATH.endsWith(".arc")){
+                                if (this.arcade){
                                 	//System.out.println(">>\n"+this.edworld.worldList+"\n<<");
                                 	this.edworld.worldList.sync();
                                     	this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
                                 }
                                 copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
+				saved();
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
 				alert.setTitle("File saved");
@@ -1056,7 +1057,7 @@ public class Editor {
 		worldsTab = new Tab("Arcade patterns");
 		worldsTab.setClosable(false);
 		worldsTab.setDisable(!this.arcade);
-		prepareArcadeMode(this.arcade);
+		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
 		
 		blocksTabPane.getTabs().addAll(blocksTab, worldsTab);
 		
@@ -1264,7 +1265,7 @@ public class Editor {
 		layout.add(splitpane, 0, 2);
 		layout.add(pointingOn, 0, 3, 2, 1);
 
-		Scene scene = new Scene(layout, 900, 550);
+		Scene scene = new Scene(layout, 1000, 550);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		this.stage.setScene(scene);
 	}
@@ -1371,7 +1372,6 @@ public class Editor {
 			}
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
-            		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
 			saved();
 		} catch (Exception e) {
 			Logger.error("Could not load world file");
@@ -1448,6 +1448,7 @@ public class Editor {
 		} catch (NullPointerException e) {
 			SAVES[0] = saved;
 		}
+		prepareArcadeMode(this.arcade);
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 	}
 
@@ -1526,7 +1527,7 @@ public class Editor {
 	}
 	
 	private void setArcadeMode(){
-		WorldList wl = new WorldList(new com.orangomango.labyrinth.World(this.edworld.getFilePath()));
+		WorldList wl = new WorldList(new World(this.edworld.getFilePath()));
 		String pt = CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf("."))+".arc";
 		File f = new File(pt);
 		/*try {
@@ -1546,25 +1547,78 @@ public class Editor {
                 tilePane.setPadding(new Insets(5, 5, 5, 5));
 		tilePane.setHgap(10);
 		tilePane.setVgap(10);
-		//System.out.println("---> "+ getArcadeLevels(CURRENT_FILE_PATH));
+		ToggleGroup toggleG = new ToggleGroup();
+		final int PREVIEW_BLOCK_WIDTH = 10;
+		final int tBW = World.BLOCK_WIDTH;
+		World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 		for (int i = 1; i <= getArcadeLevels(CURRENT_FILE_PATH); i++){
 			final int now = i;
-			Button btn = new Button("World "+i);
-                        btn.setTooltip(new Tooltip(this.edworld.worldList.getLength() > 1 ? this.edworld.worldList.getWorldAt(i-1).getFilePath() : "NoSuchFile"));
+			GridPane miniP = new GridPane();
+			miniP.setVgap(3);
+			Label title = new Label("Pattern "+i);
+			ToggleButton btn = new ToggleButton("Edit pattern");
+                        btn.setTooltip(new Tooltip(this.edworld.worldList.getLength() > 1 ? this.edworld.worldList.getWorldAt(i-1).getFilePath() : WORKING_FILE_PATH));
 			btn.setOnAction(e -> {
-				//System.out.println(this.edworld.worldList.getWorldAt(now-1).getFilePath()+" "+ this.edworld.getFilePathIndex("#World "+now));
-				//System.out.println(this.edworld.worldList);
-                              	//System.out.println(CURRENT_FILE_PATH+"\n"+WORKING_FILE_PATH);
 				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath());
 				this.setMode("normal");
 			});
-			tilePane.getChildren().add(btn);
+			btn.setToggleGroup(toggleG);
+			btn.setSelected(i == 1);
+			Button dBtn = new Button("Delete pattern");
+			dBtn.setTooltip(new Tooltip("Delete pattern"));
+			dBtn.setDisable(i == 1);
+			dBtn.setOnAction(delEvent -> {
+				this.edworld.worldList.deleteWorld(now-1);
+				this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+        			prepareArcadeMode(this.arcade);
+			});
+			World tW;
+			if (this.edworld.worldList.getLength() > 1){
+				tW = this.edworld.worldList.getWorldAt(now-1);
+			} else {
+				tW = new World(WORKING_FILE_PATH);
+				tW.setEngineeringWorld(this.edworld.getEngineeringWorld());
+			}
+			tW.previewMode = true;
+			if (tW.getEngineeringWorld() != null){
+				tW.setDrawingMode(this.mode);
+			}
+			Canvas prevCanvas = new Canvas(tW.width*PREVIEW_BLOCK_WIDTH, tW.height*PREVIEW_BLOCK_WIDTH);
+			tW.setCanvas(prevCanvas);
+			GraphicsContext pen = prevCanvas.getGraphicsContext2D();
+			tW.setPen(pen);
+			tW.setPlayer(new Player(tW.start[0], tW.start[1], tW));
+			tW.draw();
+			miniP.add(title, 0, 0);
+			miniP.add(prevCanvas, 0, 1);
+			miniP.add(btn, 0, 2);
+			miniP.add(dBtn, 0, 3);
+			tilePane.getChildren().add(miniP);
 		}
+		Button addBtn = new Button("+");
+		addBtn.setTooltip(new Tooltip("Add new pattern"));
+		addBtn.setOnAction(addEvent -> {
+			try {
+        			File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
+        			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        			World.writeNewFile(writer, this.edworld.width, this.edworld.height, this.edworld.start, this.edworld.end, this.edworld.allLights);
+        			writer.close();
+        			World newWorld = new World(file.getAbsolutePath());
+        			this.edworld.worldList.addWorld(newWorld);
+        			this.edworld.worldList.sync();
+        			this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+        			prepareArcadeMode(this.arcade);
+        		} catch (IOException ioe){}
+		});
+		tilePane.getChildren().add(addBtn);
 		System.out.println("WorldsTab: "+this.worldsTab);
 		if (this.worldsTab != null){
 			this.worldsTab.setDisable(!this.arcade);
-			this.worldsTab.setContent(tilePane);
+			ScrollPane sp = new ScrollPane(tilePane);
+			sp.setFitToWidth(true);
+			this.worldsTab.setContent(sp);
 		}
+		World.BLOCK_WIDTH = tBW;
 	}
 	
 	private void setMode(String m){
@@ -1603,6 +1657,7 @@ public class Editor {
 			this.edworld.update(0, 0, 0, 0);
 			this.mode = "normal";
 		}
+		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
 		this.edworld.updateWalls();
 	}
 }

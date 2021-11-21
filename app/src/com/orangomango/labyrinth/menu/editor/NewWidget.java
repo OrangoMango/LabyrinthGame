@@ -22,6 +22,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
+import static com.orangomango.labyrinth.World.writeNewFile;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import com.orangomango.labyrinth.Logger;
@@ -340,19 +341,7 @@ public class NewWidget {
 		}
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(this.file));
-			writer.write(String.format("%sx%s", this.pWidth, this.pHeight));
-			writer.newLine();
-			for (int i = 0; i<this.pWidth * this.pHeight; i++) {
-				if (i != this.pWidth * this.pHeight - 1) {
-					writer.write("0,");
-				} else {
-					writer.write("0");
-				}
-			}
-			writer.newLine();
-			writer.write(String.format("%s,%s\n", this.sX, this.sY));
-			writer.write(String.format("%s,%s\n", this.eX, this.eY));
-			writer.write(this.lights.isSelected() ? "1" : "0");
+			writeNewFile(writer, this.pWidth, this.pHeight, new int[]{sX, sY}, new int[]{eX, eY}, this.lights.isSelected());
 			writer.close();
 			if (!this.ed.equals(null)) {
 				Editor.DONE = true;
