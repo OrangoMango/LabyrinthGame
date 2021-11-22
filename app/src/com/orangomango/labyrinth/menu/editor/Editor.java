@@ -1547,7 +1547,6 @@ public class Editor {
                 tilePane.setPadding(new Insets(5, 5, 5, 5));
 		tilePane.setHgap(10);
 		tilePane.setVgap(10);
-		ToggleGroup toggleG = new ToggleGroup();
 		final int PREVIEW_BLOCK_WIDTH = 10;
 		final int tBW = World.BLOCK_WIDTH;
 		World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
@@ -1556,20 +1555,19 @@ public class Editor {
 			GridPane miniP = new GridPane();
 			miniP.setVgap(3);
 			Label title = new Label("Pattern "+i);
-			ToggleButton btn = new ToggleButton("Edit pattern");
+			Button btn = new Button("Edit pattern");
                         btn.setTooltip(new Tooltip(this.edworld.worldList.getLength() > 1 ? this.edworld.worldList.getWorldAt(i-1).getFilePath() : WORKING_FILE_PATH));
 			btn.setOnAction(e -> {
 				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath());
 				this.setMode("normal");
 			});
-			btn.setToggleGroup(toggleG);
-			btn.setSelected(i == 1);
 			Button dBtn = new Button("Delete pattern");
 			dBtn.setTooltip(new Tooltip("Delete pattern"));
 			dBtn.setDisable(i == 1);
 			dBtn.setOnAction(delEvent -> {
 				this.edworld.worldList.deleteWorld(now-1);
 				this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+                                this.edworld.changeToWorld(WORKING_FILE_PATH);
         			prepareArcadeMode(this.arcade);
 			});
 			World tW;
@@ -1600,6 +1598,7 @@ public class Editor {
 		addBtn.setOnAction(addEvent -> {
 			try {
         			File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
+                                file.deleteOnExit();
         			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         			World.writeNewFile(writer, this.edworld.width, this.edworld.height, this.edworld.start, this.edworld.end, this.edworld.allLights);
         			writer.close();
@@ -1657,7 +1656,7 @@ public class Editor {
 			this.edworld.update(0, 0, 0, 0);
 			this.mode = "normal";
 		}
-		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
+		prepareArcadeMode(this.arcade);
 		this.edworld.updateWalls();
 	}
 }

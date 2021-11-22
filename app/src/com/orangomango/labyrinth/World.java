@@ -80,11 +80,13 @@ public class World {
 		
 		public void deleteWorld(int index){
 			World[] output = new World[getLength()-1];
-			int counter = 0;
+			int counter = 0, counter2 = 0;
 			for (World wld : this.worlds){
 				if (counter != index){
-					output[counter] = wld;
-				}
+                                        System.out.println("Count "+counter);
+					output[counter2] = wld;
+                                        counter2++;
+                                }
 				counter++;
 			}
 			this.worlds = output;
@@ -161,6 +163,7 @@ public class World {
         public String createTempCopyFilePath(){
         	try {
         		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
+                        file.deleteOnExit();
         		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         		writeToFile(writer);
         		writer.close();
