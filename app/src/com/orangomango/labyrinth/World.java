@@ -281,6 +281,7 @@ public class World {
 			x = 0;
 			y++;
 		}
+		System.out.println("y: "+y);
 		for (Block[] blockRow : world2.getWorld()){
 			for (Block block : blockRow){
 				output[y][x] = block;
@@ -296,6 +297,7 @@ public class World {
 				if (block == null){
 					output[y][x] = new Block(VOID, x, y, null);
 				}
+				x++;
 			}
 			x = 0;
 			y++;
@@ -325,7 +327,7 @@ public class World {
 		} else {
 			eOut = null;
 		}
-		World w = new World(output, world1.start, world2.end, world1.allLights, eOut);
+		World w = new World(output, world1.start, world1.end, world1.allLights, eOut);
 		return w;
 	}
 

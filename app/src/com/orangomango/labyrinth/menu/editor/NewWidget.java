@@ -255,13 +255,13 @@ public class NewWidget {
 		l4.add(this.sizeL, 0, 3);
 		l4.add(boxes[3], 0, 4, 2, 1);
 
-		SCENE_1 = new Scene(l1, 350, 250);
+		SCENE_1 = new Scene(l1, 350, 300);
 		SCENE_1.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
-		SCENE_2 = new Scene(l2, 350, 250);
+		SCENE_2 = new Scene(l2, 350, 300);
 		SCENE_2.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
-		SCENE_3 = new Scene(l3, 350, 250);
+		SCENE_3 = new Scene(l3, 350, 300);
 		SCENE_3.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
-		SCENE_4 = new Scene(l4, 350, 250);
+		SCENE_4 = new Scene(l4, 350, 300);
 		SCENE_4.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 
 		stage.setTitle("Create a new world");

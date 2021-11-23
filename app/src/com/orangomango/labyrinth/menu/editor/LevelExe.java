@@ -24,6 +24,7 @@ import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 public class LevelExe {
 	public static Stage exStage = null;
 	public static boolean OPEN = false;
+	public static boolean PLAYER_MOVEMENT;
 	private int xGap = 0;
 	private int yGap = 0;
 	private String mode;
@@ -35,11 +36,13 @@ public class LevelExe {
 		if (OPEN) {
 			return;
 		}
+		PLAYER_MOVEMENT = true;
 		Stage stage = new Stage();
 		stage.setTitle(filename);
 		OPEN = true;
 
-		final World world = new World(path);
+		final World world = World.combineWorlds(new World(path), new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys"));
+		System.out.println(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE);
 		world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE);
 		this.mode = mode;
 		world.setDrawingMode(this.mode);
@@ -109,11 +112,14 @@ public class LevelExe {
 			world.draw();
 		}
 		
-		System.out.println(World.combineWorlds(world, new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys")));
+		//System.out.println(World.combineWorlds(world, new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys")));
 		
 		// Handle movement
 		canvas.setOnKeyPressed(event -> {
 			if (this.mode.equals("normal")){
+				if (!PLAYER_MOVEMENT){
+					return;
+				}
 				if (!(player.psx == null && player.psy == null)){
 					if (event.getCode() == KeyCode.UP) {
 						yGap = -1;

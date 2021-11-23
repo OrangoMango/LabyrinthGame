@@ -63,6 +63,7 @@ public class Player {
 		if (this.tl != null){
 			this.tl.stop();
 		}
+		LevelExe.PLAYER_MOVEMENT = true;
 	}
 	
 	public void removeHealth(int v){
@@ -200,9 +201,11 @@ public class Player {
 		int rep2 = rep;
 		this.tl = new Timeline(new KeyFrame(Duration.millis(40), event -> {
 			if (rep2 == 0){
+				LevelExe.PLAYER_MOVEMENT = true;
 				return;
 			}
 			if (this.repeat == rep2){
+				LevelExe.PLAYER_MOVEMENT = true;
 				if (this.isOnEnd()) {
 					LevelExe.OPEN = false;
 					stage.close();
@@ -238,6 +241,7 @@ public class Player {
 				tl.stop();
 				return;
 			} else {
+				LevelExe.PLAYER_MOVEMENT = false;
 				for (Entity ent : this.world.getEnts()){
 					if (ent.isOnPlayer(this) && (ent instanceof Bat || ent instanceof Arrow)){
 						if (rec[0] == 1){

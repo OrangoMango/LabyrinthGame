@@ -1334,6 +1334,9 @@ public class Editor {
     */
 	public void open(File f) {
 		try {
+			if (f.getAbsolutePath().contains("temp")){
+				throw new Exception("Could not open temp file");
+			}
 			Random r = new Random();
 			int number = r.nextInt();
 
@@ -1378,9 +1381,9 @@ public class Editor {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setHeaderText("Error while parsing file");
 			alert.setTitle("Error");
-			alert.setContentText("Could not load world file!");
+			alert.setContentText("Could not load world file!\n"+e.getMessage());
 			alert.showAndWait();
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
     
