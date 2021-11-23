@@ -160,6 +160,17 @@ public class World {
             world = readWorld(filePath, index);
         }
         
+        public World(Block[][] blocks, int[] start, int[] end, boolean lights, EngBlock[][] ew){
+        	world = blocks;
+        	this.width = blocks[0].length;
+        	this.height = blocks.length;
+        	this.start = start;
+        	this.end = end;
+        	this.allLights = lights;
+        	this.engW = ew != null ? new EngWorld(this, ew, this.width, this.height) : null;
+        	filePath = createTempCopyFilePath();
+        }
+        
         public String createTempCopyFilePath(){
         	try {
         		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
@@ -258,6 +269,65 @@ public class World {
 		} catch (IOException ex){}
 		return -1;
 	}
+	
+	public static World combineWorlds(World world1, World world2){
+		Block[][] output = new Block[world1.height + world2.height][world1.width > world2.width ? world1.width : world2.width];
+		int x = 0, y = 0;
+		for (Block[] blockRow : world1.getWorld()){
+			for (Block block : blockRow){
+				output[y][x] = block;
+				x++;
+			}
+			x = 0;
+			y++;
+		}
+		for (Block[] blockRow : world2.getWorld()){
+			for (Block block : blockRow){
+				output[y][x] = block;
+				x++;
+			}
+			x = 0;
+			y++;
+		}
+		x = 0;
+		y = 0;
+		for (Block[] blockRow : output){
+			for (Block block : blockRow){
+				if (block == null){
+					output[y][x] = new Block(VOID, x, y, null);
+				}
+			}
+			x = 0;
+			y++;
+		}
+		
+		EngBlock[][] eOut;
+		if (world1.getEngineeringWorld() != null && world2.getEngineeringWorld() != null){
+			eOut = new EngBlock[world1.height + world2.height][world1.width > world2.width ? world1.width : world2.width];
+			x = 0;
+			y = 0;
+			for (EngBlock[] blockRow : world1.getEngineeringWorld().getWorld()){
+				for (EngBlock block : blockRow){
+					eOut[y][x] = block;
+					x++;
+				}
+				x = 0;
+				y++;
+			}
+			for (EngBlock[] blockRow : world2.getEngineeringWorld().getWorld()){
+				for (EngBlock block : blockRow){
+					eOut[y][x] = block;
+					x++;
+				}
+				x = 0;
+				y++;
+			}
+		} else {
+			eOut = null;
+		}
+		World w = new World(output, world1.start, world2.end, world1.allLights, eOut);
+		return w;
+	}
 
 	public void setLevelStats(LevelStats ls){
 		this.levelStats = ls;
@@ -304,6 +374,10 @@ public class World {
 	
 	public String getFilePath(){
 		return this.filePath;
+	}
+	
+	public Block[][] getWorld(){
+		return this.world;
 	}
 
 	public void setCanvas(Canvas canvas) {

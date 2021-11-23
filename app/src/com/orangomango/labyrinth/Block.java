@@ -509,6 +509,7 @@ public class Block {
 	*/
 	@Override
 	public String toString() {
-		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : (this.info.substring(0, (this.info.length() > MAX_INFO_LENGTH ? MAX_INFO_LENGTH : this.info.length()))+(this.info.length() > MAX_INFO_LENGTH ? "..." : ""))) + " Water: " + this.water;
+		//return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : (this.info.substring(0, (this.info.length() > MAX_INFO_LENGTH ? MAX_INFO_LENGTH : this.info.length()))+(this.info.length() > MAX_INFO_LENGTH ? "..." : ""))) + " Water: " + this.water;
+		return "Block";
 	}
 }

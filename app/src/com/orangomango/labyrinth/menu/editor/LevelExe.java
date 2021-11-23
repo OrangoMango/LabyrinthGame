@@ -24,7 +24,6 @@ import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 public class LevelExe {
 	public static Stage exStage = null;
 	public static boolean OPEN = false;
-	public static boolean PLAYER_MOVEMENT;
 	private int xGap = 0;
 	private int yGap = 0;
 	private String mode;
@@ -36,7 +35,6 @@ public class LevelExe {
 		if (OPEN) {
 			return;
 		}
-		PLAYER_MOVEMENT = true;
 		Stage stage = new Stage();
 		stage.setTitle(filename);
 		OPEN = true;
@@ -94,7 +92,7 @@ public class LevelExe {
 		
 		LevelStats levelStats = new LevelStats(world, levelStatsCanvas.getGraphicsContext2D());
 		world.setLevelStats(levelStats);
-		
+				
 		for (Entity e : world.getEnts()){
 			if (this.mode.equals("normal")){
 				e.start();
@@ -111,12 +109,11 @@ public class LevelExe {
 			world.draw();
 		}
 		
+		System.out.println(World.combineWorlds(world, new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys")));
+		
 		// Handle movement
 		canvas.setOnKeyPressed(event -> {
 			if (this.mode.equals("normal")){
-				if (!PLAYER_MOVEMENT){
-					return;
-				}
 				if (!(player.psx == null && player.psy == null)){
 					if (event.getCode() == KeyCode.UP) {
 						yGap = -1;
