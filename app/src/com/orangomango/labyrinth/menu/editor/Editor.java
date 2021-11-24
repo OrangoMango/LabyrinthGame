@@ -42,7 +42,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-    	public static Editor EDITOR_INSTANCE = null;
+    public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
    	private boolean arcade = false;
    	private MenuItem mArcade;
@@ -1254,8 +1254,8 @@ public class Editor {
 
 		splitpane.getItems().add(blocksTabPane);
 
-		// Set the divider on 60%
-		splitpane.setDividerPositions(0.60f);
+		// Set the divider on 70%
+		splitpane.setDividerPositions(0.70f);
 		layout.add(menuBar, 0, 0);
 		layout.add(toolbar, 0, 1);
 		layout.add(splitpane, 0, 2);

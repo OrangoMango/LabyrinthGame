@@ -141,9 +141,9 @@ public class World {
 		world = readWorld(filePath);
 		this.worldList = new WorldList(new World(filePath, 0));
 		for (int x = 0; x < getArcadeLevels(filePath); x++){
-                        if (x == 0){
-                        	continue;
-                        }
+            if (x == 0){
+               	continue;
+            }
 			World tWorld = new World(filePath, getFilePathIndex("#World "+(x+1)));
 			tWorld.setFilePath(tWorld.createTempCopyFilePath());
 			this.worldList.addWorld(tWorld);

@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Random;
 
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Block;
@@ -31,6 +32,7 @@ public class LevelExe {
 	public static final int PWS = 4;  // Player World Space(right)
 	private boolean pressedKeys = false;
 	private boolean releasedKeys = true;
+	private boolean arcade;
 
 	public LevelExe(String path, String filename, boolean saved, String mode) {
 		if (OPEN) {
@@ -40,9 +42,11 @@ public class LevelExe {
 		Stage stage = new Stage();
 		stage.setTitle(filename);
 		OPEN = true;
+		this.arcade = filename.endsWith(".arc");
+		Random rnd = new Random();
 
-		final World world = World.combineWorlds(World.combineWorlds(new World(path), new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys")), new World("/home/paul/.labyrinthgame/SystemLevels/level2.wld.sys"));
-		world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE);
+		final World world = World.combineWorlds((new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))), (new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))));
+		//world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade);
 		this.mode = mode;
 		world.setDrawingMode(this.mode);
 		
