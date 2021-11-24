@@ -41,8 +41,7 @@ public class LevelExe {
 		stage.setTitle(filename);
 		OPEN = true;
 
-		final World world = World.combineWorlds(new World(path), new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys"));
-		System.out.println(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE);
+		final World world = World.combineWorlds(World.combineWorlds(new World(path), new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys")), new World("/home/paul/.labyrinthgame/SystemLevels/level2.wld.sys"));
 		world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE);
 		this.mode = mode;
 		world.setDrawingMode(this.mode);

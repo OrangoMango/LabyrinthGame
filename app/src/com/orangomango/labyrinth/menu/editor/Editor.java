@@ -1254,12 +1254,8 @@ public class Editor {
 
 		splitpane.getItems().add(blocksTabPane);
 
-		// Set the divider on 72%
-		splitpane.setDividerPositions(0.72f);
-		this.stage.widthProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.72f));
-		this.stage.heightProperty().addListener((obs, oldVal, newVal) -> splitpane.setDividerPositions(0.72f));
-		splitpane.getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> splitpane.setDividerPositions(0.72f));
-
+		// Set the divider on 60%
+		splitpane.setDividerPositions(0.60f);
 		layout.add(menuBar, 0, 0);
 		layout.add(toolbar, 0, 1);
 		layout.add(splitpane, 0, 2);
@@ -1596,7 +1592,8 @@ public class Editor {
 			miniP.add(dBtn, 0, 3);
 			tilePane.getChildren().add(miniP);
 		}
-		Button addBtn = new Button("+");
+		Button addBtn = new Button();
+		addBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_add.png")));
 		addBtn.setTooltip(new Tooltip("Add new pattern"));
 		addBtn.setOnAction(addEvent -> {
 			try {

@@ -45,6 +45,7 @@ public class World {
 	public boolean allLights = false;
 	private boolean canUpdate = true;
 	public WorldList worldList;
+	private boolean showEnd = true;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -281,10 +282,11 @@ public class World {
 			x = 0;
 			y++;
 		}
-		System.out.println("y: "+y);
+		final int first = y;
 		for (Block[] blockRow : world2.getWorld()){
 			for (Block block : blockRow){
 				output[y][x] = block;
+				output[y][x].setY(first+output[y][x].getY());
 				x++;
 			}
 			x = 0;
@@ -405,6 +407,10 @@ public class World {
 	
 	public void setDrawingMode(String d){
 		this.drawingMode = d;
+	}
+	
+	public void setShowEnd(boolean v){
+		this.showEnd = v;
 	}
 
 	public void changeToWorld(String path) {
@@ -761,7 +767,9 @@ public class World {
 	}
 
 	private void drawEnd(int x, int y) {
-		this.pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/end.png"), (end[0] - x) * BLOCK_WIDTH, (end[1] - y) * BLOCK_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH);
+		if (this.showEnd){
+			this.pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/end.png"), (end[0] - x) * BLOCK_WIDTH, (end[1] - y) * BLOCK_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH);
+		}
 	}
 
 	public Block getBlockAt(int x, int y) {

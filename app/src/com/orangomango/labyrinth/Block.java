@@ -108,8 +108,17 @@ public class Block {
 	public int getX() {
 		return x;
 	}
+	
 	public int getY() {
 		return y;
+	}
+	
+	// Attention
+	public void setX(int xv) {
+		this.x = xv;
+	}
+	public void setY(int yv){
+		this.y = yv;
 	}
 	
 	public boolean isWater(){
