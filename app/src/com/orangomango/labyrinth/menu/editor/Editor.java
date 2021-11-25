@@ -42,7 +42,7 @@ public class Editor {
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private static boolean EDITOR = false;
-    public static Editor EDITOR_INSTANCE = null;
+    	public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
    	private boolean arcade = false;
    	private MenuItem mArcade;

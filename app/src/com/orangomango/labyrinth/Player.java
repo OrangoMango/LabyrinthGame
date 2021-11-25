@@ -11,6 +11,7 @@ import javafx.util.Duration;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Arrays;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
@@ -296,6 +297,10 @@ public class Player {
 				this.die(rec[0] == 1, rec[1]);
 				this.repeat = rep2;
 				return;
+			}
+			System.out.println(Arrays.asList(world.combinedLines).contains(getY());
+			if (Arrays.asList(world.combinedLines).contains(getY())){
+				System.out.println("Add new pattern");
 			}
 			
 			this.repeat++;

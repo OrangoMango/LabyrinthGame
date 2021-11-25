@@ -46,6 +46,7 @@ public class World {
 	private boolean canUpdate = true;
 	public WorldList worldList;
 	private boolean showEnd = true;
+	public int[] combinedLines;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -141,9 +142,9 @@ public class World {
 		world = readWorld(filePath);
 		this.worldList = new WorldList(new World(filePath, 0));
 		for (int x = 0; x < getArcadeLevels(filePath); x++){
-            if (x == 0){
-               	continue;
-            }
+			    if (x == 0){
+			       	continue;
+			    }
 			World tWorld = new World(filePath, getFilePathIndex("#World "+(x+1)));
 			tWorld.setFilePath(tWorld.createTempCopyFilePath());
 			this.worldList.addWorld(tWorld);
@@ -154,11 +155,13 @@ public class World {
                     System.out.println("\n"+this.worldList.getWorldAt(i)+"\n");
                 }*/
         	//System.out.println("Arcade list: "+this.worldList);
+        	this.combinedLines = new int[]{this.height-1};
 	}
         
         public World(String path, int index){
             filePath = path;
             world = readWorld(filePath, index);
+        	this.combinedLines = new int[]{this.height-1};
         }
         
         public World(Block[][] blocks, int[] start, int[] end, boolean lights, EngBlock[][] ew){
@@ -170,6 +173,7 @@ public class World {
         	this.allLights = lights;
         	this.engW = ew != null ? new EngWorld(this, ew, this.width, this.height) : null;
         	filePath = createTempCopyFilePath();
+        	this.combinedLines = new int[]{this.height-1};
         }
         
         public String createTempCopyFilePath(){
@@ -282,11 +286,10 @@ public class World {
 			x = 0;
 			y++;
 		}
-		final int first = y;
 		for (Block[] blockRow : world2.getWorld()){
 			for (Block block : blockRow){
 				output[y][x] = block;
-				output[y][x].setY(first+output[y][x].getY());
+				output[y][x].setY(world1.height+output[y][x].getY());
 				x++;
 			}
 			x = 0;
@@ -330,6 +333,18 @@ public class World {
 			eOut = null;
 		}
 		World w = new World(output, world1.start, world1.end, world1.allLights, eOut);
+		int[] cl = new int[world1.combinedLines.length+world2.combinedLines.length];
+		int cont = 0;
+		for (int i : world1.combinedLines){
+			cl[cont] = i;
+			cont++;
+		}
+		for (int i : world2.combinedLines){
+			cl[cont] = i+world1.height;
+			cont++;
+		}
+		w.combinedLines = cl;
+		System.out.println(Arrays.toString(w.combinedLines));
 		return w;
 	}
 
