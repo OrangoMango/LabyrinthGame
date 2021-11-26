@@ -33,6 +33,7 @@ public class LevelExe {
 	private boolean pressedKeys = false;
 	private boolean releasedKeys = true;
 	private boolean arcade;
+	private World world;
 
 	public LevelExe(String path, String filename, boolean saved, String mode) {
 		if (OPEN) {
@@ -45,8 +46,8 @@ public class LevelExe {
 		this.arcade = filename.endsWith(".arc");
 		Random rnd = new Random();
 
-		final World world = World.combineWorlds((new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))), (new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))));
-		//world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade);
+		world = World.combineWorlds((new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))), (new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))));
+		world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade);
 		this.mode = mode;
 		world.setDrawingMode(this.mode);
 		

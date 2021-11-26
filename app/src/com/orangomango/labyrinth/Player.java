@@ -298,9 +298,16 @@ public class Player {
 				this.repeat = rep2;
 				return;
 			}
-			System.out.println(Arrays.asList(world.combinedLines).contains(getY());
-			if (Arrays.asList(world.combinedLines).contains(getY())){
+			boolean foundEndLine = false;
+			for (int n : world.combinedLines){
+				if (n == getY()){
+					foundEndLine = true;
+					break;
+				}
+			}
+			if (foundEndLine){
 				System.out.println("Add new pattern");
+				this.world.changeToWorld(World.combineWorlds(this.world, new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys")));
 			}
 			
 			this.repeat++;

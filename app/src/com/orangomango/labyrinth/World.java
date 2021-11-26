@@ -432,19 +432,24 @@ public class World {
 		filePath = path;
 		this.ents = new Entity[0];
 		world = readWorld(filePath);
+        	this.combinedLines = new int[]{this.height-1};
 		try {
 			this.canvas.setHeight(this.height * BLOCK_WIDTH);
 			this.canvas.setWidth(this.width * BLOCK_WIDTH);
 		} catch (NullPointerException e) {
 			Logger.warning("World canvas is null");
 		}
-		try {
+		/*try {
 			this.player.setX(start[0]);
 			this.player.setY(start[1]);
 		} catch (NullPointerException e) {
 			Logger.warning("World player is null");
-		}
+		}*/
 		update(0, 0, 0, 0);
+        }
+        
+        public void changeToWorld(World wld){
+        	changeToWorld(wld.getFilePath());
         }
         
 	public void updateParallelBlocks(){
