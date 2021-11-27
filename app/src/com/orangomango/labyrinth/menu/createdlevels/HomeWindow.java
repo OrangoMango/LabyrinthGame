@@ -115,7 +115,6 @@ public class HomeWindow {
 				int tempW = World.BLOCK_WIDTH;
 				World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 				Canvas canvas = new Canvas(temp.width*World.BLOCK_WIDTH, temp.height*World.BLOCK_WIDTH);
-				temp.setCanvas(canvas);
 				GraphicsContext pen = canvas.getGraphicsContext2D();
 				temp.setPen(pen);
 				temp.setPlayer(new Player(temp.start[0], temp.start[1], temp));
@@ -135,7 +134,6 @@ public class HomeWindow {
 						int tempWid = World.BLOCK_WIDTH;
 						World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 						Canvas PCanvas = new Canvas(temp.worldList.getWorldAt(index).width*World.BLOCK_WIDTH, temp.worldList.getWorldAt(index).height*World.BLOCK_WIDTH);
-						temp.worldList.getWorldAt(index).setCanvas(PCanvas);
 						GraphicsContext PPen = PCanvas.getGraphicsContext2D();
 						temp.worldList.getWorldAt(index).setPen(PPen);
 						temp.worldList.getWorldAt(index).setPlayer(new Player(temp.worldList.getWorldAt(index).start[0], temp.worldList.getWorldAt(index).start[1], temp.worldList.getWorldAt(index)));

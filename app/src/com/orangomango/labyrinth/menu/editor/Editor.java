@@ -668,7 +668,6 @@ public class Editor {
 		GraphicsContext pen = canvas.getGraphicsContext2D();
 		editableworld.setPen(pen);
 		editableworld.setPlayer(new Player(editableworld.start[0], editableworld.start[1], editableworld));
-		editableworld.setCanvas(canvas);
 		editableworld.draw();
 		
 		canvas.setOnMouseMoved(event -> {
@@ -1581,7 +1580,6 @@ public class Editor {
 				tW.setDrawingMode(this.mode);
 			}
 			Canvas prevCanvas = new Canvas(tW.width*PREVIEW_BLOCK_WIDTH, tW.height*PREVIEW_BLOCK_WIDTH);
-			tW.setCanvas(prevCanvas);
 			GraphicsContext pen = prevCanvas.getGraphicsContext2D();
 			tW.setPen(pen);
 			tW.setPlayer(new Player(tW.start[0], tW.start[1], tW));

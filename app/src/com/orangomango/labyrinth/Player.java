@@ -12,6 +12,7 @@ import javafx.util.Duration;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Arrays;
+import java.util.Random;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
@@ -34,6 +35,7 @@ public class Player {
 	private Timeline oxygenT = null;
 	private String direction = World.EAST;
 	private Timeline tl;
+	private String pseudoPath;
 
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -298,16 +300,20 @@ public class Player {
 				this.repeat = rep2;
 				return;
 			}
-			boolean foundEndLine = false;
-			for (int n : world.combinedLines){
-				if (n == getY()){
-					foundEndLine = true;
-					break;
+			if (getPsFilePath() != null && World.getArcadeLevels(getPsFilePath()) > 0){
+				Random rnd = new Random();
+				
+				boolean foundEndLine = false;
+				for (int n : world.combinedLines){
+					if (n == getY()){
+						foundEndLine = true;
+						break;
+					}
 				}
-			}
-			if (foundEndLine){
-				System.out.println("Add new pattern");
-				this.world.changeToWorld(World.combineWorlds(this.world, new World("/home/paul/.labyrinthgame/SystemLevels/level1.wld.sys")));
+				if (foundEndLine){
+					System.out.println("Add new pattern");
+					this.world.changeToWorld(World.combineWorlds(this.world, (new World(getPsFilePath())).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(getPsFilePath())))));
+				}
 			}
 			
 			this.repeat++;
@@ -328,6 +334,14 @@ public class Player {
 			return true;
 		}
 		return false;
+	}
+	
+	public void setPsFilePath(String pt){
+		this.pseudoPath = pt;
+	}
+	
+	public String getPsFilePath(){
+		return this.pseudoPath;
 	}
 	
 	public boolean isOnBlock(String block){

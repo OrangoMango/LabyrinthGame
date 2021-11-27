@@ -34,6 +34,7 @@ public class LevelExe {
 	private boolean releasedKeys = true;
 	private boolean arcade;
 	private World world;
+	private boolean playerViewEnabled;
 
 	public LevelExe(String path, String filename, boolean saved, String mode) {
 		if (OPEN) {
@@ -45,9 +46,14 @@ public class LevelExe {
 		OPEN = true;
 		this.arcade = filename.endsWith(".arc");
 		Random rnd = new Random();
-
-		world = World.combineWorlds((new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))), (new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))));
-		world.setPlayerView(world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade);
+		
+		if (this.arcade){
+			world = World.combineWorlds((new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))), (new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))));
+		} else {
+			world = new World(path);
+		}
+		this.playerViewEnabled = world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade;
+		world.setPlayerView(this.playerViewEnabled);
 		this.mode = mode;
 		world.setDrawingMode(this.mode);
 		
@@ -70,10 +76,9 @@ public class LevelExe {
 			OPEN = false;
 		});
 
-		Canvas canvas = new Canvas(World.BLOCK_WIDTH * world.width, World.BLOCK_WIDTH * world.height);
+		Canvas canvas = new Canvas((!this.playerViewEnabled ? world.width : PWS*2+1) * World.BLOCK_WIDTH, (!this.playerViewEnabled ? world.height : PWS*2+1) * World.BLOCK_WIDTH);
 		Label label = new Label(filename + ((saved) ? " (Level is currently synchronized)" : " (Level not synchronized, unsaved)"));
 		label.setWrapText(true);
-		world.setCanvas(canvas);
 
 		canvas.setFocusTraversable(true);
 		
@@ -89,12 +94,19 @@ public class LevelExe {
 		GraphicsContext pen = canvas.getGraphicsContext2D();
 		world.setPen(pen);
 
-		Scene scene = new Scene(layout, LevelStats.WIDTH < World.BLOCK_WIDTH * world.width ? World.BLOCK_WIDTH * world.width + 20 : LevelStats.WIDTH + 20, World.BLOCK_WIDTH * world.height + 40 + LevelStats.HEIGHT + 10);
+		Scene scene;
+		System.out.println(this.playerViewEnabled);
+		if (!this.playerViewEnabled){
+			scene = new Scene(layout, LevelStats.WIDTH < World.BLOCK_WIDTH * world.width ? World.BLOCK_WIDTH * world.width + 20 : LevelStats.WIDTH + 20, World.BLOCK_WIDTH * world.height + 40 + LevelStats.HEIGHT + 10);
+		} else {
+			scene = new Scene(layout, PWS*2*World.BLOCK_WIDTH+20+World.BLOCK_WIDTH, PWS*2*World.BLOCK_WIDTH+40+World.BLOCK_WIDTH+LevelStats.HEIGHT+10);
+		}
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 
 		final Player player = new Player(world.start[0], world.start[1], world);
 		player.draw(pen);
+		player.setPsFilePath(path);
 		world.setPlayer(player);
 		
 		LevelStats levelStats = new LevelStats(world, levelStatsCanvas.getGraphicsContext2D());

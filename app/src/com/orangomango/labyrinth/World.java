@@ -35,7 +35,6 @@ public class World {
 	public int[] start, end;
 	private GraphicsContext pen;
 	private Player player;
-	protected Canvas canvas;
 	private Entity[] ents = new Entity[0];
 	private boolean playerView = false;
 	private EngWorld engW = null;
@@ -399,10 +398,6 @@ public class World {
 		return this.world;
 	}
 
-	public void setCanvas(Canvas canvas) {
-		this.canvas = canvas;
-	}
-
 	public void setEnts(Entity...e) {
 		ents = e;
 	}
@@ -427,18 +422,16 @@ public class World {
 	public void setShowEnd(boolean v){
 		this.showEnd = v;
 	}
+	
+	public boolean getShowEnd(){
+		return this.showEnd;
+	}
 
 	public void changeToWorld(String path) {
-		filePath = path;
+		this.filePath = path;
 		this.ents = new Entity[0];
 		world = readWorld(filePath);
         	this.combinedLines = new int[]{this.height-1};
-		try {
-			this.canvas.setHeight(this.height * BLOCK_WIDTH);
-			this.canvas.setWidth(this.width * BLOCK_WIDTH);
-		} catch (NullPointerException e) {
-			Logger.warning("World canvas is null");
-		}
 		/*try {
 			this.player.setX(start[0]);
 			this.player.setY(start[1]);
@@ -450,6 +443,8 @@ public class World {
         
         public void changeToWorld(World wld){
         	changeToWorld(wld.getFilePath());
+        	//this.combinedLines = wld.combinedLines;
+        	setShowEnd(wld.getShowEnd());
         }
         
 	public void updateParallelBlocks(){
