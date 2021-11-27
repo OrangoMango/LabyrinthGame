@@ -1,4 +1,4 @@
-![banner](https://img.shields.io/github/v/release/OrangoMango/LabyrinthGame?color=green&display_name=tag&label=Latest%20version&style=for-the-badge)
+![banner](https://img.shields.io/github/v/release/OrangoMango/LabyrinthGame?color=green&display_name=tag&label=Latest%20version&style=for-the-badge) ![banner2](https://img.shields.io/github/repo-size/OrangoMango/LabyrinthGame?label=Size&style=for-the-badge)
 
 # LabyrinthGame
 [TO BE CONTINUED] Easy java game (Feb 2021)
