@@ -62,12 +62,12 @@ public class Elevator extends Entity {
 			}
 			if (w.getPlayerView()){
 				if (w.getPlayer().psx != null && w.getPlayer().psy != null){
-					w.update((int)Math.round(w.getPlayer().psx)-PWS,(int)Math.round(w.getPlayer().psy)-PWS, (int)Math.round(w.getPlayer().psx)+PWS, (int)Math.round(w.getPlayer().psy)+PWS);
+					w.update((int)Math.round(w.getPlayer().psx)-PWS,(int)Math.round(w.getPlayer().psy)-PWS, (int)Math.round(w.getPlayer().psx)+PWS, (int)Math.round(w.getPlayer().psy)+PWS, true);
 				} else {
-					w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS);
+					w.update(w.getPlayer().getX()-PWS,w.getPlayer().getY()-PWS, w.getPlayer().getX()+PWS, w.getPlayer().getY()+PWS, true);
 				}
 			} else {
-				w.update(0, 0, 0, 0);
+				w.update(0, 0, 0, 0, true);
 			}
 		}));
 		this.t.setCycleCount(Animation.INDEFINITE);

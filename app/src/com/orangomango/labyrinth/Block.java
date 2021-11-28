@@ -249,7 +249,7 @@ public class Block {
 	}
 	
 	public boolean activeBlockAround(World w){
-		if (w.previewMode || w.allLights){
+		if (w.previewMode || w.getAllLights()){
 			return true;
 		}
 		for (int y = getY()-LIGHT_AREA*2; y <= getY()+LIGHT_AREA*2; y++){
@@ -359,7 +359,7 @@ public class Block {
 			effect.setBrightness(LIGHT);
 	 	}
 		
-	 	if (w instanceof EditableWorld || w.previewMode){
+	 	if (w instanceof EditableWorld){
 			pen.setEffect(null);
 		} else {
 	 		pen.setEffect(effect);

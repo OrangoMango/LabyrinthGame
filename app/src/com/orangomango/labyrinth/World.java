@@ -23,6 +23,7 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.editor.EditableWorld;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.play.entity.*;
+import com.orangomango.labyrinth.menu.editor.LevelExe;
 import com.orangomango.labyrinth.menu.editor.LevelStats;
 
 // Engineering mode
@@ -39,9 +40,10 @@ public class World {
 	private boolean playerView = false;
 	private EngWorld engW = null;
 	private String drawingMode = "normal";
+	protected Canvas canvas;
 	public boolean previewMode = false;
 	private LevelStats levelStats = null;
-	public boolean allLights = false;
+	private boolean allLights = false;
 	private boolean canUpdate = true;
 	public WorldList worldList;
 	private boolean showEnd = true;
@@ -84,7 +86,6 @@ public class World {
 			int counter = 0, counter2 = 0;
 			for (World wld : this.worlds){
 				if (counter != index){
-                                        System.out.println("Count "+counter);
 					output[counter2] = wld;
                                         counter2++;
                                 }
@@ -112,7 +113,6 @@ public class World {
                 }
                 
                 public void sync(){
-                	System.out.println(">> "+worlds.length);
                 	for (int count = 0; count < worlds.length; count++){
                 		worlds[count] = new World(worlds[count].getFilePath());
                 	}
@@ -169,7 +169,7 @@ public class World {
         	this.height = blocks.length;
         	this.start = start;
         	this.end = end;
-        	this.allLights = lights;
+        	this.setAllLights(lights);
         	this.engW = ew != null ? new EngWorld(this, ew, this.width, this.height) : null;
         	filePath = createTempCopyFilePath();
         	this.combinedLines = new int[]{this.height-1};
@@ -205,7 +205,7 @@ public class World {
 			writer.newLine();
 			writer.write(this.start[0] + "," + this.start[1] + "\n");
 			writer.write(this.end[0] + "," + this.end[1] + "\n");
-			writer.write(this.allLights ? "1" : "0");
+			writer.write(this.getAllLights() ? "1" : "0");
 			if (this.getEngineeringWorld() != null){
 				writer.write("\nengineering_mode\n");
 				for (EngBlock[] bArr: this.getEngineeringWorld().getWorld()) {
@@ -328,10 +328,22 @@ public class World {
 				x = 0;
 				y++;
 			}
+			x = 0;
+			y = 0;
+			for (EngBlock[] blockRow : eOut){
+				for (EngBlock block : blockRow){
+					if (block == null){
+						eOut[y][x] = new EngBlock(x, y, EngBlock.AIR, null);
+					}
+					x++;
+				}
+				x = 0;
+				y++;
+			}
 		} else {
 			eOut = null;
 		}
-		World w = new World(output, world1.start, world1.end, world1.allLights, eOut);
+		World w = new World(output, world1.start, world1.end, world1.getAllLights(), eOut);
 		int[] cl = new int[world1.combinedLines.length+world2.combinedLines.length];
 		int cont = 0;
 		for (int i : world1.combinedLines){
@@ -343,8 +355,68 @@ public class World {
 			cont++;
 		}
 		w.combinedLines = cl;
+		w.updateWalls();
 		System.out.println(Arrays.toString(w.combinedLines));
 		return w;
+	}
+	
+	public void updateOnFile() {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(this.filePath));
+			writeToFile(writer);
+			writer.close();
+		} catch (IOException e) {
+			Logger.error(e.getMessage());
+		}
+		int[] temp = this.combinedLines;
+		changeToWorld(this.filePath);
+		this.combinedLines = temp;
+	}
+	
+	public void updateWalls(){
+		for (Block[] blockRow : this.world){
+			for (Block b : blockRow){
+				if (b.getType() == WALL){
+					if (this.getBlockAt(b.getX(), b.getY()-1) != null){
+						if (this.getBlockAt(b.getX(), b.getY()-1).getType().equals(WALL)){
+						    this.getBlockAt(b.getX(), b.getY()-1).addConn("s");
+						} else {
+							b.removeConn("n");
+						}
+					} else {
+						b.removeConn("n");
+					}
+					if (this.getBlockAt(b.getX()+1, b.getY()) != null){
+						if (this.getBlockAt(b.getX()+1, b.getY()).getType().equals(WALL)){
+						    this.getBlockAt(b.getX()+1, b.getY()).addConn("w");
+						} else {
+							b.removeConn("e");
+						}
+					} else {
+						b.removeConn("e");
+					}
+					if (this.getBlockAt(b.getX(), b.getY()+1) != null){
+						if (this.getBlockAt(b.getX(), b.getY()+1).getType().equals(WALL)){
+						    this.getBlockAt(b.getX(), b.getY()+1).addConn("n");
+						} else {
+							b.removeConn("s");
+						}
+					} else {
+						b.removeConn("s");
+					}
+					if (this.getBlockAt(b.getX()-1, b.getY()) != null){
+						if (this.getBlockAt(b.getX()-1, b.getY()).getType().equals(WALL)){
+						    this.getBlockAt(b.getX()-1, b.getY()).addConn("e");
+						} else {
+							b.removeConn("w");
+						}
+					} else {
+						b.removeConn("w");
+					}
+				}
+			}
+		}
+		updateOnFile();
 	}
 
 	public void setLevelStats(LevelStats ls){
@@ -376,6 +448,11 @@ public class World {
 	public void setPen(GraphicsContext pen) {
 		this.pen = pen;
 	}
+
+	public void setCanvas(Canvas canvas) {
+		this.canvas = canvas;
+	}
+
 
 	public void setPlayer(Player pl) {
 		this.player = pl;
@@ -426,24 +503,42 @@ public class World {
 	public boolean getShowEnd(){
 		return this.showEnd;
 	}
+	
+	public void setAllLights(boolean v){
+		this.allLights = v;
+	}
+	
+	public boolean getAllLights(){
+		return this.allLights;
+	}
 
 	public void changeToWorld(String path) {
 		this.filePath = path;
 		this.ents = new Entity[0];
 		world = readWorld(filePath);
         	this.combinedLines = new int[]{this.height-1};
+        	try {
+			this.canvas.setHeight(this.height * BLOCK_WIDTH);
+			this.canvas.setWidth(this.width * BLOCK_WIDTH);
+		} catch (NullPointerException e) {
+			Logger.warning("World canvas is null");
+		}
 		/*try {
 			this.player.setX(start[0]);
 			this.player.setY(start[1]);
 		} catch (NullPointerException e) {
 			Logger.warning("World player is null");
 		}*/
-		update(0, 0, 0, 0);
+		if (getPlayerView()){
+			update(player.getX()-LevelExe.PWS, player.getY()-LevelExe.PWS, player.getX()+LevelExe.PWS, player.getY()+LevelExe.PWS);
+		} else {
+			update(0, 0, 0, 0);
+		}
         }
         
         public void changeToWorld(World wld){
         	changeToWorld(wld.getFilePath());
-        	//this.combinedLines = wld.combinedLines;
+        	this.combinedLines = wld.combinedLines;
         	setShowEnd(wld.getShowEnd());
         }
         
@@ -534,9 +629,9 @@ public class World {
 			
 			String lightsData = readData(reader);
 			if (lightsData.equals("1")){
-				this.allLights = true;
+				this.setAllLights(true);
 			} else if (lightsData.equals("0")){
-				this.allLights = false;
+				this.setAllLights(false);
 			} else {
 				System.out.println("No light data available");
 			}

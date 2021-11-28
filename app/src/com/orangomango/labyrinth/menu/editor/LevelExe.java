@@ -37,16 +37,17 @@ public class LevelExe {
 	private boolean playerViewEnabled;
 
 	public LevelExe(String path, String filename, boolean saved, String mode) {
-		if (OPEN) {
+		this.arcade = filename.endsWith(".arc");
+		this.mode = mode;
+		if (OPEN || (this.arcade && mode.equals("engineering"))) {
 			return;
 		}
 		PLAYER_MOVEMENT = true;
 		Stage stage = new Stage();
 		stage.setTitle(filename);
 		OPEN = true;
-		this.arcade = filename.endsWith(".arc");
 		Random rnd = new Random();
-		
+				
 		if (this.arcade){
 			world = World.combineWorlds((new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))), (new World(path)).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(path))));
 		} else {
@@ -54,7 +55,6 @@ public class LevelExe {
 		}
 		this.playerViewEnabled = world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade;
 		world.setPlayerView(this.playerViewEnabled);
-		this.mode = mode;
 		world.setDrawingMode(this.mode);
 		
 		stage.setOnCloseRequest(event -> {
@@ -77,8 +77,7 @@ public class LevelExe {
 		});
 
 		Canvas canvas = new Canvas((!this.playerViewEnabled ? world.width : PWS*2+1) * World.BLOCK_WIDTH, (!this.playerViewEnabled ? world.height : PWS*2+1) * World.BLOCK_WIDTH);
-		Label label = new Label(filename + ((saved) ? " (Level is currently synchronized)" : " (Level not synchronized, unsaved)"));
-		label.setWrapText(true);
+		Label label = new Label(filename + ((saved) ? " \n(Level is currently synchronized)" : "\n(Level not synchronized, unsaved)"));
 
 		canvas.setFocusTraversable(true);
 		
@@ -97,9 +96,9 @@ public class LevelExe {
 		Scene scene;
 		System.out.println(this.playerViewEnabled);
 		if (!this.playerViewEnabled){
-			scene = new Scene(layout, LevelStats.WIDTH < World.BLOCK_WIDTH * world.width ? World.BLOCK_WIDTH * world.width + 20 : LevelStats.WIDTH + 20, World.BLOCK_WIDTH * world.height + 40 + LevelStats.HEIGHT + 10);
+			scene = new Scene(layout, LevelStats.WIDTH < World.BLOCK_WIDTH * world.width ? World.BLOCK_WIDTH * world.width + 20 : LevelStats.WIDTH + 20, World.BLOCK_WIDTH * world.height + 60 + LevelStats.HEIGHT + 10);
 		} else {
-			scene = new Scene(layout, PWS*2*World.BLOCK_WIDTH+20+World.BLOCK_WIDTH, PWS*2*World.BLOCK_WIDTH+40+World.BLOCK_WIDTH+LevelStats.HEIGHT+10);
+			scene = new Scene(layout, PWS*2*World.BLOCK_WIDTH+20+World.BLOCK_WIDTH, PWS*2*World.BLOCK_WIDTH+60+World.BLOCK_WIDTH+LevelStats.HEIGHT+10);
 		}
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);

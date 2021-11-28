@@ -21,65 +21,8 @@ public class EditableWorld extends World {
 		return super.getBlockAt(x1, y1);
 	}
 
-	public void updateOnFile() {
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(this.filePath));
-			super.writeToFile(writer);
-			writer.close();
-		} catch (IOException e) {
-			Logger.error(e.getMessage());
-		}
-		changeToWorld(this.filePath);
-	}
-
 	public void setBlockOn(EditableBlock block) {
 		this.world[block.getY()][block.getX()] = new Block(block.getType(), block.getX(), block.getY(), block.getInfo());
-	}
-	
-	public void updateWalls(){
-		for (Block[] blockRow : this.world){
-			for (Block b : blockRow){
-				if (b.getType() == EditableWorld.WALL){
-					if (this.getBlockAt(b.getX(), b.getY()-1) != null){
-						if (this.getBlockAt(b.getX(), b.getY()-1).getType().equals(WALL)){
-						    this.getBlockAt(b.getX(), b.getY()-1).addConn("s");
-						} else {
-							b.removeConn("n");
-						}
-					} else {
-						b.removeConn("n");
-					}
-					if (this.getBlockAt(b.getX()+1, b.getY()) != null){
-						if (this.getBlockAt(b.getX()+1, b.getY()).getType().equals(WALL)){
-						    this.getBlockAt(b.getX()+1, b.getY()).addConn("w");
-						} else {
-							b.removeConn("e");
-						}
-					} else {
-						b.removeConn("e");
-					}
-					if (this.getBlockAt(b.getX(), b.getY()+1) != null){
-						if (this.getBlockAt(b.getX(), b.getY()+1).getType().equals(WALL)){
-						    this.getBlockAt(b.getX(), b.getY()+1).addConn("n");
-						} else {
-							b.removeConn("s");
-						}
-					} else {
-						b.removeConn("s");
-					}
-					if (this.getBlockAt(b.getX()-1, b.getY()) != null){
-						if (this.getBlockAt(b.getX()-1, b.getY()).getType().equals(WALL)){
-						    this.getBlockAt(b.getX()-1, b.getY()).addConn("e");
-						} else {
-							b.removeConn("w");
-						}
-					} else {
-						b.removeConn("w");
-					}
-				}
-			}
-		}
-		updateOnFile();
 	}
 	
 	// private (addRow, removeRow, addColumn, removeColumn) for engineering mode

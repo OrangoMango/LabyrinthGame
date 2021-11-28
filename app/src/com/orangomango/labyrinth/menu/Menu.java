@@ -23,9 +23,9 @@ import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 public class Menu {
 	private Stage stage;
 	private LabyrinthMain toShowWorld;
-        private static String PLAY_PATH = "file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_play.png";
-        private static String EDITOR_PATH = "file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_editor.png";
-        private static String LEVELS_PATH = "file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_levels.png";
+        private static String PLAY_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_play.png";
+        private static String EDITOR_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_editor.png";
+        private static String LEVELS_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_levels.png";
 
 	public static boolean MYLEVELS = false;
 	public static boolean PLAY = false;
@@ -47,7 +47,7 @@ public class Menu {
 		layout.setPadding(new Insets(5, 5, 5, 5));
 
 		Button playBtn = new Button("Play");
-		playBtn.setGraphic(new ImageView(new Image((new File(PLAY_PATH)).exists() ? PLAY_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
+		playBtn.setGraphic(new ImageView(new Image((new File(PLAY_PATH)).exists() ? "file://" + PLAY_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
 		playBtn.setContentDisplay(ContentDisplay.TOP);
 		playBtn.setOnAction(event -> {
 			if (!PLAY) {
@@ -57,14 +57,14 @@ public class Menu {
 		});
 
 		Button editorBtn = new Button("Editor");
-		editorBtn.setGraphic(new ImageView(new Image((new File(EDITOR_PATH)).exists() ? EDITOR_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_editor.png")));
+		editorBtn.setGraphic(new ImageView(new Image((new File(EDITOR_PATH)).exists() ? "file://" + EDITOR_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_editor.png")));
 		editorBtn.setContentDisplay(ContentDisplay.TOP);
 		editorBtn.setOnAction(event -> {
 			startEditor(null);
 		});
 
 		Button levelsBtn = new Button("My levels");
-		levelsBtn.setGraphic(new ImageView(new Image((new File(LEVELS_PATH)).exists() ? LEVELS_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
+		levelsBtn.setGraphic(new ImageView(new Image((new File(LEVELS_PATH)).exists() ? "file://" + LEVELS_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
 		levelsBtn.setContentDisplay(ContentDisplay.TOP);
 		levelsBtn.setOnAction(event -> {
 			if (!MYLEVELS) {

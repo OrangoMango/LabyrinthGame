@@ -49,6 +49,7 @@ public class Editor {
    	private Tab worldsTab;
    	private RadioMenuItem mNormal, mEngineer;
    	private Button runArcBtn;
+	private MenuItem mRunPattern;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -667,6 +668,7 @@ public class Editor {
 
 		GraphicsContext pen = canvas.getGraphicsContext2D();
 		editableworld.setPen(pen);
+		editableworld.setCanvas(canvas);
 		editableworld.setPlayer(new Player(editableworld.start[0], editableworld.start[1], editableworld));
 		editableworld.draw();
 		
@@ -856,11 +858,18 @@ public class Editor {
 			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved, this.mode);
 			LevelExe.setOnFinish(null);
 		});
+		mRunPattern = new MenuItem("Run current arcade pattern");
+		mRunPattern.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
+		mRunPattern.setOnAction(e -> {
+			// Clone of toolbar button
+			new LevelExe(this.edworld.getFilePath(), "Arcade pattern ("+getFileName()+")", saved, this.mode);
+			LevelExe.setOnFinish(null);
+		});
 		MenuItem mUndo = new MenuItem("Undo");
 		mUndo.setDisable(true);
 		MenuItem mRedo = new MenuItem("Redo");
 		mRedo.setDisable(true);
-		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mSSE, new SeparatorMenuItem(), mRun, new SeparatorMenuItem(), mUndo, mRedo);
+		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mSSE, new SeparatorMenuItem(), mRun, mRunPattern, new SeparatorMenuItem(), mUndo, mRedo);
 		
 		Menu modeMenu = new Menu("_Mode");
 		modeMenu.setMnemonicParsing(true);
@@ -999,7 +1008,7 @@ public class Editor {
 		runArcBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/run.png")));
 		runArcBtn.setOnAction(event -> {
 			// Clone of menu button
-			new LevelExe(CURRENT_FILE_PATH, getFileName(), saved, this.mode);
+			new LevelExe(this.edworld.getFilePath(), "Arcade pattern ("+getFileName()+")", saved, this.mode);
 			LevelExe.setOnFinish(null);
 		});
 		runArcBtn.setDisable(!this.arcade);
@@ -1253,8 +1262,8 @@ public class Editor {
 
 		splitpane.getItems().add(blocksTabPane);
 
-		// Set the divider on 70%
-		splitpane.setDividerPositions(0.70f);
+		// Set the divider on 75%
+		splitpane.setDividerPositions(0.75f);
 		layout.add(menuBar, 0, 0);
 		layout.add(toolbar, 0, 1);
 		layout.add(splitpane, 0, 2);
@@ -1541,6 +1550,7 @@ public class Editor {
 		//System.out.println("File: "+CURRENT_FILE_PATH+" Arcade: "+this.arcade+" Levels: "+getArcadeLevels(CURRENT_FILE_PATH));
 		this.mArcade.setDisable(this.arcade);
 		this.runArcBtn.setDisable(!this.arcade);
+		this.mRunPattern.setDisable(!this.arcade);
 		TilePane tilePane = new TilePane();
                 tilePane.setPadding(new Insets(5, 5, 5, 5));
 		tilePane.setHgap(10);
@@ -1598,7 +1608,7 @@ public class Editor {
         			File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
                                 file.deleteOnExit();
         			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-        			World.writeNewFile(writer, this.edworld.width, this.edworld.height, this.edworld.start, this.edworld.end, this.edworld.allLights);
+        			World.writeNewFile(writer, this.edworld.width, this.edworld.height, this.edworld.start, this.edworld.end, this.edworld.getAllLights());
         			writer.close();
         			World newWorld = new World(file.getAbsolutePath());
         			this.edworld.worldList.addWorld(newWorld);
