@@ -53,6 +53,7 @@ public class World {
         private static File lastCreatedFile;
         private static int X_MOVE, Y_MOVE;
         public Timeline viewTime;
+        private static boolean ALLOW_UPDATES = true;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -184,6 +185,7 @@ public class World {
             X_MOVE = x;
             Y_MOVE = y;
             LevelExe.PLAYER_MOVEMENT = false;
+            ALLOW_UPDATES = false;
             viewTime = new Timeline(new KeyFrame(Duration.millis(150), evt -> {
                 System.out.println(X_MOVE+" "+Y_MOVE);
                 update(X_MOVE-LevelExe.PWS, Y_MOVE-LevelExe.PWS, X_MOVE+LevelExe.PWS, Y_MOVE+LevelExe.PWS, true);
@@ -199,6 +201,7 @@ public class World {
                             update(0, 0, 0, 0, true);
                         }
                         LevelExe.PLAYER_MOVEMENT = true;
+                        ALLOW_UPDATES = true;
                     }
                 }
             }));
@@ -595,7 +598,7 @@ public class World {
 
 	public void update(int x, int y, int x1, int y1, boolean skip) {
 		this.updateLevelStats();
-		if (!canUpdate && !(this instanceof EditableWorld) && !skip){
+		if (!canUpdate && !(this instanceof EditableWorld) && !skip || !ALLOW_UPDATES){
 			return;
 		}
 		canUpdate = false;
