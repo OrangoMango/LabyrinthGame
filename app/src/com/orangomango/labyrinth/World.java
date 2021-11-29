@@ -399,7 +399,10 @@ public class World {
 		return w;
 	}
 	
-	public void updateOnFile() {
+	public void updateOnFile(){
+		updateOnFile(true);
+	}
+	public void updateOnFile(boolean change) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(this.filePath));
 			writeToFile(writer);
@@ -407,9 +410,11 @@ public class World {
 		} catch (IOException e) {
 			Logger.error(e.getMessage());
 		}
-		int[] temp = this.combinedLines;
-		changeToWorld(this.filePath);
-		this.combinedLines = temp;
+		if (change){
+			int[] temp = this.combinedLines;
+			changeToWorld(this.filePath);
+			this.combinedLines = temp;
+		}
 	}
 	
 	public void updateWalls(){

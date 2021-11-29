@@ -894,7 +894,17 @@ public class Editor {
 		prefMenu.setMnemonicParsing(true);
 		mLights = new CheckMenuItem("Turn on lights on all level");
 		mLights.setOnAction(evt -> {
-			System.out.println(getFileName().endsWith(".arc"));
+			if (this.arcade){
+				for (int i = 0; i < World.getArcadeLevels(CURRENT_FILE_PATH); i++){
+					this.edworld.worldList.getWorldAt(i).setAllLights(mLights.isSelected());
+					this.edworld.worldList.getWorldAt(i).updateOnFile(false);
+				}
+				this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+			} else {
+				this.edworld.setAllLights(mLights.isSelected());
+				this.edworld.updateOnFile();
+			}
+			unsaved();
 		});
 		prefMenu.getItems().add(mLights);
 		
@@ -1625,7 +1635,6 @@ public class Editor {
         			writer.close();
         			World newWorld = new World(file.getAbsolutePath());
         			this.edworld.worldList.addWorld(newWorld);
-        			this.edworld.worldList.sync();
         			this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
         			prepareArcadeMode(this.arcade);
         		} catch (IOException ioe){}
