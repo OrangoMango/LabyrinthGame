@@ -187,7 +187,7 @@ public class World {
             LevelExe.PLAYER_MOVEMENT = false;
             VIEWING = true;
             viewTime = new Timeline(new KeyFrame(Duration.millis(150), evt -> {
-                update(X_MOVE-LevelExe.PWS, Y_MOVE-LevelExe.PWS, X_MOVE+LevelExe.PWS, Y_MOVE+LevelExe.PWS, true);
+                update(X_MOVE-LevelExe.PWS, Y_MOVE-LevelExe.PWS, X_MOVE+LevelExe.PWS, Y_MOVE+LevelExe.PWS, true, true);
                 if (X_MOVE != x1){
                     X_MOVE += x1 > x ? 1 : -1;
                 } else {
@@ -195,9 +195,9 @@ public class World {
                         Y_MOVE += y1 > y ? 1 : -1;
                     } else {
                         if (getPlayerView()){
-                            update(player.getX()-LevelExe.PWS, player.getY()-LevelExe.PWS, player.getX()+LevelExe.PWS, player.getY()+LevelExe.PWS, true);
+                            update(player.getX()-LevelExe.PWS, player.getY()-LevelExe.PWS, player.getX()+LevelExe.PWS, player.getY()+LevelExe.PWS, true, true);
                         } else {
-                            update(0, 0, 0, 0, true);
+                            update(0, 0, 0, 0, true, true);
                         }
                         LevelExe.PLAYER_MOVEMENT = true;
                         VIEWING = false;
@@ -595,9 +595,9 @@ public class World {
 		}
 	}
 
-	public void update(int x, int y, int x1, int y1, boolean skip) {
+	public void update(int x, int y, int x1, int y1, boolean skip, boolean invu) {
 		this.updateLevelStats();
-		if (!canUpdate && !(this instanceof EditableWorld) && !skip){
+		if ((!canUpdate && !(this instanceof EditableWorld) && !skip) || (VIEWING && !invu)){
                     return;
 		}
 		canUpdate = false;
@@ -623,7 +623,8 @@ public class World {
 			Logger.warning("World pen is null");
 		}
 	}
-	public void update(int x, int y, int x1, int y1){ update(x, y, x1, y1, false); }
+	public void update(int x, int y, int x1, int y1){ update(x, y, x1, y1, false, false); }
+        public void update(int x, int y, int x1, int y1, boolean s){ update(x, y, x1, y1, s, false); }
 	
 	private String readData(BufferedReader reader){
 		try {
