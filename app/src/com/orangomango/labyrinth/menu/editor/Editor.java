@@ -50,6 +50,7 @@ public class Editor {
    	private RadioMenuItem mNormal, mEngineer;
    	private Button runArcBtn;
 	private MenuItem mRunPattern;
+	private CheckMenuItem mLights;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -889,7 +890,15 @@ public class Editor {
 		this.mArcade.setOnAction(e -> {setArcadeMode(); mArcade.setDisable(true);});
 		modeMenu.getItems().addAll(mNormal, mEngineer, new SeparatorMenuItem(), mArcade);
 		
-		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu);
+		Menu prefMenu = new Menu("_Preferences");
+		prefMenu.setMnemonicParsing(true);
+		mLights = new CheckMenuItem("Turn on lights on all level");
+		mLights.setOnAction(evt -> {
+			System.out.println(getFileName().endsWith(".arc"));
+		});
+		prefMenu.getItems().add(mLights);
+		
+		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu, prefMenu);
 
 		// Setup the toolbar
 		ToolBar toolbar = new ToolBar();
@@ -1076,6 +1085,7 @@ public class Editor {
 				WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
 				saved = SAVES[index];
 				edworld = WORLDS[index];
+				this.mLights.setSelected(edworld.getAllLights());
 				this.setMode("normal");
 				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
 				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
@@ -1377,6 +1387,7 @@ public class Editor {
 				}
 				edworld.changeToWorld(WORKING_FILE_PATH);
 			}
+			this.mLights.setSelected(edworld.getAllLights());
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
 			saved();
@@ -1597,7 +1608,7 @@ public class Editor {
 			tW.setPlayer(new Player(tW.start[0], tW.start[1], tW));
 			tW.draw();
 			miniP.add(title, 0, 0);
-			miniP.add(prevCanvas, 0, 1);
+			miniP.add(prevCanvas, 0, 1, 2, 1);
 			miniP.add(btn, 0, 2);
 			miniP.add(dBtn, 1, 2);
 			tilePane.getChildren().add(miniP);

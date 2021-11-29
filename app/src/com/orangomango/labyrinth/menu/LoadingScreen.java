@@ -44,6 +44,7 @@ public class LoadingScreen {
 		"editor" + File.separator + "pattern_add",
                 "editor" + File.separator + "pattern_edit",
                 "editor" + File.separator + "pattern_delete",
+                "editor" + File.separator + "menu_run",
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_spike_closed",
 		"blocks" + File.separator + "block_wall-null",

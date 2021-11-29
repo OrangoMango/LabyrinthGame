@@ -13,7 +13,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Tooltip;
 import javafx.scene.canvas.*;
+import javafx.scene.image.*;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -81,7 +83,9 @@ public class HomeWindow {
 				innerpane.setHgap(10);
 				innerpane.setVgap(6);
 				Label plabel = new Label(p);
-				Button edit = new Button("Edit");
+				Button edit = new Button();
+				edit.setTooltip(new Tooltip("Edit level"));
+				edit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_edit.png")));
 				edit.setOnAction(event -> {
 					if (Editor.EDITOR_INSTANCE == null) {
 						Editor editor = new Editor(p);
@@ -94,8 +98,12 @@ public class HomeWindow {
 				Label mod = new Label("Last modified: " + format.format(file.lastModified()));
 				Label size = new Label(String.format("Size: %d bytes (Dim.: %dx%d) %s", file.length(), temp.width, temp.height, getDim(temp.width, temp.height)));
 				Label author = new Label("Author: -");
-				Button del = new Button("Delete");
-				Button run = new Button("Run");
+				Button del = new Button();
+				del.setTooltip(new Tooltip("Delete level"));
+				del.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_delete.png")));
+				Button run = new Button();
+				run.setTooltip(new Tooltip("Run level"));
+				run.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/menu_run.png")));
 				Button pub = new Button("Publish");
 				pub.setDisable(true);
 				run.setOnAction(event -> {
