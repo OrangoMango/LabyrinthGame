@@ -18,6 +18,8 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.image.Image;
+import javafx.animation.*;
+import javafx.util.Duration;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.editor.EditableWorld;
@@ -48,6 +50,9 @@ public class World {
 	public WorldList worldList;
 	private boolean showEnd = true;
 	public int[] combinedLines;
+        private static File lastCreatedFile;
+        private static int X_MOVE, Y_MOVE;
+        public Timeline viewTime;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -163,7 +168,7 @@ public class World {
         	this.combinedLines = new int[]{this.height-1};
         }
         
-        public World(Block[][] blocks, int[] start, int[] end, boolean lights, EngBlock[][] ew){
+        public World(Block[][] blocks, int[] start, int[] end, boolean lights, EngBlock[][] ew, boolean delBefore){
         	world = blocks;
         	this.width = blocks[0].length;
         	this.height = blocks.length;
@@ -171,13 +176,44 @@ public class World {
         	this.end = end;
         	this.setAllLights(lights);
         	this.engW = ew != null ? new EngWorld(this, ew, this.width, this.height) : null;
-        	filePath = createTempCopyFilePath();
+        	filePath = createTempCopyFilePath(delBefore);
         	this.combinedLines = new int[]{this.height-1};
         }
         
-        public String createTempCopyFilePath(){
+        public void viewFrom(int x, int y, int x1, int y1){
+            X_MOVE = x;
+            Y_MOVE = y;
+            LevelExe.PLAYER_MOVEMENT = false;
+            viewTime = new Timeline(new KeyFrame(Duration.millis(150), evt -> {
+                System.out.println(X_MOVE+" "+Y_MOVE);
+                update(X_MOVE-LevelExe.PWS, Y_MOVE-LevelExe.PWS, X_MOVE+LevelExe.PWS, Y_MOVE+LevelExe.PWS, true);
+                if (X_MOVE != x1){
+                    X_MOVE += x1 > x ? 1 : -1;
+                } else {
+                    if (Y_MOVE != y1){
+                        Y_MOVE += y1 > y ? 1 : -1;
+                    } else {
+                        if (getPlayerView()){
+                            update(player.getX()-LevelExe.PWS, player.getY()-LevelExe.PWS, player.getX()+LevelExe.PWS, player.getY()+LevelExe.PWS, true);
+                        } else {
+                            update(0, 0, 0, 0, true);
+                        }
+                        LevelExe.PLAYER_MOVEMENT = true;
+                    }
+                }
+            }));
+            viewTime.setCycleCount(Math.abs(y1-y)+Math.abs(x1-x)+1);
+            viewTime.play();
+        }
+        
+        public String createTempCopyFilePath(){ return createTempCopyFilePath(false); }
+        public String createTempCopyFilePath(boolean dbefore){
         	try {
+                        if (lastCreatedFile != null && dbefore){
+                            lastCreatedFile.delete();
+                        }
         		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
+                        lastCreatedFile = file;
                         file.deleteOnExit();
         		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         		writeToFile(writer);
@@ -256,6 +292,7 @@ public class World {
 					f = true;
 				}
 			}
+                        reader.close();
 			return index == 0 ? -1 : index;
 		} catch (IOException ex){
                     return -1;
@@ -270,6 +307,7 @@ public class World {
 				int num = Integer.parseInt(line1.split(":")[1]);
 				return num;
 			}
+                        reader.close();
 		} catch (IOException ex){}
 		return -1;
 	}
@@ -343,7 +381,7 @@ public class World {
 		} else {
 			eOut = null;
 		}
-		World w = new World(output, world1.start, world1.end, world1.getAllLights(), eOut);
+		World w = new World(output, world1.start, world1.end, world1.getAllLights(), eOut, true);
 		int[] cl = new int[world1.combinedLines.length+world2.combinedLines.length];
 		int cont = 0;
 		for (int i : world1.combinedLines){
@@ -356,7 +394,6 @@ public class World {
 		}
 		w.combinedLines = cl;
 		w.updateWalls();
-		System.out.println(Arrays.toString(w.combinedLines));
 		return w;
 	}
 	

@@ -63,7 +63,7 @@ public class SESetup {
     GridPane.setHalignment(cancel, HPos.RIGHT);
     GridPane.setHalignment(endX, HPos.RIGHT);
 
-    Scene scene = new Scene(layout, 500, 150);
+    Scene scene = new Scene(layout, 500, 175);
     scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
     this.stage.setScene(scene);
     this.stage.setTitle("Change start and end position");

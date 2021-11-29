@@ -39,6 +39,7 @@ public class LevelExe {
 	public LevelExe(String path, String filename, boolean saved, String mode) {
 		this.arcade = filename.endsWith(".arc");
 		this.mode = mode;
+                System.out.println("MODE: "+this.mode);
 		if (OPEN || (this.arcade && mode.equals("engineering"))) {
 			return;
 		}
@@ -53,8 +54,12 @@ public class LevelExe {
 		} else {
 			world = new World(path);
 		}
-		this.playerViewEnabled = world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade;
-		world.setPlayerView(this.playerViewEnabled);
+                if (this.mode.equals("engineering")){
+                    this.playerViewEnabled = false;
+                } else {
+                    this.playerViewEnabled = world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade;
+                }
+                world.setPlayerView(this.playerViewEnabled);
 		world.setDrawingMode(this.mode);
 		
 		stage.setOnCloseRequest(event -> {
@@ -73,6 +78,9 @@ public class LevelExe {
 			if (world.getEngineeringWorld() != null){
 				world.getEngineeringWorld().stopAnimations();
 			}
+                        if (world.viewTime != null){
+                            world.viewTime.stop();
+                        }
 			OPEN = false;
 		});
 
@@ -227,6 +235,9 @@ public class LevelExe {
 		if (world.getEngineeringWorld() != null && this.mode.equals("engineering")){
 			world.getEngineeringWorld().startAnimations();
 		}
+                if (this.mode.equals("normal") && !this.arcade){
+                    world.viewFrom(world.end[0], world.end[1], world.start[0], world.start[1]);
+                }
 		stage.setScene(scene);
 		stage.setResizable(false);
 		stage.show();

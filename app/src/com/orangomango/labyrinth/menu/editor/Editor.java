@@ -1563,13 +1563,15 @@ public class Editor {
 			GridPane miniP = new GridPane();
 			miniP.setVgap(3);
 			Label title = new Label("Pattern "+i);
-			Button btn = new Button("Edit pattern");
+			Button btn = new Button();
+                        btn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_edit.png")));
                         btn.setTooltip(new Tooltip(this.edworld.worldList.getLength() > 1 ? this.edworld.worldList.getWorldAt(i-1).getFilePath() : WORKING_FILE_PATH));
 			btn.setOnAction(e -> {
 				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now-1).getFilePath());
 				this.setMode("normal");
 			});
-			Button dBtn = new Button("Delete pattern");
+			Button dBtn = new Button();
+                        dBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_delete.png")));
 			dBtn.setTooltip(new Tooltip("Delete pattern"));
 			dBtn.setDisable(i == 1);
 			dBtn.setOnAction(delEvent -> {
@@ -1597,7 +1599,7 @@ public class Editor {
 			miniP.add(title, 0, 0);
 			miniP.add(prevCanvas, 0, 1);
 			miniP.add(btn, 0, 2);
-			miniP.add(dBtn, 0, 3);
+			miniP.add(dBtn, 1, 2);
 			tilePane.getChildren().add(miniP);
 		}
 		Button addBtn = new Button();
