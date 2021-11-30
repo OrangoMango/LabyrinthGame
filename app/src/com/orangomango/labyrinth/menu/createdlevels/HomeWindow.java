@@ -136,9 +136,7 @@ public class HomeWindow {
 					pages.setMaxPageIndicatorCount(3);
 					pages.setPageFactory(index -> {
 						temp.worldList.getWorldAt(index).previewMode = true;
-						em.setDisable(temp.worldList.getWorldAt(index).getEngineeringWorld() == null);
-						temp.worldList.getWorldAt(index).setDrawingMode("normal");
-						nm.setSelected(true);
+						temp.worldList.getWorldAt(index).setDrawingMode(nm.isSelected() ? "normal" : "engineering");
 						int tempWid = World.BLOCK_WIDTH;
 						World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 						Canvas PCanvas = new Canvas(temp.worldList.getWorldAt(index).width*World.BLOCK_WIDTH, temp.worldList.getWorldAt(index).height*World.BLOCK_WIDTH);
