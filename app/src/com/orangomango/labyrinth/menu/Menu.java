@@ -16,25 +16,20 @@ import java.io.*;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
 import com.orangomango.labyrinth.menu.play.PlayScreen;
-import com.orangomango.labyrinth.LabyrinthMain; // import main application
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 
 public class Menu {
 	private Stage stage;
-	private LabyrinthMain toShowWorld;
         private static String PLAY_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_play.png";
         private static String EDITOR_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_editor.png";
         private static String LEVELS_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_levels.png";
 
 	public static String OPEN = null;
 
-	public Menu(double version) {
-		this.stage = new Stage();
-		this.stage.setTitle("Menu v" + version);
-		this.stage.setOnCloseRequest(event -> {
-			Platform.exit();
-		});
+	public Menu(Stage stage) {
+		this.stage = stage;
+		this.stage.setTitle("Menu v" + com.orangomango.labyrinth.LabyrinthMain.VERSION);
 
 		LoadingScreen ls = new LoadingScreen(this);
 
@@ -47,7 +42,7 @@ public class Menu {
 		playBtn.setGraphic(new ImageView(new Image((new File(PLAY_PATH)).exists() ? "file://" + PLAY_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
 		playBtn.setContentDisplay(ContentDisplay.TOP);
 		playBtn.setOnAction(event -> {
-			PlayScreen screen = new PlayScreen(this.toShowWorld, this.stage);
+			PlayScreen screen = new PlayScreen(this.stage);
 		});
 
 		Button editorBtn = new Button("Editor");
@@ -79,19 +74,15 @@ public class Menu {
 	}
 
 	private void startEditor(String param) {
-		Editor editor = new Editor(param);
+		Editor editor = new Editor(param, this.stage);
 		editor.start();
-	}
-
-	public void setTSW(LabyrinthMain tsw) {
-		this.toShowWorld = tsw;
 	}
 
 	public void start() {
 		this.stage.show();
 		if (OPEN != null) {
 			System.out.println("Opening requested file: " + OPEN);
-			Editor editor = new Editor(OPEN);
+			Editor editor = new Editor(OPEN, this.stage);
 			editor.start();
 		}
 	}

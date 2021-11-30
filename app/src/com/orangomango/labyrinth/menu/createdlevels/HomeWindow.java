@@ -86,7 +86,7 @@ public class HomeWindow {
 				edit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_edit.png")));
 				edit.setOnAction(event -> {
 					if (Editor.EDITOR_INSTANCE == null) {
-						Editor editor = new Editor(p);
+						Editor editor = new Editor(p, stage);
 						editor.start();
 					} else {
 						Editor.EDITOR_INSTANCE.open(new File(p));

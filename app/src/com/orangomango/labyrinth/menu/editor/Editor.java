@@ -724,28 +724,30 @@ public class Editor {
 		referenceWorld.updateOnFile();
 		unsaved();
 	}
+	
+	private void exit(){
+		EDITOR = false;
+		WORKING_FILE_PATHS = new String[1];
+		CURRENT_FILE_PATHS = new String[1];
+		SAVES = new boolean[1];
+		OPENED_TABS = 0;
+            	EDITOR_INSTANCE = null;
+	}
 
     /**
      * Editor class constructor. Setups all editor window (toolbar, canvas, tabs, ...)
      * @param editorFilePath the file path to open
     */
-	public Editor(String editorFilePath) {
+	public Editor(String editorFilePath, Stage stage) {
 		if (EDITOR){
 			return;
 		}
         	EDITOR_INSTANCE = this;
 		EDITOR = true;
 		worldList = new CreatedWorldFiles();
-		this.stage = new Stage();
+		this.stage = stage;
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
-		this.stage.setOnCloseRequest(event -> {
-			EDITOR = false;
-			WORKING_FILE_PATHS = new String[1];
-			CURRENT_FILE_PATHS = new String[1];
-			SAVES = new boolean[1];
-			OPENED_TABS = 0;
-            		EDITOR_INSTANCE = null;
-		});
+		this.stage.setOnCloseRequest(event -> exit());
 
 		GridPane layout = new GridPane();
 
@@ -808,7 +810,11 @@ public class Editor {
 				alert.showAndWait();
 			}
 		});
-		fileMenu.getItems().addAll(mNew, mSave, mOpen);
+		MenuItem mExit = new MenuItem("Exit");
+		mExit.setOnAction(e -> {
+			com.orangomango.labyrinth.menu.Menu m = new com.orangomango.labyrinth.menu.Menu(this.stage);
+		});
+		fileMenu.getItems().addAll(mNew, mSave, mOpen, new SeparatorMenuItem(), mExit);
 		
 		Menu editMenu = new Menu("_Edit");
 		editMenu.setMnemonicParsing(true);

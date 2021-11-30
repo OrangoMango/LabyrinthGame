@@ -21,7 +21,6 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LabyrinthMain extends Application {
 
-    public static String[] FILE_PATHS;
     public static int currentWorldIndex = 0;
     public final static double VERSION = 3.5;
 
@@ -52,13 +51,8 @@ public class LabyrinthMain extends Application {
 
         // Start Menu
         Menu.OPEN = ARG;
-        Menu menu = new Menu(VERSION);
-        menu.setTSW(this);
-        this.stage.setTitle("com.orangomango.labyrinth");
+        Menu menu = new Menu(this.stage);
     }
-
-    public void startShowing() {
-        FILE_PATHS = getLevelsList();
 
     /* 
       Move player (example) from start to end (WORLD1)
@@ -72,5 +66,4 @@ public class LabyrinthMain extends Application {
       player.moveOn(player.Y, player.NEGATIVE);
       player.moveOn(player.X, player.POSITIVE);
    */
-    }
 }
