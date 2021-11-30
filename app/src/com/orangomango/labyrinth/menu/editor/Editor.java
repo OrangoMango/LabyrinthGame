@@ -1654,8 +1654,15 @@ public class Editor {
 		this.mode = m;
 		if (this.mode.equals("engineering")){
 			if (this.edworld.getEngineeringWorld() == null){
-				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld, this.edworld.width, this.edworld.height));
-				this.edworld.updateOnFile();
+                                if (this.arcade){
+                                    for (int i = 0; i < World.getArcadeLevels(CURRENT_FILE_PATH); i++){
+					this.edworld.worldList.getWorldAt(i).setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.worldList.getWorldAt(i), this.edworld.worldList.getWorldAt(i).width, this.edworld.worldList.getWorldAt(i).height));
+					this.edworld.worldList.getWorldAt(i).updateOnFile(false);
+                                    }
+                                } else {
+                                    this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld, this.edworld.width, this.edworld.height));
+                                    this.edworld.updateOnFile();
+                                }
 				unsaved();
 				Logger.info("Engineering mode created successfully");
 			}
