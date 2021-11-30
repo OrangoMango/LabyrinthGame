@@ -17,7 +17,6 @@ import com.orangomango.labyrinth.LabyrinthMain;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
-import static com.orangomango.labyrinth.menu.Menu.PLAY;
 import static com.orangomango.labyrinth.menu.LoadingScreen.LEVELS;
 
 public class PlayScreen {
@@ -98,13 +97,11 @@ public class PlayScreen {
 		tabpane.getSelectionModel().select(LevelInfoTab);
 	}
 
-	public PlayScreen(LabyrinthMain main) {
-		final Stage stage = new Stage();
-		stage.setTitle("Play");
-		stage.setOnCloseRequest(event -> {
-			PLAY = false;
+	public PlayScreen(LabyrinthMain main, Stage stage) {
+		stage.setTitle("Play levels");
+		/*stage.setOnCloseRequest(event -> {
 			LEVELS_OPEN = new int[LEVELS];
-		});
+		});*/
 		TabPane tabpane = new TabPane();
 		Tab tab = new Tab("Levels");
 		tab.setClosable(false);

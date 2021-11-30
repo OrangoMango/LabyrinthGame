@@ -27,9 +27,6 @@ public class Menu {
         private static String EDITOR_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_editor.png";
         private static String LEVELS_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_levels.png";
 
-	public static boolean MYLEVELS = false;
-	public static boolean PLAY = false;
-
 	public static String OPEN = null;
 
 	public Menu(double version) {
@@ -50,10 +47,7 @@ public class Menu {
 		playBtn.setGraphic(new ImageView(new Image((new File(PLAY_PATH)).exists() ? "file://" + PLAY_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
 		playBtn.setContentDisplay(ContentDisplay.TOP);
 		playBtn.setOnAction(event -> {
-			if (!PLAY) {
-				PlayScreen screen = new PlayScreen(this.toShowWorld);
-				PLAY = true;
-			}
+			PlayScreen screen = new PlayScreen(this.toShowWorld, this.stage);
 		});
 
 		Button editorBtn = new Button("Editor");
@@ -67,10 +61,7 @@ public class Menu {
 		levelsBtn.setGraphic(new ImageView(new Image((new File(LEVELS_PATH)).exists() ? "file://" + LEVELS_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
 		levelsBtn.setContentDisplay(ContentDisplay.TOP);
 		levelsBtn.setOnAction(event -> {
-			if (!MYLEVELS) {
-				HomeWindow hw = new HomeWindow();
-				MYLEVELS = true;
-			}
+			HomeWindow hw = new HomeWindow(this.stage);
 		});
 
 		Label sign = new Label("Game by OrangoMango (C)2021");
