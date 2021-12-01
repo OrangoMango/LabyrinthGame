@@ -210,7 +210,7 @@ public class HomeWindow {
 		}
                 pane.setFitToWidth(true);
                 
-                Button exit = new Button();
+                Button exit = new Button("Exit");
                 exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
                 exit.setOnAction(e -> {
                     Menu m = new Menu(stage);

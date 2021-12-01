@@ -153,7 +153,7 @@ public class PlayScreen {
 		VBox vbox = new VBox();
 		vbox.setSpacing(5);
 		vbox.setPadding(new Insets(5, 5, 5, 5));
-		Button exit = new Button();
+		Button exit = new Button("Exit");
                 exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
 		exit.setOnAction(e -> {
 			LEVELS_OPEN = new int[LEVELS];
