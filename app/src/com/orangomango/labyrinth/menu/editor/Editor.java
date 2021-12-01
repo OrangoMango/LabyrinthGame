@@ -1101,6 +1101,9 @@ public class Editor {
 				this.mLights.setSelected(edworld.getAllLights());
 				this.setMode("normal");
 				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
+                                if (this.blocksTabPane != null){
+                                    this.blocksTabPane.getSelectionModel().selectFirst();
+                                }
 				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 			}
 		});
@@ -1403,8 +1406,9 @@ public class Editor {
 			this.mLights.setSelected(edworld.getAllLights());
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
+                        System.out.println("tabPane: "+this.blocksTabPane);
                         if (this.blocksTabPane != null){
-                            this.blocksTabPane.getSelectionModel().select(this.worldsTab);
+                            this.blocksTabPane.getSelectionModel().selectFirst();
                         }
 			saved();
 		} catch (Exception e) {
