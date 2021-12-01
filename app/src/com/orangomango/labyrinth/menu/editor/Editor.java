@@ -41,8 +41,6 @@ public class Editor {
 	public static boolean DONE = true;
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
-	private static boolean EDITOR = false;
-    	public static Editor EDITOR_INSTANCE = null;
 	private Label pointingOn;
    	private boolean arcade = false;
    	private MenuItem mArcade;
@@ -51,6 +49,7 @@ public class Editor {
    	private Button runArcBtn;
 	private MenuItem mRunPattern;
 	private CheckMenuItem mLights;
+        private TabPane blocksTabPane;
 	
 	// Temp variables used to store info
 	private String dirSelection;
@@ -726,12 +725,10 @@ public class Editor {
 	}
 	
 	private void exit(){
-		EDITOR = false;
 		WORKING_FILE_PATHS = new String[1];
 		CURRENT_FILE_PATHS = new String[1];
 		SAVES = new boolean[1];
 		OPENED_TABS = 0;
-            	EDITOR_INSTANCE = null;
 	}
 
     /**
@@ -739,11 +736,6 @@ public class Editor {
      * @param editorFilePath the file path to open
     */
 	public Editor(String editorFilePath, Stage stage) {
-		if (EDITOR){
-			return;
-		}
-        	EDITOR_INSTANCE = this;
-		EDITOR = true;
 		worldList = new CreatedWorldFiles();
 		this.stage = stage;
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
@@ -810,11 +802,7 @@ public class Editor {
 				alert.showAndWait();
 			}
 		});
-		MenuItem mExit = new MenuItem("Exit");
-		mExit.setOnAction(e -> {
-			com.orangomango.labyrinth.menu.Menu m = new com.orangomango.labyrinth.menu.Menu(this.stage);
-		});
-		fileMenu.getItems().addAll(mNew, mSave, mOpen, new SeparatorMenuItem(), mExit);
+		fileMenu.getItems().addAll(mNew, mSave, mOpen, new SeparatorMenuItem());
 		
 		Menu editMenu = new Menu("_Edit");
 		editMenu.setMnemonicParsing(true);
@@ -913,8 +901,17 @@ public class Editor {
 			unsaved();
 		});
 		prefMenu.getItems().add(mLights);
+                
+                Menu exitMenu = new Menu("Exit");
+                MenuItem mExit = new MenuItem("Exit");
+                mExit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
+		mExit.setOnAction(e -> {
+                        exit();
+			com.orangomango.labyrinth.menu.Menu m = new com.orangomango.labyrinth.menu.Menu(this.stage);
+		});
+                exitMenu.getItems().add(mExit);
 		
-		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu, prefMenu);
+		menuBar.getMenus().addAll(fileMenu, editMenu, modeMenu, prefMenu, exitMenu);
 
 		// Setup the toolbar
 		ToolBar toolbar = new ToolBar();
@@ -1076,7 +1073,7 @@ public class Editor {
 		tabs.getTabs().add(editTab);
 		splitpane.getItems().add(tabs);
 
-		TabPane blocksTabPane = new TabPane();
+		blocksTabPane = new TabPane();
 		Tab blocksTab = new Tab("Blocks");
 		blocksTab.setClosable(false);
 
@@ -1406,6 +1403,9 @@ public class Editor {
 			this.mLights.setSelected(edworld.getAllLights());
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
+                        if (this.blocksTabPane != null){
+                            this.blocksTabPane.getSelectionModel().select(this.worldsTab);
+                        }
 			saved();
 		} catch (Exception e) {
 			Logger.error("Could not load world file");

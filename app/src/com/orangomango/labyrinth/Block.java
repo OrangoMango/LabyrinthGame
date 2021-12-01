@@ -278,24 +278,6 @@ public class Block {
 		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/editor/warning.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 	
-	private String wallOpposite(String d){
-		if (!getType().equals(World.WALL)){
-			throw new RuntimeException("Method only available for wall block");
-		}
-		if (d.equals("null")){
-			return "nesw";
-		} else if (d.equals("nesw")){
-			return "null";
-		}
-		String[] directions = new String[]{"n", "e", "s", "w"};
-		StringBuilder output = new StringBuilder();
-		for (String c : directions){
-			if (!d.contains(c))
-				output.append(c);
-		}
-		return output.toString();
-	}
-	
 	public void addConn(String d){
 		if (!getType().equals(World.WALL)){
 			throw new RuntimeException("Method only available for wall block");
@@ -367,7 +349,7 @@ public class Block {
 		
 		switch (getType()){
 			case World.WALL:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-"+wallOpposite(getInfo().split(";")[checkInfoKey("conn")].split("#")[1])+".png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-"+getInfo().split(";")[checkInfoKey("conn")].split("#")[1]+".png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.AIR:
 				drawAirBlock(pen, px, py);

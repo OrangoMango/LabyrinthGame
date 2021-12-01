@@ -10,6 +10,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.canvas.*;
+import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 
 import java.io.*;
@@ -145,14 +146,15 @@ public class PlayScreen {
 		tab.setContent(sp);
 		tabpane.getTabs().add(tab);
 		
-		sp.setPrefSize(stage.getWidth(), stage.getHeight());
+		sp.setFitToHeight(true);
 		stage.widthProperty().addListener((obs, oldVal, newVal) -> sp.setPrefSize((double) newVal, stage.getHeight()));
 		stage.heightProperty().addListener((obs, oldVal, newVal) -> sp.setPrefSize(stage.getWidth(), (double) newVal));
 		
 		VBox vbox = new VBox();
 		vbox.setSpacing(5);
 		vbox.setPadding(new Insets(5, 5, 5, 5));
-		Button exit = new Button("Exit");
+		Button exit = new Button();
+                exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
 		exit.setOnAction(e -> {
 			LEVELS_OPEN = new int[LEVELS];
 			Menu m = new Menu(stage);
@@ -160,7 +162,7 @@ public class PlayScreen {
 		
 		vbox.getChildren().addAll(tabpane, exit);
 		
-		Scene scene = new Scene(vbox, 650, 350);
+		Scene scene = new Scene(vbox, 620, 340);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 		stage.show();

@@ -16,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Tooltip;
 import javafx.scene.canvas.*;
 import javafx.scene.image.*;
+import javafx.geometry.Insets;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
+import com.orangomango.labyrinth.menu.Menu;
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Player;
 
@@ -61,6 +63,8 @@ public class HomeWindow {
 		stage.setTitle("My levels");
 
 		GridPane layout = new GridPane();
+                layout.setVgap(5);
+                layout.setPadding(new Insets(5, 5, 5, 5));
 		CreatedWorldFiles cwf = new CreatedWorldFiles();
 
 		ScrollPane pane = new ScrollPane();
@@ -85,12 +89,8 @@ public class HomeWindow {
 				edit.setTooltip(new Tooltip("Edit level"));
 				edit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_edit.png")));
 				edit.setOnAction(event -> {
-					if (Editor.EDITOR_INSTANCE == null) {
-						Editor editor = new Editor(p, stage);
-						editor.start();
-					} else {
-						Editor.EDITOR_INSTANCE.open(new File(p));
-					}
+					Editor editor = new Editor(p, stage);
+					editor.start();
 				});
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				Label mod = new Label("Last modified: " + format.format(file.lastModified()));
@@ -208,8 +208,16 @@ public class HomeWindow {
 			}
 			pane.setContent(acc);
 		}
-
-		layout.add(pane, 0, 0);
+                pane.setFitToWidth(true);
+                
+                Button exit = new Button();
+                exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
+                exit.setOnAction(e -> {
+                    Menu m = new Menu(stage);
+                });
+                
+                layout.add(exit, 0, 0);
+		layout.add(pane, 0, 1);
 
 		Scene scene = new Scene(layout, 800, 500);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
