@@ -802,7 +802,7 @@ public class Editor {
 				alert.showAndWait();
 			}
 		});
-		fileMenu.getItems().addAll(mNew, mSave, mOpen, new SeparatorMenuItem());
+		fileMenu.getItems().addAll(mNew, mSave, mOpen);
 		
 		Menu editMenu = new Menu("_Edit");
 		editMenu.setMnemonicParsing(true);
@@ -1124,7 +1124,7 @@ public class Editor {
 					db.setHgap(5);
 					db.setVgap(5);
 					ToggleButton wallB = new ToggleButton();
-					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-nesw.png")));
+					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-null.png")));
 					wallB.setTooltip(new Tooltip("Wall block. ID:N1"));
 					wallB.setToggleGroup(tg);
 					wallB.setSelected(SELECTED_BLOCK == 1 && mode.equals("normal"));
@@ -1528,6 +1528,7 @@ public class Editor {
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Levels");
+		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Fonts");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "editor");
 		checkAndCreateDir(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "blocks");

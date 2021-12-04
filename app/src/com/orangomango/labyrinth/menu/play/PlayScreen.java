@@ -12,6 +12,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.canvas.*;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 import java.io.*;
 
@@ -49,28 +51,30 @@ public class PlayScreen {
 					this.pen.strokeLine(180+240*(i-3)/4, 70, 300+240*(i-3)/4, 70);
 			}
 		}
+                this.pen.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/play_font.ttf", 24));
+                this.pen.setTextAlign(TextAlignment.CENTER);
 		for (int i = 0; i < num; i++){
 			this.pen.setFill(Color.GREEN);
 			switch (i % 4){
 				case 0:
 					this.pen.fillRect(60+240*i/4-BUTTON_WIDTH/2, 70-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
-					this.pen.setFill(Color.RED);
-					this.pen.fillText("Level "+(i+1), 60+240*i/4-23, 70+5);
+					this.pen.setFill(Color.WHITE);
+					this.pen.fillText(""+(i+1), 60+240*i/4, 70+5);
 					break;
 				case 1:
 					this.pen.fillRect(60+240*(i-1)/4-BUTTON_WIDTH/2, 190-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
-					this.pen.setFill(Color.RED);
-					this.pen.fillText("Level "+(i+1), 60+240*(i-1)/4-23, 190+5);
+					this.pen.setFill(Color.WHITE);
+					this.pen.fillText(""+(i+1), 60+240*(i-1)/4, 190+5);
 					break;
 				case 2:
 					this.pen.fillRect(180+240*(i-2)/4-BUTTON_WIDTH/2, 190-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
-					this.pen.setFill(Color.RED);
-					this.pen.fillText("Level "+(i+1), 180+240*(i-2)/4-23, 190+5);
+					this.pen.setFill(Color.WHITE);
+					this.pen.fillText(""+(i+1), 180+240*(i-2)/4, 190+5);
 					break;
 				case 3:
 					this.pen.fillRect(180+240*(i-3)/4-BUTTON_WIDTH/2, 70-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
-					this.pen.setFill(Color.RED);
-					this.pen.fillText("Level "+(i+1), 180+240*(i-3)/4-23, 70+5);
+					this.pen.setFill(Color.WHITE);
+					this.pen.fillText(""+(i+1), 180+240*(i-3)/4, 70+5);
 			}
 		}
 	}
@@ -102,8 +106,21 @@ public class PlayScreen {
 
 	public PlayScreen(Stage stage) {
 		stage.setTitle("Play levels");
+		TabPane selectionMode = new TabPane();
+		/*selectionMode.tabMinWidthProperty().set(32);
+        	selectionMode.tabMaxWidthProperty().set(32);
+		selectionMode.tabMinHeightProperty().set(32);
+        	selectionMode.tabMaxHeightProperty().set(32);*/
+		Tab playLevels = new Tab("Levels");
+		//playLevels.setGraphic(new ImageView(new Image("file:///home/paul/.labyrinthgame/Images/editor/pattern_add.png")));
+		playLevels.setClosable(false);
+		Tab playArcade = new Tab("Arcade");
+		playArcade.setClosable(false);
+		selectionMode.getTabs().addAll(playLevels, playArcade);
+
 		TabPane tabpane = new TabPane();
-		Tab tab = new Tab("Levels");
+		playLevels.setContent(tabpane);
+		Tab tab = new Tab("Demo");
 		tab.setClosable(false);
 		ScrollPane sp = new ScrollPane();
 		sp.requestFocus();
@@ -153,16 +170,16 @@ public class PlayScreen {
 		VBox vbox = new VBox();
 		vbox.setSpacing(5);
 		vbox.setPadding(new Insets(5, 5, 5, 5));
-		Button exit = new Button("Exit");
+		Button exit = new Button("Back to menu");
                 exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
 		exit.setOnAction(e -> {
 			LEVELS_OPEN = new int[LEVELS];
 			Menu m = new Menu(stage);
 		});
 		
-		vbox.getChildren().addAll(tabpane, exit);
+		vbox.getChildren().addAll(selectionMode, exit);
 		
-		Scene scene = new Scene(vbox, 620, 340);
+		Scene scene = new Scene(vbox, 650, 380);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 		stage.show();

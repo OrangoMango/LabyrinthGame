@@ -1,15 +1,13 @@
 package com.orangomango.labyrinth.menu;
 
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ContentDisplay;
-import javafx.geometry.Insets;
+import javafx.scene.layout.Pane;
+import javafx.scene.canvas.*;
+import javafx.scene.paint.Color;
 import javafx.scene.image.*;
+import javafx.scene.text.Font;
+import javafx.scene.effect.ColorAdjust;
 
 import java.io.*;
 
@@ -21,62 +19,166 @@ import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 
 public class Menu {
 	private Stage stage;
-        private static String PLAY_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_play.png";
-        private static String EDITOR_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_editor.png";
-        private static String LEVELS_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/button_levels.png";
+        private GraphicsContext gc;
+	private double width, height;
+        private final static String IMAGE_PATH = changeSlash(PATH) + ".labyrinthgame/Images/editor/";
+        private final static int WIDTH = 650;
+        private final static int HEIGHT = 400;
+        private final static int BUTTON_WIDTH = 260;
+        private final static int BUTTON_HEIGHT = 40;
+        private final static int MENU_WIDTH = 350;
+        private final static int MENU_HEIGHT = 300;
+        private boolean isIn = false;
+        private boolean openedWindow = false;
 
 	public static String OPEN = null;
 
 	public Menu(Stage stage) {
 		this.stage = stage;
 		this.stage.setTitle("Menu v" + com.orangomango.labyrinth.LabyrinthMain.VERSION);
-
-		LoadingScreen ls = new LoadingScreen(this);
-
-		GridPane layout = new GridPane();
-		layout.setHgap(20);
-		layout.setVgap(20);
-		layout.setPadding(new Insets(5, 5, 5, 5));
-
-		Button playBtn = new Button("Play");
-		playBtn.setGraphic(new ImageView(new Image((new File(PLAY_PATH)).exists() ? "file://" + PLAY_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
-		playBtn.setContentDisplay(ContentDisplay.TOP);
-		playBtn.setOnAction(event -> {
-			PlayScreen screen = new PlayScreen(this.stage);
+		
+		
+		Pane layout = new Pane();
+		Canvas canvas = new Canvas(WIDTH, HEIGHT);
+		canvas.setOnMousePressed(e -> {
+			if (openedWindow) return;
+			int x = (int)Math.round(e.getX());
+			int y = (int)Math.round(e.getY());
+                        if (isContainedIn(x, y, 195, 80, 455, 120)){
+                            PlayScreen screen = new PlayScreen(this.stage);
+                        } else if (isContainedIn(x, y, 195, 130, 455, 170)){
+                            startEditor(null);
+                        } else if (isContainedIn(x, y, 195, 180, 455, 220)){
+                            HomeWindow hw = new HomeWindow(this.stage);
+                        } else if (isContainedIn(x, y, 195, 230, 455, 270)){
+                        	showInMenu("profile", this.gc);
+                        } else if (isContainedIn(x, y, 195, 280, 455, 320)){
+                        	showInMenu("credits", this.gc);
+                        }
 		});
-
-		Button editorBtn = new Button("Editor");
-		editorBtn.setGraphic(new ImageView(new Image((new File(EDITOR_PATH)).exists() ? "file://" + EDITOR_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_editor.png")));
-		editorBtn.setContentDisplay(ContentDisplay.TOP);
-		editorBtn.setOnAction(event -> {
-			startEditor(null);
-		});
-
-		Button levelsBtn = new Button("My levels");
-		levelsBtn.setGraphic(new ImageView(new Image((new File(LEVELS_PATH)).exists() ? "file://" + LEVELS_PATH : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/button_play.png")));
-		levelsBtn.setContentDisplay(ContentDisplay.TOP);
-		levelsBtn.setOnAction(event -> {
-			HomeWindow hw = new HomeWindow(this.stage);
-		});
-
-		Label sign = new Label("Game by OrangoMango (C)2021");
-		Hyperlink l = new Hyperlink("https://orangomango.github.io");
-		l.setOnAction(event -> System.out.println("Click at this link: https://orangomango.github.io"));
-		layout.add(playBtn, 0, 0);
-		layout.add(editorBtn, 1, 0);
-		layout.add(levelsBtn, 2, 0);
-		layout.add(sign, 0, 1, 3, 1);
-		layout.add(l, 0, 2, 3, 1);
-
-		Scene scene = new Scene(layout, 300, 200);
-		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+                
+                canvas.setOnMouseMoved(e -> {
+			if (openedWindow) return;
+			int x = (int)Math.round(e.getX());
+			int y = (int)Math.round(e.getY());
+                        if (isContainedIn(x, y, 195, 80, 455, 120)){
+                            if (!isIn){
+                                updateCanvas(this.gc, 0);
+                                isIn = true;
+                            }
+                        } else if (isContainedIn(x, y, 195, 130, 455, 170)){
+                            if (!isIn){
+                                updateCanvas(this.gc, 1);
+                                isIn = true;
+                            }
+                        } else if (isContainedIn(x, y, 195, 180, 455, 220)){
+                            if (!isIn){
+                                updateCanvas(this.gc, 2);
+                                isIn = true;
+                            }
+                        } else if (isContainedIn(x, y, 195, 230, 455, 270)){
+                            if (!isIn){
+                                updateCanvas(this.gc, 3);
+                                isIn = true;
+                            }
+                        } else if (isContainedIn(x, y, 195, 280, 455, 320)){
+                            if (!isIn){
+                                updateCanvas(this.gc, 4);
+                                isIn = true;
+                            }
+                        } else if (isIn){
+                            isIn = false;
+                            updateCanvas(this.gc, -1);
+                        }
+                });
+                
+		gc = canvas.getGraphicsContext2D();
+                updateCanvas(gc, -1);
+		
+		layout.getChildren().add(canvas);
+                
+		Scene scene = new Scene(layout, WIDTH, HEIGHT);
+		
 		this.stage.setScene(scene);
-	}
+                this.stage.setResizable(false);
+                
+		LoadingScreen ls = new LoadingScreen(this);
+        }
+        
+        private void showMenu(GraphicsContext gc){
+        	gc.setFill(Color.GRAY);
+       		gc.fillRect(0, 0, WIDTH, HEIGHT);
+        	gc.setFill(Color.YELLOW);
+           	gc.fillRect((WIDTH-MENU_WIDTH)/2, (HEIGHT-MENU_HEIGHT)/2, MENU_WIDTH, MENU_HEIGHT);
+        }
+        
+        private void updateCanvas(GraphicsContext gc, int ds){
+        	showMenu(gc);
+            gc.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/menu_font.ttf", 20));
+            for (int i = 0; i < 5; i++){
+                String text = null;
+                String imageName = null;
+                switch (i){
+                    case 0:
+                        text = "PLAY";
+                        imageName = "button_play.png";
+                        break;
+                    case 1:
+                        text = "EDITOR";
+                        imageName = "button_editor.png";
+                        break;
+                    case 2:
+                        text = "MY LEVELS";
+                        imageName = "button_levels.png";
+                        break;
+                    case 3:
+                        text = "PROFILE";
+                        imageName = "button_profile.png";
+                        break;
+                    case 4:
+                        text = "CREDITS";
+                        imageName = "button_credits.png";
+                        break;
+                }
+                gc.setFill(Color.RED);
+                if (i == ds){
+                	ColorAdjust effect = new ColorAdjust();
+                	effect.setBrightness(-0.2);
+                    	gc.setEffect(effect);
+                }
+                gc.drawImage(new Image((new File(IMAGE_PATH+imageName)).exists() ? "file://" + IMAGE_PATH+imageName : "https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/editor/"+imageName), (WIDTH-MENU_WIDTH)/2+(MENU_WIDTH-BUTTON_WIDTH)/2, 80+(BUTTON_HEIGHT+10)*i, BUTTON_WIDTH, BUTTON_HEIGHT);
+                gc.setEffect(null);
+                gc.setFill(Color.BLACK);
+                gc.fillText(text, 275, 105+(BUTTON_HEIGHT+10)*i);
+            }
+        }
+        
+        private void showInMenu(String what, GraphicsContext gc){
+        	if (what.equals("credits")){
+        		this.openedWindow = true;
+        		showMenu(gc);
+               		gc.setFill(Color.BLACK);
+        		gc.fillText("Coming soon...", 225, 150);
+        	} else if (what.equals("profile")){
+        		this.openedWindow = true;
+        		showMenu(gc);
+               		gc.setFill(Color.BLACK);
+        		gc.fillText("Coming soon...", 225, 150);
+        	}
+        }
 
 	private void startEditor(String param) {
 		Editor editor = new Editor(param, this.stage);
 		editor.start();
 	}
+        
+        private boolean isContainedIn(int v1, int v2, int x, int y, int x1, int y1){
+            if (v1 >= x && v1 <= x1 && v2 >= y && v2 <= y1){
+                return true;
+            } else {
+                return false;
+            }
+        }
 
 	public void start() {
 		this.stage.show();

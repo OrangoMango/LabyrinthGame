@@ -25,6 +25,10 @@ import com.orangomango.labyrinth.Logger;
 
 public class LoadingScreen {
 	public static final int LEVELS = 10;
+	private static final String[] FONTNAMES = new String[] {
+		"menu_font",
+		"play_font"
+	};
 	private static final String[] IMGNAMES = new String[] {
 		"editor" + File.separator + "ac",
 		"editor" + File.separator + "ar",
@@ -37,7 +41,8 @@ public class LoadingScreen {
 		"editor" + File.separator + "sse",
 		"editor" + File.separator + "button_editor",
 		"editor" + File.separator + "button_play",
-		"editor" + File.separator + "button_levels",		
+		"editor" + File.separator + "button_levels",
+		"editor" + File.separator + "button_profile",	
 		"editor" + File.separator + "warning",
 		"editor" + File.separator + "arrow_sign_h",
 		"editor" + File.separator + "arrow_sign_v",
@@ -114,6 +119,7 @@ public class LoadingScreen {
 	};
 	
 	private static final int IMAGES = IMGNAMES.length;
+	private static final int FONTS = FONTNAMES.length;
 	private Stage stage;
 	private Menu menu;
 	private static int ALERTS = 0;
@@ -174,7 +180,7 @@ public class LoadingScreen {
 			Task dwlworker = new Task() {
 				@Override
 				protected Object call() {
-					int total = LEVELS + IMAGES - 2 + 1;
+					int total = LEVELS + IMAGES + FONTS - 2 + 1;
 					int progress = 0;
 					updateMessage("Downloading styles");
 					updateProgress(progress, total);
@@ -190,6 +196,12 @@ public class LoadingScreen {
 						updateProgress(progress, total);
 						updateMessage("Downloading image " + IMGNAMES[x] + ".png");
 						downloadFile(String.format("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/images/%s.png", convertSlash(IMGNAMES[x])), String.format(PATH + ".labyrinthgame" + File.separator + "Images" + File.separator + "%s.png", IMGNAMES[x]));
+						progress++;
+					}
+					for (int x = 0; x<FONTS; x++) {
+						updateProgress(progress, total);
+						updateMessage("Downloading font " + FONTNAMES[x] + ".ttf");
+						downloadFile(String.format("https://github.com/OrangoMango/LabyrinthGame/raw/main/app/lib/fonts/%s.ttf", FONTNAMES[x]), String.format(PATH + ".labyrinthgame" + File.separator + "Fonts" + File.separator + "%s.ttf", FONTNAMES[x]));
 						progress++;
 					}
 					updateMessage("Download finished.");
