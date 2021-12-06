@@ -88,15 +88,12 @@ public class LevelExe {
 		Label label = new Label(filename + ((saved) ? " \n(Level is currently synchronized)" : "\n(Level not synchronized, unsaved)"));
 
 		canvas.setFocusTraversable(true);
-		
-		Canvas levelStatsCanvas = new Canvas(LevelStats.WIDTH, LevelStats.HEIGHT);
 
 		GridPane layout = new GridPane();
 		layout.setVgap(5);
 		layout.setPadding(new Insets(10, 10, 10, 10));
 		layout.add(label, 0, 0);
 		layout.add(canvas, 0, 1);
-		layout.add(levelStatsCanvas, 0, 2);
 
 		GraphicsContext pen = canvas.getGraphicsContext2D();
 		world.setPen(pen);
@@ -104,9 +101,9 @@ public class LevelExe {
 		Scene scene;
 		System.out.println(this.playerViewEnabled);
 		if (!this.playerViewEnabled){
-			scene = new Scene(layout, LevelStats.WIDTH < World.BLOCK_WIDTH * world.width ? World.BLOCK_WIDTH * world.width + 20 : LevelStats.WIDTH + 20, World.BLOCK_WIDTH * world.height + 60 + LevelStats.HEIGHT + 10);
+			scene = new Scene(layout, World.BLOCK_WIDTH * world.width + 20, World.BLOCK_WIDTH * world.height + 60);
 		} else {
-			scene = new Scene(layout, PWS*2*World.BLOCK_WIDTH+20+World.BLOCK_WIDTH, PWS*2*World.BLOCK_WIDTH+60+World.BLOCK_WIDTH+LevelStats.HEIGHT+10);
+			scene = new Scene(layout, PWS*2*World.BLOCK_WIDTH+20+World.BLOCK_WIDTH, PWS*2*World.BLOCK_WIDTH+60+World.BLOCK_WIDTH);
 		}
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
@@ -116,7 +113,7 @@ public class LevelExe {
 		player.setPsFilePath(path);
 		world.setPlayer(player);
 		
-		LevelStats levelStats = new LevelStats(world, levelStatsCanvas.getGraphicsContext2D());
+		LevelStats levelStats = new LevelStats(world, pen);
 		world.setLevelStats(levelStats);
 				
 		for (Entity e : world.getEnts()){
@@ -225,7 +222,7 @@ public class LevelExe {
 			}
 		});
 
-		levelStats.draw();
+		//levelStats.draw();
 		
 		if (world.getBlockAt(player.getX(), player.getY()).isWater() && this.mode.equals("normal")){
 			player.oxygenSwitch = true;

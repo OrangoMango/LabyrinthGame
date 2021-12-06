@@ -38,7 +38,6 @@ public class Editor {
 	private static String CURRENT_FILE_PATH = "";
 	private boolean saved = true;
 	public static CreatedWorldFiles worldList;
-	public static boolean DONE = true;
 	private static int SELECTED_BLOCK = 1;
 	private TabPane tabs;
 	private Label pointingOn;
@@ -753,7 +752,6 @@ public class Editor {
 		mNew.setOnAction(e -> {
 		    // Clone of toolbar button
 		    NewWidget wid = new NewWidget(false);
-		    wid.setEDW(edworld);
 		    wid.setEditor(this);
 		});
 		MenuItem mSave = new MenuItem("Save");
@@ -925,7 +923,6 @@ public class Editor {
 		newBtn.setOnAction(event -> {
 			// Clone of menu button
 			NewWidget wid = new NewWidget(false);
-			wid.setEDW(edworld);
 			wid.setEditor(this);
 		});
 		Button saveBtn = new Button("Save");
@@ -1053,9 +1050,6 @@ public class Editor {
 		if (editorFilePath != null) {
 			Logger.info("Opening: " + editorFilePath);
 			open(new File(editorFilePath));
-		} else if (getCurrentFilePath() == null) {
-			DONE = false;
-			Selection sel = new Selection(edworld, this);
 		} else {
 			Logger.info("Last file: " + getCurrentFilePath());
 			open(new File(getCurrentFilePath()));
@@ -1299,15 +1293,6 @@ public class Editor {
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		this.stage.setScene(scene);
 	}
-    
-    /**
-     * Show the window
-    */
-	public void start() {
-		if (DONE && this.stage != null) {
-			this.stage.show();
-		}
-	}
 
     /**
      * Update the file that contains last opened world
@@ -1369,12 +1354,8 @@ public class Editor {
 			}
 			Random r = new Random();
 			int number = r.nextInt();
-
-			if (Arrays.asList(CURRENT_FILE_PATHS).contains(f.getAbsolutePath())) {
-			this.tabs.getSelectionModel().select(Arrays.asList(CURRENT_FILE_PATHS).indexOf(f.getAbsolutePath()));
-				return;
-			}
-
+                        boolean oldPathIn = Arrays.asList(CURRENT_FILE_PATHS).contains(f.getAbsolutePath());
+                                                
 			CURRENT_FILE_PATH = f.getAbsolutePath();
 			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
 
@@ -1391,12 +1372,16 @@ public class Editor {
 			checkAndDeleteCache();
 			copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
 			if (this.tabs != null && getCurrentFilePath() != null) {
-				Tab newTab = new Tab(f.getName());
+                            Tab newTab;
+                            if (oldPathIn){
+                                newTab = this.tabs.getTabs().get(Arrays.asList(CURRENT_FILE_PATHS).indexOf(f.getAbsolutePath()));
+                            } else {
+				newTab = new Tab(f.getName());
 				newTab.setClosable(false);
 				newTab.setContent(getEditorTabContent());
-
 				this.tabs.getTabs().add(newTab);
-				this.tabs.getSelectionModel().select(newTab);
+                            }
+                            this.tabs.getSelectionModel().select(newTab);
 			} else {
 				if (this.tabs != null) {
 					this.tabs.getSelectionModel().getSelectedItem().setText(getFileName());
@@ -1406,7 +1391,6 @@ public class Editor {
 			this.mLights.setSelected(edworld.getAllLights());
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
-                        System.out.println("tabPane: "+this.blocksTabPane);
                         if (this.blocksTabPane != null){
                             this.blocksTabPane.getSelectionModel().selectFirst();
                         }

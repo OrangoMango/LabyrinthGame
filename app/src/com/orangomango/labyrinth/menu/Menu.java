@@ -14,6 +14,7 @@ import java.io.*;
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
 import com.orangomango.labyrinth.menu.play.PlayScreen;
+import com.orangomango.labyrinth.menu.editor.Selection;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 
@@ -168,8 +169,11 @@ public class Menu {
         }
 
 	private void startEditor(String param) {
-		Editor editor = new Editor(param, this.stage);
-		editor.start();
+		if (Editor.getCurrentFilePath() == null){
+			Selection sel = new Selection(this.stage);
+		} else {
+			Editor editor = new Editor(param, this.stage);
+		}
 	}
         
         private boolean isContainedIn(int v1, int v2, int x, int y, int x1, int y1){
@@ -185,7 +189,6 @@ public class Menu {
 		if (OPEN != null) {
 			System.out.println("Opening requested file: " + OPEN);
 			Editor editor = new Editor(OPEN, this.stage);
-			editor.start();
 		}
 	}
 

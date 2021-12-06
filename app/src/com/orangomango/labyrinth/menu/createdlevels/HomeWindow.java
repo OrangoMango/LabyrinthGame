@@ -90,7 +90,6 @@ public class HomeWindow {
 				edit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_edit.png")));
 				edit.setOnAction(event -> {
 					Editor editor = new Editor(p, stage);
-					editor.start();
 				});
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				Label mod = new Label("Last modified: " + format.format(file.lastModified()));

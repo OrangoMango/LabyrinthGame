@@ -87,6 +87,7 @@ public class LoadingScreen {
 		"entities" + File.separator + "player_n",
 		"entities" + File.separator + "player_e",
 		"entities" + File.separator + "player_w",
+                "entities" + File.separator + "player_s",
 		"entities" + File.separator + "bat_side_1",
 		"entities" + File.separator + "bat_side_2",
 		"entities" + File.separator + "bat_front_1",

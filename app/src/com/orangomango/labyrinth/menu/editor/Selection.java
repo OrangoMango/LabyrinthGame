@@ -13,26 +13,16 @@ import java.io.*;
 
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
-import static com.orangomango.labyrinth.menu.editor.Editor.DONE;
 
 public class Selection {
 
-	private EditableWorld edworld;
 	private Editor editor;
 	private Stage stage;
-	private static boolean OPENED = false;
 
-	public Selection(EditableWorld ed, Editor editor) {
-		if (OPENED){
-			return;
-		}
-		OPENED = true;
-		this.edworld = ed;
-		this.editor = editor;
+	public Selection(Stage stage) {
 
-		this.stage = new Stage();
+		this.stage = stage;
 		this.stage.setTitle("Create or open a file");
-		this.stage.setOnCloseRequest(event -> OPENED = false);
 		Button newBtn = new Button("New");
 		newBtn.setOnAction(event -> setupNewWidget());
 		Button openBtn = new Button("Open");
@@ -57,10 +47,7 @@ public class Selection {
 
 	private void setupNewWidget() {
 		NewWidget wid = new NewWidget(true);
-		wid.setEDW(this.edworld);
-		wid.setEditor(this.editor);
-		this.stage.close();
-		OPENED = false;
+                wid.setEditorStage(this.stage);
 	}
 
 	private void setupEditor() {
@@ -70,18 +57,18 @@ public class Selection {
 			chooser.setTitle("Open world");
 			chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("World file", "*.wld"));
 			File f = chooser.showOpenDialog(this.stage);
-			DONE = true;
-			this.stage.close();
-			this.editor.start();
-			this.editor.open(f);
+                        if (this.editor == null){
+                            Editor edi = new Editor(f.getAbsolutePath(), this.stage);
+                        } else {
+                            this.editor.open(f);
+                        }
 		} catch (Exception e) {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setHeaderText("Error while parsing file");
 			alert.setTitle("Error");
 			alert.setContentText("Could not open world file!");
 			alert.showAndWait();
-            Platform.exit();
+                        Platform.exit();
 		}
-		OPENED = false;
 	}
 }

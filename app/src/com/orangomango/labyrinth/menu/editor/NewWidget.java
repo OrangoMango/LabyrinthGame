@@ -42,9 +42,9 @@ public class NewWidget {
 	private Spinner spinner1, spinner2, spinner3, spinner4;
 	private CheckBox allow, lights;
 	private Label pathL;
-	private EditableWorld ed;
 	private Editor editor;
 	private Label sizeL;
+        private Stage editorStage;
 
 	private int pWidth, pHeight = 0;
 	private int sX, sY, eX, eY;
@@ -287,10 +287,6 @@ public class NewWidget {
 		return this.file.getAbsolutePath();
 	}
 
-	public void setEDW(EditableWorld ed) {
-		this.ed = ed;
-	}
-
 	public void finishWidget() {
 		try {
 			String path = this.file.getAbsolutePath();
@@ -343,18 +339,22 @@ public class NewWidget {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(this.file));
 			writeNewFile(writer, this.pWidth, this.pHeight, new int[]{sX, sY}, new int[]{eX, eY}, this.lights.isSelected());
 			writer.close();
-			if (!this.ed.equals(null)) {
-				Editor.DONE = true;
-				this.editor.start(); // If it's hidded then show
-				this.editor.open(new File(getPath()));
+			if (this.editor == null){
+				Editor editor = new Editor(this.file.getAbsolutePath(), this.editorStage);
+			} else {
+				this.editor.open(this.file);
 			}
 		} catch (IOException ex) {}
-		this.stage.close();
+                this.stage.close();
 	}
 
 	public void setEditor(Editor editor) {
 		this.editor = editor;
 	}
+        
+        public void setEditorStage(Stage stage){
+            this.editorStage = stage;
+        }
 
 	public void switchScene(int move) {
 		if (move == 1) {

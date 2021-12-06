@@ -12,25 +12,19 @@ public class LevelStats {
 	private GraphicsContext pen;
 	private World world;
 	
-	public static final int HEIGHT = 70, WIDTH = 250;
+	private static final int BAR_WIDTH = 50;
+	private static final int BAR_HEIGHT = 10;
+	public static final int ICON_SIZE = 10;
+	public static final double GAP_FACTOR = 1.3;
 	
 	public LevelStats(World w, GraphicsContext pen){
 		this.pen = pen;
 		this.world = w;
 	}
 	
-	public void update(){
-		this.pen.clearRect(0, 0, WIDTH, HEIGHT);
-		draw();
-	}
-	
-	public void draw(){
-		this.pen.setStroke(Color.BLACK);
-		this.pen.setLineWidth(2);
-		this.pen.strokeRect(0, 0, WIDTH, HEIGHT);
-		this.pen.setLineWidth(1);
-		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/health.png"), 10, 10, 20, 20);
-		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/oxygen.png"), 10, 40, 20, 20);
+	public void draw(double x, double y){
+		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/health.png"), x, y, ICON_SIZE, ICON_SIZE);
+		pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/oxygen.png"), x, y+ICON_SIZE*GAP_FACTOR, ICON_SIZE, ICON_SIZE);
 		int health = this.world.getPlayer().getHealth();
 		
 		/* RED - ORANGE - YELLOW - GREEN - LIME
@@ -56,13 +50,13 @@ public class LevelStats {
 			this.pen.setFill(Color.BLACK);
 		}
 		
-		this.pen.fillRect(40, 10, (int)Math.round(health/100.0*175), 20);
-		this.pen.strokeRect(40, 10, 175, 20);
+		this.pen.fillRect(x+ICON_SIZE*GAP_FACTOR, y, (int)Math.round(health/100.0*BAR_WIDTH), BAR_HEIGHT);
+		this.pen.strokeRect(x+ICON_SIZE*GAP_FACTOR, y, BAR_WIDTH, BAR_HEIGHT);
 		
 		int ox = this.world.getPlayer().getOx();
 		this.pen.setFill(Color.CYAN);
-		this.pen.fillRect(40, 40, (int)Math.round(ox/100.0*175), 20);
-		this.pen.strokeRect(40, 40, 175, 20);
+		this.pen.fillRect(x+ICON_SIZE*GAP_FACTOR, y+ICON_SIZE*GAP_FACTOR, (int)Math.round(ox/100.0*BAR_WIDTH), BAR_HEIGHT);
+		this.pen.strokeRect(x+ICON_SIZE*GAP_FACTOR, y+ICON_SIZE*GAP_FACTOR, BAR_WIDTH, BAR_HEIGHT);
 	}
 }
 

@@ -282,7 +282,7 @@ public class Block {
 		if (!getType().equals(World.WALL)){
 			throw new RuntimeException("Method only available for wall block");
 		}
-		if (getInfo().split("#")[1].equals("null")){
+		if (getInfo().split(";")[checkInfoKey("conn")].split("#")[1].equals("null")){
 			addInfoParam("conn#"+d);
 			return;
 		}
@@ -290,7 +290,7 @@ public class Block {
 		StringBuilder builder = new StringBuilder();
 		String[] directions = new String[]{"n", "e", "s", "w"};
 		for (String c : directions){
-			if (getInfo().split("#")[1].contains(c) || d.equals(c)){
+			if (getInfo().split(";")[checkInfoKey("conn")].split("#")[1].contains(c) || d.equals(c)){
 				builder.append(c);
 			}
 		}
@@ -301,15 +301,18 @@ public class Block {
 		if (!getType().equals(World.WALL)){
 			throw new RuntimeException("Method only available for wall block");
 		}
-		if (d.equals(getInfo().split("#")[1])){
-			addInfoParam("conn#null");
-			return;
+		if (d.equals(getInfo().split(";")[checkInfoKey("conn")].split("#")[1])){
+                    addInfoParam("conn#null");
+                    return;
 		}
-		if (!getInfo().split("#")[1].contains(d)){
-			return;
+		if (!getInfo().split(";")[checkInfoKey("conn")].split("#")[1].contains(d)){
+                    return;
 		}
-		StringBuilder sb = new StringBuilder(getInfo().split("#")[1]);
-		sb.deleteCharAt(getInfo().split("#")[1].indexOf(d));
+                if (getInfo().split(";")[checkInfoKey("conn")].split("#")[1].equals("null")){
+                    return;
+                }
+		StringBuilder sb = new StringBuilder(getInfo().split(";")[checkInfoKey("conn")].split("#")[1]);
+		sb.deleteCharAt(getInfo().split(";")[checkInfoKey("conn")].split("#")[1].indexOf(d));
 		addInfoParam("conn#"+sb.toString());
 	}
 	

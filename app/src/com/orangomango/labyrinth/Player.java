@@ -19,6 +19,8 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
 import com.orangomango.labyrinth.menu.play.entity.*;
 import com.orangomango.labyrinth.engineering.EngBlock;
+import static com.orangomango.labyrinth.menu.editor.LevelStats.GAP_FACTOR;
+import static com.orangomango.labyrinth.menu.editor.LevelStats.ICON_SIZE;
 
 
 public class Player {
@@ -150,6 +152,9 @@ public class Player {
 	
 	public void draw(GraphicsContext pen, double x, double y) {
 		World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player", x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction);
+		if (this.world.getLevelStats() != null){
+			this.world.getLevelStats().draw(x, y-ICON_SIZE*(2+GAP_FACTOR));
+		}
 	}
 
 	public void moveOn(String direction, int m, Stage stage, int[] rec) {

@@ -467,12 +467,10 @@ public class World {
 		this.levelStats = ls;
 	}
 	
-	public void updateLevelStats(){
-		if (this.levelStats != null){
-			this.levelStats.update();
-		}
+	public LevelStats getLevelStats(){
+		return this.levelStats;
 	}
-
+	
 	public void setPlayerView(boolean value) {
 		this.playerView = value;
 	}
@@ -601,7 +599,6 @@ public class World {
 	}
 
 	public void update(int x, int y, int x1, int y1, boolean skip, boolean invu) {
-		this.updateLevelStats();
 		if ((!canUpdate && !(this instanceof EditableWorld) && !skip) || (VIEWING && !invu)){
                     return;
 		}
