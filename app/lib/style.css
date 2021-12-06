@@ -1,9 +1,0 @@
-.root{
-    -fx-font-size: 10pt;
-    -fx-base: #F2A32A;
-    -fx-background: #F4D105;
-}
-
-.pagination > .pagination-control {
-    -fx-font-size: 12;
-}
