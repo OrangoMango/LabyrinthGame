@@ -26,8 +26,7 @@ sh run.sh
 * Interface<br>
 ![image](https://user-images.githubusercontent.com/61402409/144900184-30c7e2f6-f357-43d9-a3e2-d64ed444a6e9.png)
 * Gameplay (*Use arrows to move*)<br>
-![image](https://user-images.githubusercontent.com/61402409/144900287-e07d7d82-4b08-4617-8780-5bb0b6a14835.png)
-![image](https://user-images.githubusercontent.com/61402409/144900238-115e4e3b-42d9-418c-93b9-ac628e425081.png)
+![image](https://user-images.githubusercontent.com/61402409/144900287-e07d7d82-4b08-4617-8780-5bb0b6a14835.png) ![image](https://user-images.githubusercontent.com/61402409/144900238-115e4e3b-42d9-418c-93b9-ac628e425081.png)
 * Editor (*Click on the block to change its type*)<br>
 ![image](https://user-images.githubusercontent.com/61402409/144900416-294deefa-6be3-44e4-af46-492ef0998fa7.png)
 * Engineering mode<br>
