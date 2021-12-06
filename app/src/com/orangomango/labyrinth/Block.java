@@ -371,7 +371,7 @@ public class Block {
 				break;
 			case World.SHOOTER:
 				String d = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				World.drawRotatedImage(pen, new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, d);
+				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, d);
 				break;
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
@@ -427,7 +427,7 @@ public class Block {
 			case World.D_ARROW:
 				drawAirBlock(pen, px, py);
 				String direct = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				World.drawRotatedImage(pen, new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct);
+				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct);
 				break;
 			case World.OXYGEN_POINT:
 				drawAirBlock(pen, px, py);

@@ -149,8 +149,7 @@ public class Player {
 	}
 	
 	public void draw(GraphicsContext pen, double x, double y) {
-		Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player.png");
-		World.drawRotatedImage(pen, image, x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction);
+		World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player", x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction);
 	}
 
 	public void moveOn(String direction, int m, Stage stage, int[] rec) {

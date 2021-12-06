@@ -113,7 +113,7 @@ public class Menu {
         }
         
         private void updateCanvas(GraphicsContext gc, int ds){
-        	showMenu(gc);
+            showMenu(gc);
             gc.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/menu_font.ttf", 20));
             for (int i = 0; i < 5; i++){
                 String text = null;

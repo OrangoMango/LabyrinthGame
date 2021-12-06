@@ -796,33 +796,48 @@ public class World {
 		return output;
 	}
 	
-	public static void drawRotatedImage(GraphicsContext pen, Image img, double x, double y, int w, String d){
+	public static void drawRotatedImage(GraphicsContext pen, String img, double x, double y, int w, String d){
 		// NORTH: 0 - EAST: 90 - SOUTH: 180 - WEST: -90 (Square images only)
-		
-		switch (d){
+                switch (d){
 			case NORTH:
-				pen.drawImage(img, x, y, w, w);
+                                if (img.contains("player")){
+                                    pen.drawImage(new Image(img+"_n.png"), x, y, w, w);
+                                } else {
+                                    pen.drawImage(new Image(img+".png"), x, y, w, w);
+                                }
 				break;
 			case EAST:
-				pen.translate(x+w, y);
-				pen.rotate(90);
-				pen.drawImage(img, 0, 0, w, w);
-				pen.rotate(-90);
-				pen.translate(-x-w, -y);
+                                if (img.contains("player")){
+                                    pen.drawImage(new Image(img+"_e.png"), x, y, w, w);
+                                } else {
+                                    pen.translate(x+w, y);
+                                    pen.rotate(90);
+                                    pen.drawImage(new Image(img+".png"), 0, 0, w, w);
+                                    pen.rotate(-90);
+                                    pen.translate(-x-w, -y);
+                                }
 				break;
 			case SOUTH:
-				pen.translate(x+w, y+w);
-				pen.rotate(180);
-				pen.drawImage(img, 0, 0, w, w);
-				pen.rotate(-180);
-				pen.translate(-x-w, -y-w);
+                                if (img.contains("player")){
+                                    pen.drawImage(new Image(img+"_s.png"), x, y, w, w);
+                                } else {
+                                    pen.translate(x+w, y+w);
+                                    pen.rotate(180);
+                                    pen.drawImage(new Image(img+".png"), 0, 0, w, w);
+                                    pen.rotate(-180);
+                                    pen.translate(-x-w, -y-w);
+                                }
 				break;
 			case WEST:
-				pen.translate(x, y+w);
-				pen.rotate(-90);
-				pen.drawImage(img, 0, 0, w, w);
-				pen.rotate(90);
-				pen.translate(-x, -y-w);
+                                if (img.contains("player")){
+                                    pen.drawImage(new Image(img+"_w.png"), x, y, w, w);
+                                } else {
+                                    pen.translate(x, y+w);
+                                    pen.rotate(-90);
+                                    pen.drawImage(new Image(img+".png"), 0, 0, w, w);
+                                    pen.rotate(90);
+                                    pen.translate(-x, -y-w);
+                                }
 				break;
 		}
 	}

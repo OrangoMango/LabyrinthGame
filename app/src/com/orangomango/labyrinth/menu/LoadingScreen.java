@@ -52,6 +52,12 @@ public class LoadingScreen {
                 "editor" + File.separator + "pattern_delete",
                 "editor" + File.separator + "menu_run",
                 "editor" + File.separator + "back_arrow",
+                "editor" + File.separator + "background_levels",
+                "editor" + File.separator + "background_arcade",
+                "editor" + File.separator + "tab_arcade_on",
+                "editor" + File.separator + "tab_arcade_off",
+                "editor" + File.separator + "tab_levels_on",
+                "editor" + File.separator + "tab_levels_off",
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_spike_closed",
 		"blocks" + File.separator + "block_wall-null",
@@ -78,7 +84,9 @@ public class LoadingScreen {
 		"blocks" + File.separator + "oxygen_point",
 		"blocks" + File.separator + "end",
 		"entities" + File.separator + "move_block",
-		"entities" + File.separator + "player",
+		"entities" + File.separator + "player_n",
+		"entities" + File.separator + "player_e",
+		"entities" + File.separator + "player_w",
 		"entities" + File.separator + "bat_side_1",
 		"entities" + File.separator + "bat_side_2",
 		"entities" + File.separator + "bat_front_1",
@@ -181,11 +189,13 @@ public class LoadingScreen {
 			Task dwlworker = new Task() {
 				@Override
 				protected Object call() {
-					int total = LEVELS + IMAGES + FONTS - 2 + 1;
+					int total = LEVELS + IMAGES + FONTS;
 					int progress = 0;
 					updateMessage("Downloading styles");
 					updateProgress(progress, total);
 					downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "style.css");
+					progress++;
+                                        downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/play_style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "play_style.css");
 					progress++;
 					for (int x = 0; x<LEVELS; x++) {
 						updateMessage("Downloading " + "level " + (x + 1) + ".wld.sys");

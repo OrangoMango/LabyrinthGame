@@ -5,6 +5,9 @@ import javafx.scene.Scene;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
@@ -105,27 +108,48 @@ public class PlayScreen {
 	}
 
 	public PlayScreen(Stage stage) {
-		stage.setTitle("Play levels");
+		stage.setTitle("Play");
 		TabPane selectionMode = new TabPane();
-		/*selectionMode.tabMinWidthProperty().set(32);
-        	selectionMode.tabMaxWidthProperty().set(32);
-		selectionMode.tabMinHeightProperty().set(32);
-        	selectionMode.tabMaxHeightProperty().set(32);*/
+		selectionMode.getStyleClass().add("floating");
+		selectionMode.setTabMaxWidth(32);
+		selectionMode.setTabMaxHeight(32);
 		Tab playLevels = new Tab("Levels");
-		//playLevels.setGraphic(new ImageView(new Image("file:///home/paul/.labyrinthgame/Images/editor/pattern_add.png")));
+		playLevels.setStyle("-fx-background-color: transparent");
+		playLevels.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_levels_on.png")));
 		playLevels.setClosable(false);
 		Tab playArcade = new Tab("Arcade");
+		playArcade.setStyle("-fx-background-color: transparent");
+		playArcade.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_arcade_off.png")));
 		playArcade.setClosable(false);
-		selectionMode.getTabs().addAll(playLevels, playArcade);
+                VBox arcadeContent = new VBox();
+		arcadeContent.setBackground(new Background(new BackgroundImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/background_arcade.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null)));
+		playArcade.setContent(arcadeContent);
+                selectionMode.getTabs().addAll(playLevels, playArcade);
+
+		playLevels.setOnSelectionChanged(e -> {
+			playLevels.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_levels_on.png")));
+			playArcade.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_arcade_off.png")));
+		});
+		
+		playArcade.setOnSelectionChanged(e -> {
+			playLevels.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_levels_off.png")));
+			playArcade.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_arcade_on.png")));
+		});
 
 		TabPane tabpane = new TabPane();
-		playLevels.setContent(tabpane);
+                tabpane.getStyleClass().add("floating");
+		VBox lvls = new VBox();
+		lvls.setPadding(new Insets(20, 20, 20, 20));
+		lvls.getChildren().add(tabpane);
+		playLevels.setContent(lvls);
+		lvls.setBackground(new Background(new BackgroundImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/background_levels.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null)));
 		Tab tab = new Tab("Demo");
 		tab.setClosable(false);
 		ScrollPane sp = new ScrollPane();
 		sp.requestFocus();
 		Canvas canvas = new Canvas(LEVELS*60, 250);
 		sp.setContent(canvas);
+		tab.setContent(sp);
 		
 		canvas.setOnMousePressed(event -> {
 			double x = event.getX(), y = event.getY();
@@ -159,8 +183,6 @@ public class PlayScreen {
 		//main.startShowing();
 
 		drawCanvas(LEVELS);
-
-		tab.setContent(sp);
 		tabpane.getTabs().add(tab);
 		
 		sp.setFitToHeight(true);
@@ -179,9 +201,12 @@ public class PlayScreen {
 		
 		vbox.getChildren().addAll(selectionMode, exit);
 		
-		Scene scene = new Scene(vbox, 650, 380);
-		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
+		Scene scene = new Scene(vbox, 700, 430);
+		scene.getStylesheets().addAll("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css", "file://" + changeSlash(PATH) + ".labyrinthgame/Editor/play_style.css");
 		stage.setScene(scene);
+		
+		System.out.println(lvls.getWidth());
+		System.out.println(lvls.getHeight());
 		stage.show();
 	}
 }
