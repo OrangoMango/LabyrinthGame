@@ -2,7 +2,6 @@ package com.orangomango.labyrinth.menu.play.entity;
 
 import javafx.scene.canvas.*;
 import javafx.animation.*;
-import javafx.scene.image.*;
 import javafx.util.Duration;
 
 import com.orangomango.labyrinth.World;
@@ -12,7 +11,7 @@ import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
 
 public class Arrow extends Entity{
 	private String direction = "";
-	private Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow.png");
+	private String image = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow";
 	private Timeline t;
 	private boolean SHOW = false;
 	private double stepX = 0.0;
