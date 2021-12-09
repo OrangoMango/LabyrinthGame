@@ -57,25 +57,24 @@ public class PlayScreen {
                 this.pen.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/play_font.ttf", 24));
                 this.pen.setTextAlign(TextAlignment.CENTER);
 		for (int i = 0; i < num; i++){
-			this.pen.setFill(Color.GREEN);
 			switch (i % 4){
 				case 0:
-					this.pen.fillRect(60+240*i/4-BUTTON_WIDTH/2, 70-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
+					this.pen.drawImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/level_select.png"), 60+240*i/4-BUTTON_WIDTH/2, 70-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
 					this.pen.setFill(Color.WHITE);
 					this.pen.fillText(""+(i+1), 60+240*i/4, 70+5);
 					break;
 				case 1:
-					this.pen.fillRect(60+240*(i-1)/4-BUTTON_WIDTH/2, 190-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
+					this.pen.drawImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/level_select.png"), 60+240*(i-1)/4-BUTTON_WIDTH/2, 190-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
 					this.pen.setFill(Color.WHITE);
 					this.pen.fillText(""+(i+1), 60+240*(i-1)/4, 190+5);
 					break;
 				case 2:
-					this.pen.fillRect(180+240*(i-2)/4-BUTTON_WIDTH/2, 190-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
+					this.pen.drawImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/level_select.png"), 180+240*(i-2)/4-BUTTON_WIDTH/2, 190-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
 					this.pen.setFill(Color.WHITE);
 					this.pen.fillText(""+(i+1), 180+240*(i-2)/4, 190+5);
 					break;
 				case 3:
-					this.pen.fillRect(180+240*(i-3)/4-BUTTON_WIDTH/2, 70-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
+					this.pen.drawImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/level_select.png"), 180+240*(i-3)/4-BUTTON_WIDTH/2, 70-BUTTON_WIDTH/2, BUTTON_WIDTH, BUTTON_WIDTH);
 					this.pen.setFill(Color.WHITE);
 					this.pen.fillText(""+(i+1), 180+240*(i-3)/4, 70+5);
 			}
