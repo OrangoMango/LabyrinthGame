@@ -58,6 +58,7 @@ public class LoadingScreen {
                 "editor" + File.separator + "tab_arcade_off",
                 "editor" + File.separator + "tab_levels_on",
                 "editor" + File.separator + "tab_levels_off",
+                "editor" + File.separator + "level_select",
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_spike_closed",
 		"blocks" + File.separator + "block_wall-null",
