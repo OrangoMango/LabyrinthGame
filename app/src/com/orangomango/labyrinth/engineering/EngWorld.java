@@ -3,6 +3,7 @@ package com.orangomango.labyrinth.engineering;
 import java.util.Arrays;
 
 import com.orangomango.labyrinth.World;
+import com.orangomango.labyrinth.Block;
 
 public class EngWorld {
 	private EngBlock[][] world;
@@ -31,7 +32,7 @@ public class EngWorld {
 		for (EngBlock[] r: this.world) {
 			for (EngBlock b: r) {
 				if (b.getType().equals(EngBlock.GENERATOR)){
-					b.makeAnimation(new String[]{"generator_1", "generator_2", "generator_3", "generator_4", "generator_5", "generator_5"}, 250);
+					b.makeAnimation(5, 250);
 				}
 			}
 		}
@@ -137,8 +138,11 @@ public class EngWorld {
 		a += (w ? 1 : 0);
 
 		String d = (n ? "n" : "") + (e ? "e" : "") + (s ? "s" : "") + (w ? "w" : "");
+		if (d.equals("")){
+			d = "null";
+		}
 		return new String[] {
-			Integer.toString(a), d, "cable" + (a == 0 ? "" : "-") + d + ".png"
+			Integer.toString(a), d, Integer.toString(Block.getSpriteCoords(d, true))
 		};
 	}
 	

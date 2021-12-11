@@ -316,6 +316,24 @@ public class Block {
 		addInfoParam("conn#"+sb.toString());
 	}
 	
+	public static int getSpriteCoords(String data, boolean complete){
+		String[] names;
+		if (complete){
+			names = new String[]{"e", "es", "esw", "ew", "n", "ne", "nes", "nesw", "new", "ns", "nsw", "null", "nw", "s", "sw", "w"};
+		} else {
+			names = new String[]{"e", "n", "s", "w"};
+		}
+		int foundAt = -1, foundNow = 1;
+		for (String name : names){
+			if (data.equals(name)){
+				foundAt = foundNow;
+				break;
+			}
+			foundNow += World.DEFAULT_BLOCK_WIDTH+2;
+		}
+		return foundAt;
+	}
+	
 	public void draw(GraphicsContext pen, int px, int py, World w) {
 		
 		/*
@@ -352,7 +370,7 @@ public class Block {
 		
 		switch (getType()){
 			case World.WALL:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-"+getInfo().split(";")[checkInfoKey("conn")].split("#")[1]+".png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png"), getSpriteCoords(getInfo().split(";")[checkInfoKey("conn")].split("#")[1], true), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.AIR:
 				drawAirBlock(pen, px, py);
@@ -374,7 +392,7 @@ public class Block {
 				break;
 			case World.SHOOTER:
 				String d = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, d);
+				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, d);
 				break;
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
@@ -430,7 +448,7 @@ public class Block {
 			case World.D_ARROW:
 				drawAirBlock(pen, px, py);
 				String direct = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct);
+				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow.png", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct);
 				break;
 			case World.OXYGEN_POINT:
 				drawAirBlock(pen, px, py);

@@ -11,7 +11,7 @@ import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
 
 public class Arrow extends Entity{
 	private String direction = "";
-	private String image = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow";
+	private String image = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow.png";
 	private Timeline t;
 	private boolean SHOW = false;
 	private double stepX = 0.0;

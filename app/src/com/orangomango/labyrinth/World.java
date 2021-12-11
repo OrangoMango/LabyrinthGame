@@ -74,7 +74,8 @@ public class World {
 	public final static String PARALLEL_BLOCK = "parallel_block";
 	public final static String OXYGEN_POINT = "oxygen_point";
 
-	public static int BLOCK_WIDTH = 32;
+	public static final int DEFAULT_BLOCK_WIDTH = 32;
+	public static int BLOCK_WIDTH = DEFAULT_BLOCK_WIDTH;
 	
 	public static class WorldList{
 		private World[] worlds;
@@ -795,48 +796,7 @@ public class World {
 	
 	public static void drawRotatedImage(GraphicsContext pen, String img, double x, double y, int w, String d){
 		// NORTH: 0 - EAST: 90 - SOUTH: 180 - WEST: -90 (Square images only)
-                switch (d){
-			case NORTH:
-                                if (img.contains("player")){
-                                    pen.drawImage(new Image(img+"_n.png"), x, y, w, w);
-                                } else {
-                                    pen.drawImage(new Image(img+".png"), x, y, w, w);
-                                }
-				break;
-			case EAST:
-                                if (img.contains("player")){
-                                    pen.drawImage(new Image(img+"_e.png"), x, y, w, w);
-                                } else {
-                                    pen.translate(x+w, y);
-                                    pen.rotate(90);
-                                    pen.drawImage(new Image(img+".png"), 0, 0, w, w);
-                                    pen.rotate(-90);
-                                    pen.translate(-x-w, -y);
-                                }
-				break;
-			case SOUTH:
-                                if (img.contains("player")){
-                                    pen.drawImage(new Image(img+"_s.png"), x, y, w, w);
-                                } else {
-                                    pen.translate(x+w, y+w);
-                                    pen.rotate(180);
-                                    pen.drawImage(new Image(img+".png"), 0, 0, w, w);
-                                    pen.rotate(-180);
-                                    pen.translate(-x-w, -y-w);
-                                }
-				break;
-			case WEST:
-                                if (img.contains("player")){
-                                    pen.drawImage(new Image(img+"_w.png"), x, y, w, w);
-                                } else {
-                                    pen.translate(x, y+w);
-                                    pen.rotate(-90);
-                                    pen.drawImage(new Image(img+".png"), 0, 0, w, w);
-                                    pen.rotate(90);
-                                    pen.translate(-x, -y-w);
-                                }
-				break;
-		}
+		pen.drawImage(new Image(img), Block.getSpriteCoords(d, false), 1, DEFAULT_BLOCK_WIDTH, DEFAULT_BLOCK_WIDTH, x, y, w, w);
 	}
 
 	public void draw() {
