@@ -635,7 +635,7 @@ public class Editor {
 						case 2:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.LEVER);
-							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/lever_off.png;category#wall;type#lever");
+							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/lever.png;category#wall;type#lever");
 							break;
 						case 3:
 							engblock.setInfo(null);
@@ -647,12 +647,12 @@ public class Editor {
 						case 4:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.LED);
-							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/led_off.png;category#air;type#led");
+							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/led.png;category#air;type#led");
 							break;
 						case 5:
 							engblock.setInfo(null);
 							engblock.toggleType(EngBlock.DOOR);
-							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/door_1.png;category#air;type#door");
+							createParallelBlock(editableworld, engblock.getX(), engblock.getY(), "imagePath#engineering/blocks/door.png;category#air;type#door");
 							break;
 					}
 					
@@ -1118,7 +1118,7 @@ public class Editor {
 					db.setHgap(5);
 					db.setVgap(5);
 					ToggleButton wallB = new ToggleButton();
-					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall-null.png")));
+					wallB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_block_wall.png")));
 					wallB.setTooltip(new Tooltip("Wall block. ID:N1"));
 					wallB.setToggleGroup(tg);
 					wallB.setSelected(SELECTED_BLOCK == 1 && mode.equals("normal"));
@@ -1205,7 +1205,7 @@ public class Editor {
 					engp1.setHgap(5);
 					engp1.setVgap(5);
 					ToggleButton cableB = new ToggleButton();
-					cableB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/cable-es.png")));
+					cableB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_block_cable.png")));
 					cableB.setTooltip(new Tooltip("Cable block. ID:E1"));
 					cableB.setToggleGroup(tg);
 					cableB.setSelected(SELECTED_BLOCK == 1 && mode.equals("engineering"));
@@ -1221,7 +1221,7 @@ public class Editor {
 					engp2.setHgap(5);
 					engp2.setVgap(5);
 					ToggleButton leverB = new ToggleButton();
-					leverB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/lever_on.png")));
+					leverB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_block_lever.png")));
 					leverB.setTooltip(new Tooltip("Lever block. ID:E2"));
 					leverB.setToggleGroup(tg);
 					leverB.setOnAction(event -> SELECTED_BLOCK = 2);
@@ -1236,7 +1236,7 @@ public class Editor {
 					engp3.setHgap(5);
 					engp3.setVgap(5);
 					ToggleButton generatorB = new ToggleButton();
-					generatorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/generator_5.png")));
+					generatorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_block_generator.png")));
 					generatorB.setTooltip(new Tooltip("Generator block. ID:E3"));
 					generatorB.setToggleGroup(tg);
 					generatorB.setOnAction(event -> SELECTED_BLOCK = 3);
@@ -1251,12 +1251,12 @@ public class Editor {
 					engp4.setHgap(5);
 					engp4.setVgap(5);
 					ToggleButton ledB = new ToggleButton();
-					ledB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/led_off.png")));
+					ledB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_block_led.png")));
 					ledB.setTooltip(new Tooltip("Led block. ID:E4"));
 					ledB.setToggleGroup(tg);
 					ledB.setOnAction(event -> SELECTED_BLOCK = 4);
 					ToggleButton doorB = new ToggleButton();
-					doorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/engineering/blocks/door_3.png")));
+					doorB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_block_door.png")));
 					doorB.setTooltip(new Tooltip("Door block. ID:E5"));
 					doorB.setToggleGroup(tg);
 					doorB.setOnAction(event -> SELECTED_BLOCK = 5);

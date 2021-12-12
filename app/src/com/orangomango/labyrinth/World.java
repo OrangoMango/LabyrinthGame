@@ -782,7 +782,7 @@ public class World {
 					addEnt(new CSpike(this, x[it2].getX(), x[it2].getY()));
 				} else if (x[it2].getType() == PARALLEL_BLOCK){
 					if (x[it2].parallelBlockData[x[it2].checkInfoKey("type")].equals(EngBlock.DOOR)){
-						addEnt(new ParallelBlock(this, x[it2].getX(), x[it2].getY(), x[it2].getInfo(), new String[][]{{"engineering/blocks/door_1.png", "engineering/blocks/door_2.png", "engineering/blocks/door_3.png", "engineering/blocks/door_4.png"},{"engineering/blocks/door_4.png", "engineering/blocks/door_3.png", "engineering/blocks/door_2.png", "engineering/blocks/door_1.png"}}, "engineering/blocks/door_4.png", "engineering/blocks/door_1.png"));
+						addEnt(new ParallelBlock(this, x[it2].getX(), x[it2].getY(), x[it2].getInfo(), new int[][]{{0, 1, 2, 3},{3, 2, 1, 0}}, 3, 0));
 					}
 				}
 				it2++;

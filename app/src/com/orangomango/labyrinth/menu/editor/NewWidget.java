@@ -226,7 +226,7 @@ public class NewWidget {
 		this.spinner2.setMaxWidth(90);
 		this.spinner3.setMaxWidth(90);
 		this.spinner4.setMaxWidth(90);
-		this.lights = new CheckBox("Turn on lights on all level (Engineering mode)");
+		this.lights = new CheckBox("Turn on lights on all level\n(Engineering mode)");
 		l3.add(allow, 0, 1, 3, 1);
 		l3.add(lab1, 0, 2);
 		l3.add(lab2, 0, 3);

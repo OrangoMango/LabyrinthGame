@@ -12,25 +12,25 @@ import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
 
 public class ParallelBlock extends Entity{
-	private Image image;
+	private final Image image;
 	public String[] parallelBlockData;
 	private String info;
-	private String[][] imageFrames;
+	private int[][] imageFrames;
 	private int internalCounter = 0;
 	private Timeline t;
-	private boolean open = false; // = active
+	private boolean active = false;
 	private boolean doing = false;
-	private String activeImagePath, inactiveImagePath;
-	private String currentImagePath = "";
+	private int activeImageIndex, inactiveImageIndex;
+	private int currentImageIndex;
 	
-	public ParallelBlock(World w, double x, double y, String info, String[][] imageFrames, String activeImagePath, String inactiveImagePath){
+	public ParallelBlock(World w, double x, double y, String info, int[][] imageFrames, int activeImageIndex, int inactiveImageIndex){
 		setData(w);
 		setX(x);
 		setY(y);
 		this.info = info;
 		this.imageFrames = imageFrames;
-		this.activeImagePath = activeImagePath;
-		this.inactiveImagePath = inactiveImagePath;
+		this.activeImageIndex = activeImageIndex;
+		this.inactiveImageIndex = inactiveImageIndex;
 		this.engineering = true;
 		
 		int counter = 0;
@@ -45,46 +45,42 @@ public class ParallelBlock extends Entity{
 		t = new Timeline(new KeyFrame(Duration.millis(150), event -> {
 			boolean updateRequest = false;
 			if (w.getEngineeringWorld().getBlockAt((int)getX(), (int)getY()).isActive()){
-				if (!open){
-					this.currentImagePath = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+imageFrames[0][internalCounter];
-					this.image = new Image(this.currentImagePath);
+				if (!active){
+					this.currentImageIndex = imageFrames[0][internalCounter];
 					updateRequest = true;
 					if (internalCounter+1 != imageFrames[0].length){
 						internalCounter++;
 					} else {
 						internalCounter = 0;
-						if (open != true){
-							open = true;
+						if (active != true){
+							active = true;
 						}
 					}
 				} else {
-					if (!this.currentImagePath.equals("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+this.activeImagePath)){
+					if (this.currentImageIndex != this.activeImageIndex){
 						internalCounter = 0;
 						updateRequest = true;
 					}
-					this.currentImagePath = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+this.activeImagePath;
-					this.image = new Image(this.currentImagePath);
+					this.currentImageIndex = this.activeImageIndex;
 				}
 			} else {
-				if (open){
-					this.currentImagePath = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+imageFrames[1][internalCounter];
-					this.image = new Image(this.currentImagePath);
+				if (active){
+					this.currentImageIndex = imageFrames[1][internalCounter];
 					updateRequest = true;
 					if (internalCounter+1 != imageFrames[1].length){
 						internalCounter++;
 					} else {
 						internalCounter = 0;
-						if (open != false){
-							open = false;
+						if (active != false){
+							active = false;
 						}
 					}
 				} else {
-					if (!this.currentImagePath.equals("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+this.inactiveImagePath)){
+					if (this.currentImageIndex != this.inactiveImageIndex){
 						internalCounter = 0;
 						updateRequest = true;
 					}
-					this.currentImagePath = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+this.inactiveImagePath;
-					this.image = new Image(this.currentImagePath);
+					this.currentImageIndex = this.inactiveImageIndex;
 				}
 			}
 			if (updateRequest){
@@ -116,6 +112,6 @@ public class ParallelBlock extends Entity{
 	}
 
 	public void draw(GraphicsContext p, double px, double py) {
-		p.drawImage(this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+		p.drawImage(this.image, 1+(World.DEFAULT_BLOCK_WIDTH+2)*this.currentImageIndex, 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 	}
 }
