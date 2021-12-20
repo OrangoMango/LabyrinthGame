@@ -592,7 +592,7 @@ public class World {
 					String bType = b.parallelBlockData[b.checkInfoKey("type")];
 					EngBlock eb = engW.getBlockAt(b.getX(), b.getY());
 					if (bType.equals(EngBlock.LEVER) || bType.equals(EngBlock.LED)){
-						b.addInfoParam("imagePath#engineering/blocks/"+bType+"_"+(eb.isActive() ? "on" : "off")+".png;category#air;type#"+bType);
+						b.addInfoParam("imagePath#engineering/blocks/"+bType+".png;category#air;type#"+bType);
 					}
 				}
 			}

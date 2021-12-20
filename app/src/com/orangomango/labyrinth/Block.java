@@ -482,7 +482,7 @@ public class Block {
 			case World.PARALLEL_BLOCK:
 				drawAirBlock(pen, px, py);
 				if (!parallelBlockData[checkInfoKey("type")].equals(EngBlock.DOOR) || (parallelBlockData[checkInfoKey("type")].equals(EngBlock.DOOR) && (w instanceof EditableWorld || w.previewMode))){
-					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[checkInfoKey("imagePath")]), 1, 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+					pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/"+parallelBlockData[checkInfoKey("imagePath")]), 1+(w.getEngineeringWorld().getBlockAt(getX(), getY()).isActive() ? 1 : 0)*(World.DEFAULT_BLOCK_WIDTH + 2), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				}
 				break;
 			case World.D_ARROW:
