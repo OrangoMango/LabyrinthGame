@@ -32,7 +32,7 @@ public class EngWorld {
 		for (EngBlock[] r: this.world) {
 			for (EngBlock b: r) {
 				if (b.getType().equals(EngBlock.GENERATOR)){
-					b.makeAnimation(5, 250);
+					b.makeAnimation(5, 125);
 				}
 			}
 		}
@@ -142,7 +142,7 @@ public class EngWorld {
 			d = "null";
 		}
 		return new String[] {
-			Integer.toString(a), d, Integer.toString(Block.getSpriteCoords(d, true))
+			Integer.toString(a), d, Integer.toString(Block.getSpriteCoords(d, true, false))
 		};
 	}
 	

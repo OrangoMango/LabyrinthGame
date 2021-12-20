@@ -11,7 +11,7 @@ import static com.orangomango.labyrinth.menu.editor.LevelExe.PWS;
 
 public class Arrow extends Entity{
 	private String direction = "";
-	private String image = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow.png";
+	private String image = "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/arrow";
 	private Timeline t;
 	private boolean SHOW = false;
 	private double stepX = 0.0;
@@ -105,7 +105,7 @@ public class Arrow extends Entity{
 	
 	public void draw(GraphicsContext pen, double px, double py){
 		if (SHOW){
-			World.drawRotatedImage(pen, this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction);
+			World.drawRotatedImage(pen, this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction, false, false, false, null);
 		}
 	}
 }

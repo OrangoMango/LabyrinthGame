@@ -421,10 +421,10 @@ public class World {
 	public void updateWalls(){
 		for (Block[] blockRow : this.world){
 			for (Block b : blockRow){
-				if (b.getType() == WALL){
+				if (b.getWallAttach()){
 					if (this.getBlockAt(b.getX(), b.getY()-1) != null){
-						if (this.getBlockAt(b.getX(), b.getY()-1).getType().equals(WALL)){
-						    this.getBlockAt(b.getX(), b.getY()-1).addConn("s");
+						if (this.getBlockAt(b.getX(), b.getY()-1).getWallAttach()){
+						       this.getBlockAt(b.getX(), b.getY()-1).addConn("s");
 						} else {
 							b.removeConn("n");
 						}
@@ -432,7 +432,7 @@ public class World {
 						b.removeConn("n");
 					}
 					if (this.getBlockAt(b.getX()+1, b.getY()) != null){
-						if (this.getBlockAt(b.getX()+1, b.getY()).getType().equals(WALL)){
+						if (this.getBlockAt(b.getX()+1, b.getY()).getWallAttach()){
 						    this.getBlockAt(b.getX()+1, b.getY()).addConn("w");
 						} else {
 							b.removeConn("e");
@@ -441,7 +441,7 @@ public class World {
 						b.removeConn("e");
 					}
 					if (this.getBlockAt(b.getX(), b.getY()+1) != null){
-						if (this.getBlockAt(b.getX(), b.getY()+1).getType().equals(WALL)){
+						if (this.getBlockAt(b.getX(), b.getY()+1).getWallAttach()){
 						    this.getBlockAt(b.getX(), b.getY()+1).addConn("n");
 						} else {
 							b.removeConn("s");
@@ -450,7 +450,7 @@ public class World {
 						b.removeConn("s");
 					}
 					if (this.getBlockAt(b.getX()-1, b.getY()) != null){
-						if (this.getBlockAt(b.getX()-1, b.getY()).getType().equals(WALL)){
+						if (this.getBlockAt(b.getX()-1, b.getY()).getWallAttach()){
 						    this.getBlockAt(b.getX()-1, b.getY()).addConn("e");
 						} else {
 							b.removeConn("w");
@@ -794,9 +794,55 @@ public class World {
 		return output;
 	}
 	
-	public static void drawRotatedImage(GraphicsContext pen, String img, double x, double y, int w, String d){
+	public static void drawRotatedImage(GraphicsContext pen, String img, double x, double y, int w, String d, boolean isContained, boolean exRotation, boolean complete, String attach){
 		// NORTH: 0 - EAST: 90 - SOUTH: 180 - WEST: -90 (Square images only)
-		pen.drawImage(new Image(img), Block.getSpriteCoords(d, false), 1, DEFAULT_BLOCK_WIDTH, DEFAULT_BLOCK_WIDTH, x, y, w, w);
+		Image imgFile = new Image(img+(exRotation ? "-"+d: "")+".png");
+		if (exRotation){
+			pen.drawImage(imgFile, isContained ? Block.getSpriteCoords(attach, complete, true) : 0,  isContained ? 1 : 0, isContained ? DEFAULT_BLOCK_WIDTH : imgFile.getWidth(), isContained ? DEFAULT_BLOCK_WIDTH : imgFile.getHeight(), x, y, w, w);
+		} else {
+			switch (d){
+				case NORTH:
+					if (isContained){
+						pen.drawImage(imgFile, Block.getSpriteCoords(d, complete, false),  1, DEFAULT_BLOCK_WIDTH, DEFAULT_BLOCK_WIDTH, x, y, w, w);
+					} else {
+						pen.drawImage(imgFile, x, y, w, w);
+					}
+					break;
+				case EAST:
+					if (isContained){
+						pen.drawImage(imgFile, Block.getSpriteCoords(d, complete, false),  1, DEFAULT_BLOCK_WIDTH, DEFAULT_BLOCK_WIDTH, x, y, w, w);
+					} else {
+						pen.translate(x+w, y);
+						pen.rotate(90);
+						pen.drawImage(imgFile, 0, 0, w, w);
+						pen.rotate(-90);
+						pen.translate(-x-w, -y);
+					}
+					break;
+				case SOUTH:
+					if (isContained){
+						pen.drawImage(imgFile, Block.getSpriteCoords(d, complete, false),  1, DEFAULT_BLOCK_WIDTH, DEFAULT_BLOCK_WIDTH, x, y, w, w);
+					} else {
+						pen.translate(x+w, y+w);
+						pen.rotate(180);
+						pen.drawImage(imgFile, 0, 0, w, w);
+						pen.rotate(-180);
+						pen.translate(-x-w, -y-w);
+					}
+					break;
+				case WEST:
+					if (isContained){
+						pen.drawImage(imgFile, Block.getSpriteCoords(d, complete, false),  1, DEFAULT_BLOCK_WIDTH, DEFAULT_BLOCK_WIDTH, x, y, w, w);
+					} else {
+						pen.translate(x, y+w);
+						pen.rotate(-90);
+						pen.drawImage(imgFile, 0, 0, w, w);
+						pen.rotate(90);
+						pen.translate(-x, -y-w);
+					}
+					break;
+			}
+		}
 	}
 
 	public void draw() {

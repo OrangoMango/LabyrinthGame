@@ -519,7 +519,7 @@ public class Editor {
 							    StringBuilder b = new StringBuilder();
 							    int c = 0;
 							    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()-1) != null){
-								    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()-1).getType().equals(EditableWorld.WALL)){
+								    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()-1).getWallAttach()){
 									    b.append("n");
 									    editableworld.getBlockAt(edblock.getX(), edblock.getY()-1).addConn("s");
 								    } else {
@@ -529,7 +529,7 @@ public class Editor {
 								    c++;
 							    }
 							    if (editableworld.getBlockAt(edblock.getX()+1, edblock.getY()) != null){
-								    if (editableworld.getBlockAt(edblock.getX()+1, edblock.getY()).getType().equals(EditableWorld.WALL)){
+								    if (editableworld.getBlockAt(edblock.getX()+1, edblock.getY()).getWallAttach()){
 									    b.append("e");
 									    editableworld.getBlockAt(edblock.getX()+1, edblock.getY()).addConn("w");
 								    } else {
@@ -539,7 +539,7 @@ public class Editor {
 								    c++;
 							    }
 							    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()+1) != null){
-								    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()+1).getType().equals(EditableWorld.WALL)){
+								    if (editableworld.getBlockAt(edblock.getX(), edblock.getY()+1).getWallAttach()){
 									    b.append("s");
 									    editableworld.getBlockAt(edblock.getX(), edblock.getY()+1).addConn("n");
 								    } else {
@@ -549,7 +549,7 @@ public class Editor {
 								    c++;
 							    }
 							    if (editableworld.getBlockAt(edblock.getX()-1, edblock.getY()) != null){
-								    if (editableworld.getBlockAt(edblock.getX()-1, edblock.getY()).getType().equals(EditableWorld.WALL)){
+								    if (editableworld.getBlockAt(edblock.getX()-1, edblock.getY()).getWallAttach()){
 									    b.append("w");
 									    editableworld.getBlockAt(edblock.getX()-1, edblock.getY()).addConn("e");
 								    } else {
@@ -611,11 +611,10 @@ public class Editor {
 					}
 					
 					editableworld.setBlockOn(edblock);
-					editableworld.updateOnFile();
-					
+					editableworld.updateWalls();
 					unsaved();
 				} else if (event.getButton() == MouseButton.PRIMARY && mode.equals("engineering")){
-					if ((editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType() != EditableWorld.AIR && !editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType().equals(EditableWorld.PARALLEL_BLOCK)) && (SELECTED_BLOCK == 2 || SELECTED_BLOCK == 4)){
+					if ((editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType() != EditableWorld.AIR && !editableworld.getBlockAt(engblock.getX(), engblock.getY()).getType().equals(EditableWorld.PARALLEL_BLOCK)) && (SELECTED_BLOCK == 2 || SELECTED_BLOCK == 4) && engblock.getType().equals(EngBlock.AIR)){
 						Logger.warning("Could not place block on a block in normal mode");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
 						alert.setHeaderText("Could not place block on a existing block in normal mode.\nPlease remove this block in the same coordinates from the normal mode");
@@ -1180,7 +1179,7 @@ public class Editor {
 					spikeB.setToggleGroup(tg);
 					spikeB.setOnAction(event -> SELECTED_BLOCK = 3);
 					ToggleButton shootB = new ToggleButton();
-					shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png")));
+					shootB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_block_shooter.png")));
 					shootB.setTooltip(new Tooltip("Shooter block. ID:N5"));
 					shootB.setToggleGroup(tg);
 					shootB.setOnAction(event -> SELECTED_BLOCK = 5);

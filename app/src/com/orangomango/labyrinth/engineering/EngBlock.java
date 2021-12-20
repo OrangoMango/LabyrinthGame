@@ -7,6 +7,8 @@ import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.effect.ColorAdjust;
 
+import java.util.Random;
+
 import com.orangomango.labyrinth.World;
 import com.orangomango.labyrinth.Block;
 import com.orangomango.labyrinth.menu.editor.Editor;
@@ -24,11 +26,11 @@ public class EngBlock {
 	private String path;
 	private String info;
 	private int imageIndex;
+	private int randomImageIndexStart = -1;
 	
 	private int counter;
 	private Timeline t;
-	//private int activeTimes = 0;
-	//private boolean doActivate = false;
+	private int max;
 
 	//Categories
 	public static final String SIGNAL_EXTENDER = "signal_extender";
@@ -239,6 +241,7 @@ public class EngBlock {
 				this.category = SIGNAL_GENERATOR;
 				this.activable = true;
 				this.imageIndex = 0;
+				this.randomImageIndexStart = 2;
 				setActive(true);
 				break;
 			case LED:
@@ -254,12 +257,20 @@ public class EngBlock {
 	
 	public void makeAnimation(int images, int time){
 		counter = 0;
-		t = new Timeline(new KeyFrame(Duration.millis(time), event -> {
+		max = images;
+		t = new Timeline(new KeyFrame(Duration.millis(time), event -> {		
 			this.imageIndex = counter;
-			if (counter+1 != images){
+			if (counter+1 != max){
 				counter++;
 			} else {
-				counter = 0;
+				int extra = 0;
+				// Random start
+				if (this.randomImageIndexStart > 0){
+					Random rnd = new Random();
+					extra = rnd.nextInt(this.randomImageIndexStart);
+				}
+				counter = extra * images;
+				max = counter + images;
 			}
 			this.world.getBigWorld().update(0, 0, 0, 0);
 		}));

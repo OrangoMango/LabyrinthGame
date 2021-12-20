@@ -18,6 +18,7 @@ public class Block {
 	public String category = "";
 	public String[] parallelBlockData = null;
 	private boolean water = false;
+	private boolean wallAttach = false;
 	
 	public static final double DARK = -0.25;
 	public static final double LIGHT = 0;
@@ -51,6 +52,9 @@ public class Block {
 			case World.OXYGEN_POINT:
 				this.category = World.AIR;
 				break;
+		}
+		if (this.type.equals(World.WALL) || this.type.equals(World.SHOOTER)){
+			this.wallAttach = true;
 		}
 		if (this.info != null){
 			if (checkInfoKey("data") > 0){
@@ -103,6 +107,10 @@ public class Block {
 	
 	public String getCategory(){
 		return this.category;
+	}
+	
+	public boolean getWallAttach(){
+		return this.wallAttach;
 	}
 
 	public int getX() {
@@ -280,7 +288,7 @@ public class Block {
 	
 	public void addConn(String d){
 		if (!getType().equals(World.WALL)){
-			throw new RuntimeException("Method only available for wall block");
+			return;      //Method only available for wall block
 		}
 		if (getInfo().split(";")[checkInfoKey("conn")].split("#")[1].equals("null")){
 			addInfoParam("conn#"+d);
@@ -299,7 +307,7 @@ public class Block {
 	
 	public void removeConn(String d){
 		if (!getType().equals(World.WALL)){
-			throw new RuntimeException("Method only available for wall block");
+			return;      //Method only available for wall block
 		}
 		if (d.equals(getInfo().split(";")[checkInfoKey("conn")].split("#")[1])){
                     addInfoParam("conn#null");
@@ -316,12 +324,20 @@ public class Block {
 		addInfoParam("conn#"+sb.toString());
 	}
 	
-	public static int getSpriteCoords(String data, boolean complete){
+	public static int getSpriteCoords(String data, boolean complete, boolean sort){
 		String[] names;
 		if (complete){
-			names = new String[]{"e", "es", "esw", "ew", "n", "ne", "nes", "nesw", "new", "ns", "nsw", "null", "nw", "s", "sw", "w"};
+			if (!sort){
+				names = new String[]{"e", "es", "esw", "ew", "n", "ne", "nes", "nesw", "new", "ns", "nsw", "null", "nw", "s", "sw", "w"};
+			} else {
+				names = new String[]{"n", "e", "s", "w", "ne", "es", "sw", "nw", "nes", "esw", "nws", "new", "nesw", "null", "ns", "ew"};
+			}
 		} else {
-			names = new String[]{"e", "n", "s", "w"};
+			if (!sort){
+				names = new String[]{"e", "n", "s", "w"};
+			} else {
+				names = new String[]{"n", "e", "s", "w"};
+			}
 		}
 		int foundAt = -1, foundNow = 1;
 		for (String name : names){
@@ -370,7 +386,7 @@ public class Block {
 		
 		switch (getType()){
 			case World.WALL:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png"), getSpriteCoords(getInfo().split(";")[checkInfoKey("conn")].split("#")[1], true), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png"), getSpriteCoords(getInfo().split(";")[checkInfoKey("conn")].split("#")[1], true, false), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.AIR:
 				drawAirBlock(pen, px, py);
@@ -392,7 +408,31 @@ public class Block {
 				break;
 			case World.SHOOTER:
 				String d = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter.png", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, d);
+				StringBuilder attachBuilder = new StringBuilder();
+				boolean isAny = false;
+				if (w.getBlockAt(getX(), getY()-1) != null && w.getBlockAt(getX(), getY()-1).getCategory().equals(World.WALL)){
+					attachBuilder.append("n");
+					isAny = true;
+				}
+				if (w.getBlockAt(getX()+1, getY()) != null && w.getBlockAt(getX()+1, getY()).getCategory().equals(World.WALL)){
+					attachBuilder.append("e");
+					isAny = true;
+				}
+				if (w.getBlockAt(getX(), getY()+1) != null && w.getBlockAt(getX(), getY()+1).getCategory().equals(World.WALL)){
+					attachBuilder.append("s");
+					isAny = true;
+				}
+				if (w.getBlockAt(getX()-1, getY()) != null && w.getBlockAt(getX()-1, getY()).getCategory().equals(World.WALL)){
+					attachBuilder.append("w");
+					isAny = true;
+				}
+				String attach;
+				if (isAny){
+					attach = attachBuilder.toString();
+				} else {
+					attach = "null";
+				}
+				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_shooter", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, d, true, true, true, attach);
 				break;
 			case World.BAT_GEN:
 				drawAirBlock(pen, px, py);
@@ -448,7 +488,7 @@ public class Block {
 			case World.D_ARROW:
 				drawAirBlock(pen, px, py);
 				String direct = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow.png", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct);
+				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct, false, false, false, null);
 				break;
 			case World.OXYGEN_POINT:
 				drawAirBlock(pen, px, py);

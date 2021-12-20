@@ -151,9 +151,9 @@ public class Player {
 	}
 	
 	public void draw(GraphicsContext pen, double x, double y) {
-		World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player.png", x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction);
+		World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/player", x * World.BLOCK_WIDTH, y * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction, true, false, false, null);
 		if (this.world.getLevelStats() != null){
-			this.world.getLevelStats().draw(x, y-ICON_SIZE*(2+GAP_FACTOR));
+			this.world.getLevelStats().draw(x*World.BLOCK_WIDTH-ICON_SIZE/2*(2+GAP_FACTOR)/2, y*World.BLOCK_WIDTH+ICON_SIZE*(2+GAP_FACTOR));
 		}
 	}
 
