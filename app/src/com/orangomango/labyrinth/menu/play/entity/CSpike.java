@@ -58,16 +58,13 @@ public class CSpike extends Entity{
 	}
 	
 	public void start() {
+		super.start();
 		this.t.play();
 	}
 
 	public void stop() {
+		super.stop();
 		this.t.stop();
-	}
-	
-	@Override
-	public void draw(GraphicsContext p){
-		draw(p, getX(), getY());
 	}
 	
 	public void draw(GraphicsContext p, double px, double py){

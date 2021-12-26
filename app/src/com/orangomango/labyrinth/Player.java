@@ -51,6 +51,22 @@ public class Player {
 	}
 	
 	public void die(Boolean pw, int dist){
+		if (getPsFilePath() != null && World.getArcadeLevels(getPsFilePath()) > 0){
+			LevelExe.OPEN = false;
+			this.world.getPsStage().close();
+			if (LevelExe.exStage != null)
+				LevelExe.exStage.show();
+			LevelExe.PLAYER_MOVEMENT = true;
+			for (Entity e : world.getEnts()){
+				e.stop();
+			}
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setHeaderText("You died!");
+			alert.setTitle("You died");
+			alert.setContentText(null);
+			alert.show();
+			return;
+		}
 		this.health = 100;
 		this.oxygen = 100;
 		setX(this.world.start[0]);
@@ -315,8 +331,17 @@ public class Player {
 					}
 				}
 				if (foundEndLine){
-					System.out.println("Add new pattern");
+					int ph = 2;
+					for (Entity e : this.world.getEnts()){
+						if (e instanceof PoisonCloud){
+							ph = ((PoisonCloud)e).getHeight();
+						}
+					}
 					this.world.changeToWorld(World.combineWorlds(this.world, (new World(getPsFilePath())).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(getPsFilePath())))));
+					this.world.addEnt(new PoisonCloud(this.world, this.world.width, ph, -2));
+					for (Entity e : this.world.getEnts()){
+						e.start();
+					}
 				}
 			}
 			

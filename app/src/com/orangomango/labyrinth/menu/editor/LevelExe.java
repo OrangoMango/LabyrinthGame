@@ -37,9 +37,8 @@ public class LevelExe {
 	private boolean playerViewEnabled;
 
 	public LevelExe(String path, String filename, boolean saved, String mode) {
-		this.arcade = filename.endsWith(".arc");
+		this.arcade = filename.endsWith(".arc") || filename.endsWith(".arc.sys");
 		this.mode = mode;
-                System.out.println("MODE: "+this.mode);
 		if (OPEN || (this.arcade && mode.equals("engineering"))) {
 			return;
 		}
@@ -54,13 +53,14 @@ public class LevelExe {
 		} else {
 			world = new World(path);
 		}
-                if (this.mode.equals("engineering")){
-                    this.playerViewEnabled = false;
-                } else {
-                    this.playerViewEnabled = world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade;
-                }
-                world.setPlayerView(this.playerViewEnabled);
+		if (this.mode.equals("engineering")){
+			this.playerViewEnabled = false;
+		} else {
+			this.playerViewEnabled = world.width > NewWidget.MAX_PLAYER_VIEW_SIZE || world.height > NewWidget.MAX_PLAYER_VIEW_SIZE || this.arcade;
+		}
+		world.setPlayerView(this.playerViewEnabled);
 		world.setDrawingMode(this.mode);
+		world.setPsStage(stage);
 		
 		stage.setOnCloseRequest(event -> {
 			if (LevelExe.exStage != null) {
@@ -78,9 +78,9 @@ public class LevelExe {
 			if (world.getEngineeringWorld() != null){
 				world.getEngineeringWorld().stopAnimations();
 			}
-                        if (world.viewTime != null){
-                            world.viewTime.stop();
-                        }
+			if (world.viewTime != null){
+				world.viewTime.stop();
+			}
 			OPEN = false;
 		});
 
@@ -99,7 +99,6 @@ public class LevelExe {
 		world.setPen(pen);
 
 		Scene scene;
-		System.out.println(this.playerViewEnabled);
 		if (!this.playerViewEnabled){
 			scene = new Scene(layout, World.BLOCK_WIDTH * world.width + 20, World.BLOCK_WIDTH * world.height + 60);
 		} else {
@@ -115,6 +114,10 @@ public class LevelExe {
 		
 		LevelStats levelStats = new LevelStats(world, pen);
 		world.setLevelStats(levelStats);
+		
+		if (this.arcade){
+			world.addEnt(new PoisonCloud(world, world.width, 2, -2));
+		}
 				
 		for (Entity e : world.getEnts()){
 			if (this.mode.equals("normal")){
@@ -163,15 +166,6 @@ public class LevelExe {
 					player.setY((int)Math.round(player.psy+yGap));
 					xGap = 0;
 					yGap = 0;
-				}
-				
-				if (event.getCode() == KeyCode.U){
-					if (world.getPlayerView()){
-						world.update(world.getPlayer().getX()-PWS, world.getPlayer().getY()-PWS, world.getPlayer().getX()+PWS, world.getPlayer().getY()+PWS, true);
-					} else {
-						world.update(0, 0, 0, 0, true);
-					}
-					System.out.println("Force updated!");
 				}
 				
 				if (releasedKeys){
@@ -232,9 +226,9 @@ public class LevelExe {
 		if (world.getEngineeringWorld() != null && this.mode.equals("engineering")){
 			world.getEngineeringWorld().startAnimations();
 		}
-                if (this.mode.equals("normal") && !this.arcade){
-                    world.viewFrom(world.end[0], world.end[1], world.start[0], world.start[1]);
-                }
+		if (this.mode.equals("normal") && !this.arcade){
+			world.viewFrom(world.end[0], world.end[1], world.start[0], world.start[1]);
+		}
 		stage.setScene(scene);
 		stage.setResizable(false);
 		stage.show();

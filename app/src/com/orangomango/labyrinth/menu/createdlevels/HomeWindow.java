@@ -95,6 +95,7 @@ public class HomeWindow {
 				Label mod = new Label("Last modified: " + format.format(file.lastModified()));
 				Label size = new Label(String.format("Size: %d bytes (Dim.: %dx%d) %s", file.length(), temp.width, temp.height, getDim(temp.width, temp.height)));
 				Label author = new Label("Author: -");
+				Label information = new Label("Information:\n"+World.getWorldInformation(p).replace("\\n", "\n"));
 				Button del = new Button();
 				del.setTooltip(new Tooltip("Delete level"));
 				del.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_delete.png")));
@@ -173,15 +174,16 @@ public class HomeWindow {
 				});
 				
 				innerpane.add(plabel, 0, 0);
-				innerpane.add(World.getArcadeLevels(temp.getFilePath()) > 0 ? pages : canvas, 1, 0, 1, 4);
+				innerpane.add(World.getArcadeLevels(temp.getFilePath()) > 0 ? pages : canvas, 1, 0, 1, 5);
 				innerpane.add(edit, 2, 0);
 				innerpane.add(mod, 0, 1);
 				innerpane.add(size, 0, 2);
 				innerpane.add(del, 2, 1);
 				innerpane.add(run, 2, 2);
 				innerpane.add(author, 0, 3);
+				innerpane.add(information, 0, 4);
 				innerpane.add(pub, 2, 3);
-				innerpane.add(hb, 0, 4, 2, 1);
+				innerpane.add(hb, 0, 5, 2, 1);
 
 				final TitledPane tp = new TitledPane(file.getName(), innerpane);
 

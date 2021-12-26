@@ -1080,7 +1080,7 @@ public class Editor {
 		worldsTab = new Tab("Arcade patterns");
 		worldsTab.setClosable(false);
 		worldsTab.setDisable(!this.arcade);
-		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
+		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys"));
 		
 		blocksTabPane.getTabs().addAll(blocksTab, worldsTab);
 		
@@ -1093,7 +1093,7 @@ public class Editor {
 				edworld = WORLDS[index];
 				this.mLights.setSelected(edworld.getAllLights());
 				this.setMode("normal");
-				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc"));
+				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys"));
                                 if (this.blocksTabPane != null){
                                     this.blocksTabPane.getSelectionModel().selectFirst();
                                 }
@@ -1459,7 +1459,7 @@ public class Editor {
 	}
 
     /**
-     * When the user clicks the <pre>Save</pre> button, this method is called and updates the window and the tab title
+     * When the user clicks the <pre>Save</pre> button, this method updates the window and the tab title
     */
 	private void saved() {
 		this.saved = true;
@@ -1481,6 +1481,7 @@ public class Editor {
 		try {
 			f.createNewFile();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+			writer.write("Deafult world\n");
 			writer.write("2x2\n");
 			writer.write("0,0,0,0\n");
 			writer.write("1,0\n");
@@ -1625,7 +1626,7 @@ public class Editor {
         			File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
                                 file.deleteOnExit();
         			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-        			World.writeNewFile(writer, this.edworld.width, this.edworld.height, this.edworld.start, this.edworld.end, this.edworld.getAllLights());
+        			World.writeNewFile(writer, this.edworld.width, this.edworld.height, this.edworld.start, this.edworld.end, this.edworld.getAllLights(), "Arcade pattern description");
         			writer.close();
         			World newWorld = new World(file.getAbsolutePath());
         			this.edworld.worldList.addWorld(newWorld);
@@ -1634,7 +1635,6 @@ public class Editor {
         		} catch (IOException ioe){}
 		});
 		tilePane.getChildren().add(addBtn);
-		System.out.println("WorldsTab: "+this.worldsTab);
 		if (this.worldsTab != null){
 			this.worldsTab.setDisable(!this.arcade);
 			ScrollPane sp = new ScrollPane(tilePane);
@@ -1654,7 +1654,6 @@ public class Editor {
                                     for (int i = 0; i < World.getArcadeLevels(CURRENT_FILE_PATH); i++){
 					this.edworld.worldList.getWorldAt(i).setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.worldList.getWorldAt(i), this.edworld.worldList.getWorldAt(i).width, this.edworld.worldList.getWorldAt(i).height));
 					this.edworld.worldList.getWorldAt(i).updateOnFile(false);
-					System.out.println(i);
                                     }
                                 }
 				unsaved();

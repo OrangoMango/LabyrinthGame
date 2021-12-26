@@ -11,7 +11,9 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.canvas.*;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
@@ -21,8 +23,11 @@ import javafx.scene.text.TextAlignment;
 import java.io.*;
 
 import com.orangomango.labyrinth.LabyrinthMain;
+import com.orangomango.labyrinth.World;
+import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.menu.Menu;
 import com.orangomango.labyrinth.menu.editor.LevelExe;
+import static com.orangomango.labyrinth.menu.createdlevels.HomeWindow.PREVIEW_BLOCK_WIDTH;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import static com.orangomango.labyrinth.menu.LoadingScreen.LEVELS;
@@ -84,24 +89,48 @@ public class PlayScreen {
 	public void openLevel(int levelNum, Stage stage, TabPane tabpane){
 	
 		String level = "level"+ levelNum + ".wld.sys"; 
+		String lPath = PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + level;
 	
 		Tab LevelInfoTab = new Tab(level);
 		LevelInfoTab.setOnClosed(closeEvent -> LEVELS_OPEN[getLevelIndex(level) - 1] = 0);
 		GridPane grid = new GridPane();
+		grid.setPadding(new Insets(10, 10, 10, 10));
+		grid.setVgap(5);
+		grid.setHgap(5);
 
 		if (LEVELS_OPEN[getLevelIndex(level) - 1] == 1) {
 			return;
 		}
 		LEVELS_OPEN[getLevelIndex(level) - 1] = 1;
 
-		Button playBtn = new Button("Play level");
+		Label information = new Label(World.getWorldInformation(lPath).replace("\\n", "\n"));
+		
+		World temp = new World(lPath);
+		temp.previewMode = true;
+		int tempW = World.BLOCK_WIDTH;
+		World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
+		Canvas Tcanvas = new Canvas(temp.width*World.BLOCK_WIDTH, temp.height*World.BLOCK_WIDTH);
+		GraphicsContext pen = Tcanvas.getGraphicsContext2D();
+		temp.setPen(pen);
+		temp.setPlayer(new Player(temp.start[0], temp.start[1], temp));
+		temp.draw();
+		World.BLOCK_WIDTH = tempW;
+
+		Button playBtn = new Button();
+		playBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/menu_run.png")));
+		playBtn.setTooltip(new Tooltip("Play this level"));
 		playBtn.setOnAction(clickEvent -> {
-			new LevelExe(PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + level, level, true, "normal");
+			new LevelExe(lPath, level, true, "normal");
 			LevelExe.setOnFinish(stage);
 			stage.hide();
 		});
-		grid.add(playBtn, 0, 0);
-		LevelInfoTab.setContent(grid);
+		grid.add(information, 0, 0);
+		grid.add(playBtn, 1, 0);
+		grid.add(Tcanvas, 0, 1);
+		ScrollPane sp = new ScrollPane(grid);
+		sp.setFitToHeight(true);
+		sp.setFitToWidth(true);
+		LevelInfoTab.setContent(sp);
 		tabpane.getTabs().add(LevelInfoTab);
 		tabpane.getSelectionModel().select(LevelInfoTab);
 	}
@@ -192,7 +221,7 @@ public class PlayScreen {
 		vbox.setSpacing(5);
 		vbox.setPadding(new Insets(5, 5, 5, 5));
 		Button exit = new Button("Back to menu");
-                exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
+        exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
 		exit.setOnAction(e -> {
 			LEVELS_OPEN = new int[LEVELS];
 			Menu m = new Menu(stage);
@@ -204,8 +233,6 @@ public class PlayScreen {
 		scene.getStylesheets().addAll("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css", "file://" + changeSlash(PATH) + ".labyrinthgame/Editor/play_style.css");
 		stage.setScene(scene);
 		
-		System.out.println(lvls.getWidth());
-		System.out.println(lvls.getHeight());
 		stage.show();
 	}
 }

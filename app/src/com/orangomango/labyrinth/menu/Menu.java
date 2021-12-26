@@ -1,7 +1,9 @@
 package com.orangomango.labyrinth.menu;
 
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
@@ -10,11 +12,14 @@ import javafx.scene.text.Font;
 import javafx.scene.effect.ColorAdjust;
 
 import java.io.*;
+import java.util.*;
+import java.net.URL;
 
 import com.orangomango.labyrinth.menu.editor.Editor;
 import com.orangomango.labyrinth.menu.createdlevels.HomeWindow;
 import com.orangomango.labyrinth.menu.play.PlayScreen;
 import com.orangomango.labyrinth.menu.editor.Selection;
+import com.orangomango.labyrinth.Logger;
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 
@@ -38,24 +43,25 @@ public class Menu {
 		this.stage = stage;
 		this.stage.setTitle("Menu v" + com.orangomango.labyrinth.LabyrinthMain.VERSION);
 		
-		
 		Pane layout = new Pane();
 		Canvas canvas = new Canvas(WIDTH, HEIGHT);
 		canvas.setOnMousePressed(e -> {
-			if (openedWindow) return;
 			int x = (int)Math.round(e.getX());
 			int y = (int)Math.round(e.getY());
-                        if (isContainedIn(x, y, 195, 80, 455, 120)){
-                            PlayScreen screen = new PlayScreen(this.stage);
-                        } else if (isContainedIn(x, y, 195, 130, 455, 170)){
-                            startEditor(null);
-                        } else if (isContainedIn(x, y, 195, 180, 455, 220)){
-                            HomeWindow hw = new HomeWindow(this.stage);
-                        } else if (isContainedIn(x, y, 195, 230, 455, 270)){
-                        	showInMenu("profile", this.gc);
-                        } else if (isContainedIn(x, y, 195, 280, 455, 320)){
+                        if (!this.openedWindow && isContainedIn(x, y, 195, 80, 455, 120)){
+                           	PlayScreen screen = new PlayScreen(this.stage);
+                        } else if (!this.openedWindow && isContainedIn(x, y, 195, 130, 455, 170)){
+                           	startEditor(null);
+                        } else if (!this.openedWindow && isContainedIn(x, y, 195, 180, 455, 220)){
+				HomeWindow hw = new HomeWindow(this.stage);
+                        } else if (!this.openedWindow && isContainedIn(x, y, 195, 230, 455, 270)){
+				showInMenu("profile", this.gc);
+                        } else if (!this.openedWindow && isContainedIn(x, y, 195, 280, 455, 320)){
                         	showInMenu("credits", this.gc);
-                        }
+                        } else if (this.openedWindow && isContainedIn(x, y, 155, 300, 197, 342)){
+			    	this.openedWindow = false;
+				updateCanvas(this.gc, -1);
+			}
 		});
                 
                 canvas.setOnMouseMoved(e -> {
@@ -105,6 +111,24 @@ public class Menu {
                 
 		LoadingScreen ls = new LoadingScreen(this);
         }
+	
+	private List<Double> getVersions(){
+		List<Double> versions = new ArrayList<>();
+		try {
+			URL url = new URL("https://github.com/OrangoMango/LabyrinthGame/releases");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			reader.lines().forEach(line -> {
+				if (line.contains("tags/v") && line.contains(".zip")){
+					versions.add(Double.parseDouble(line.substring(65, line.indexOf(".zip"))));
+				}
+			});
+			reader.close();
+			return versions;
+		} catch (IOException e){
+			Logger.warning("Could not get latest version, connection error");
+		}
+		return null;
+	}
         
         private void showMenu(GraphicsContext gc){
         	gc.setFill(Color.GRAY);
@@ -155,17 +179,20 @@ public class Menu {
         }
         
         private void showInMenu(String what, GraphicsContext gc){
+		this.openedWindow = true;
         	if (what.equals("credits")){
-        		this.openedWindow = true;
         		showMenu(gc);
                		gc.setFill(Color.BLACK);
-        		gc.fillText("Coming soon...", 225, 150);
+			gc.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/credits_font.ttf", 25));
+        		gc.fillText("CREDITS\n\nIMAGES: OrangoMango\nCODE: OrangoMango\nWEB PAGE: \norangomango.github.io\n\nMIT Licence, OrangoMango\n-- February 2020 --", 160, 90);
         	} else if (what.equals("profile")){
-        		this.openedWindow = true;
         		showMenu(gc);
                		gc.setFill(Color.BLACK);
         		gc.fillText("Coming soon...", 225, 150);
         	}
+		gc.setFill(Color.WHITE);
+		gc.fillRect(155, 300, 42, 42);
+		gc.drawImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png"), 160, 305);
         }
 
 	private void startEditor(String param) {
@@ -186,6 +213,18 @@ public class Menu {
 
 	public void start() {
 		this.stage.show();
+		Logger.info("Checking updates...");
+		List<Double> versions = getVersions();
+		if (versions != null && com.orangomango.labyrinth.LabyrinthMain.VERSION < versions.get(0)){
+			Logger.error("Please update to the latest version! ("+com.orangomango.labyrinth.LabyrinthMain.VERSION+" < "+versions.get(0)+")");
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setHeaderText("Update available");
+			alert.setTitle("Update available ("+com.orangomango.labyrinth.LabyrinthMain.VERSION+" < "+versions.get(0)+")");
+			alert.setContentText("Please update to the latest version!\nCheck out the new release at https://github.com/OrangoMango/LabyrinthGame/releases/latest");
+			alert.showAndWait();
+			Platform.exit();
+		}
+		Logger.info("You are running the latest version");
 		if (OPEN != null) {
 			System.out.println("Opening requested file: " + OPEN);
 			Editor editor = new Editor(OPEN, this.stage);

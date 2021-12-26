@@ -50,10 +50,11 @@ public class World {
 	public WorldList worldList;
 	private boolean showEnd = true;
 	public int[] combinedLines;
-        private static File lastCreatedFile;
-        private static int X_MOVE, Y_MOVE;
-        public Timeline viewTime;
-        private static boolean VIEWING = false;
+	private static File lastCreatedFile;
+	private static int X_MOVE, Y_MOVE;
+	public Timeline viewTime;
+	private static boolean VIEWING = false;
+	private Stage psStage;
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -105,25 +106,25 @@ public class World {
 			return worlds[index];
 		}
                 
-                public int getLength(){
-                    return worlds.length;
-                }
-                
-                @Override
-                public String toString(){
-                	StringBuilder output = new StringBuilder();
-                        output.append("List length: "+getLength()+"\n");
-                	for (World wld : worlds){
-                		output.append(wld).append("\n");
-                	}
-                	return output.toString();
-                }
-                
-                public void sync(){
-                	for (int count = 0; count < worlds.length; count++){
-                		worlds[count] = new World(worlds[count].getFilePath());
-                	}
-                }
+		public int getLength(){
+			return worlds.length;
+		}
+		
+		@Override
+		public String toString(){
+			StringBuilder output = new StringBuilder();
+				output.append("List length: "+getLength()+"\n");
+			for (World wld : worlds){
+				output.append(wld).append("\n");
+			}
+			return output.toString();
+		}
+		
+		public void sync(){
+			for (int count = 0; count < worlds.length; count++){
+				worlds[count] = new World(worlds[count].getFilePath());
+			}
+		}
 		
 		public void updateOnFile(String filePath){
 			try {
@@ -148,20 +149,14 @@ public class World {
 		world = readWorld(filePath);
 		this.worldList = new WorldList(new World(filePath, 0));
 		for (int x = 0; x < getArcadeLevels(filePath); x++){
-			    if (x == 0){
-			       	continue;
-			    }
+			if (x == 0){
+				continue;
+			}
 			World tWorld = new World(filePath, getFilePathIndex("#World "+(x+1)));
 			tWorld.setFilePath(tWorld.createTempCopyFilePath());
 			this.worldList.addWorld(tWorld);
 		}
-                //this.worldList.getWorldAt(0).setFilePath(this.createTempCopyFilePath());
-        	System.out.println("Arcade length: "+this.worldList.getLength());
-                /*for (int i = 0; i < this.worldList.getLength(); i++){
-                    System.out.println("\n"+this.worldList.getWorldAt(i)+"\n");
-                }*/
-        	//System.out.println("Arcade list: "+this.worldList);
-        	this.combinedLines = new int[]{this.height-1};
+        this.combinedLines = new int[]{this.height-1};
 	}
         
         public World(String path, int index){
@@ -230,6 +225,7 @@ public class World {
         	
 	public void writeToFile(BufferedWriter writer){
 		try {
+			writer.write("Level comment\n");
 			writer.write(this.width + "x" + this.height + "\n");
 			int counter = 0;
 			for (Block[] bArr: this.world) {
@@ -262,8 +258,10 @@ public class World {
 		}
 	}
 	
-	public static void writeNewFile(BufferedWriter writer, int w, int h, int[] startP, int[] endP, boolean lights){
+	public static void writeNewFile(BufferedWriter writer, int w, int h, int[] startP, int[] endP, boolean lights, String desc){
 		try {
+			writer.write(desc);
+			writer.newLine();
 			writer.write(String.format("%sx%s", w, h));
 			writer.newLine();
 			for (int i = 0; i<w * h; i++) {
@@ -495,6 +493,14 @@ public class World {
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
 	}
+	
+	public void setPsStage(Stage s){
+		this.psStage = s;
+	}
+	
+	public Stage getPsStage(){
+		return this.psStage;
+	}
 
 
 	public void setPlayer(Player pl) {
@@ -518,7 +524,7 @@ public class World {
 		return this.world;
 	}
 
-	public void setEnts(Entity...e) {
+	public void setEnts(Entity... e) {
 		ents = e;
 	}
 
@@ -559,8 +565,8 @@ public class World {
 		this.filePath = path;
 		this.ents = new Entity[0];
 		world = readWorld(filePath);
-        	this.combinedLines = new int[]{this.height-1};
-        	try {
+		this.combinedLines = new int[]{this.height-1};
+        try {
 			this.canvas.setHeight(this.height * BLOCK_WIDTH);
 			this.canvas.setWidth(this.width * BLOCK_WIDTH);
 		} catch (NullPointerException e) {
@@ -627,9 +633,9 @@ public class World {
 		}
 	}
 	public void update(int x, int y, int x1, int y1){ update(x, y, x1, y1, false, false); }
-        public void update(int x, int y, int x1, int y1, boolean s){ update(x, y, x1, y1, s, false); }
+    public void update(int x, int y, int x1, int y1, boolean s){ update(x, y, x1, y1, s, false); }
 	
-	private String readData(BufferedReader reader){
+	private static String readData(BufferedReader reader){
 		try {
 			String line;
 			do {
@@ -653,7 +659,8 @@ public class World {
 				reader.readLine();
 			}
 			
-			//System.out.println(path+" <<<<<<<<<<<<<<<<");
+			// Skip world information
+			readData(reader);
 
 			// Get world width and height from file
 			String data = readData(reader);
@@ -705,6 +712,18 @@ public class World {
 	}
 	private Block[][] readWorld(String path){
 		return readWorld(path, 0);
+	}
+	
+	// Warning: This method does not work for arcade world files
+	public static String getWorldInformation(String path){
+		String information;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(path));
+			information = readData(reader);
+			return information;
+		} catch (IOException ioe){
+			return null;
+		}
 	}
 
 	private int[] configureFromString(String data) {
@@ -907,7 +926,7 @@ public class World {
 			drawEnd(x, y);
 		}
 		for (Entity e: this.ents) {
-			if ((e.getX() >= x && e.getX()<= x1) && (e.getY() >= y && e.getY()<= y1)) {
+			if (((e.getX() >= x && e.getX()<= x1) && (e.getY() >= y && e.getY()<= y1)) || (e instanceof PoisonCloud)) {
 				if (!e.layer){
 					e.draw(this.pen, e.getX() - x, e.getY() - y);
 				}
@@ -925,7 +944,7 @@ public class World {
 			}
 		}
 		for (Entity e: this.ents) {
-			if ((e.getX() >= x && e.getX()<= x1) && (e.getY() >= y && e.getY()<= y1)) {
+			if (((e.getX() >= x && e.getX()<= x1) && (e.getY() >= y && e.getY()<= y1)) || (e instanceof PoisonCloud)) {
 				if (e.layer){
 					e.draw(this.pen, e.getX() - x, e.getY() - y);
 				}

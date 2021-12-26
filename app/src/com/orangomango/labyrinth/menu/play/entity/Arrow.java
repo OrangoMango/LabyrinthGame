@@ -87,22 +87,22 @@ public class Arrow extends Entity{
 		t.setCycleCount(Animation.INDEFINITE);
 	}
 	
+	@Override
 	public void start(){
+		super.start();
 		if (!SHOW){
 			SHOW = true;
 		}
 		this.t.play();
 	}
 	
+	@Override
 	public void stop(){
+		super.stop();
 		this.t.stop();
 	}
 	
 	@Override
-	public void draw(GraphicsContext pen){
-		draw(pen, getX(), getY());
-	}
-	
 	public void draw(GraphicsContext pen, double px, double py){
 		if (SHOW){
 			World.drawRotatedImage(pen, this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, this.direction, false, false, false, null);

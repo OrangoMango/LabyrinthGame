@@ -27,7 +27,8 @@ public class LoadingScreen {
 	public static final int LEVELS = 10;
 	private static final String[] FONTNAMES = new String[] {
 		"menu_font",
-		"play_font"
+		"play_font",
+		"credits_font"
 	};
 	private static final String[] IMGNAMES = new String[] {
 		"editor" + File.separator + "ac",
@@ -48,24 +49,24 @@ public class LoadingScreen {
 		"editor" + File.separator + "arrow_sign_h",
 		"editor" + File.separator + "arrow_sign_v",
 		"editor" + File.separator + "pattern_add",
-                "editor" + File.separator + "pattern_edit",
-                "editor" + File.separator + "pattern_delete",
-                "editor" + File.separator + "menu_run",
-                "editor" + File.separator + "back_arrow",
-                "editor" + File.separator + "background_levels",
-                "editor" + File.separator + "background_arcade",
-                "editor" + File.separator + "tab_arcade_on",
-                "editor" + File.separator + "tab_arcade_off",
-                "editor" + File.separator + "tab_levels_on",
-                "editor" + File.separator + "tab_levels_off",
-                "editor" + File.separator + "level_select",
-                "editor" + File.separator + "button_block_wall",
-                "editor" + File.separator + "button_block_shooter",
-                "editor" + File.separator + "button_block_cable",
-                "editor" + File.separator + "button_block_generator",
-                "editor" + File.separator + "button_block_door",
-                "editor" + File.separator + "button_block_led",
-                "editor" + File.separator + "button_block_lever",
+		"editor" + File.separator + "pattern_edit",
+		"editor" + File.separator + "pattern_delete",
+		"editor" + File.separator + "menu_run",
+		"editor" + File.separator + "back_arrow",
+		"editor" + File.separator + "background_levels",
+		"editor" + File.separator + "background_arcade",
+		"editor" + File.separator + "tab_arcade_on",
+		"editor" + File.separator + "tab_arcade_off",
+		"editor" + File.separator + "tab_levels_on",
+		"editor" + File.separator + "tab_levels_off",
+		"editor" + File.separator + "level_select",
+		"editor" + File.separator + "button_block_wall",
+		"editor" + File.separator + "button_block_shooter",
+		"editor" + File.separator + "button_block_cable",
+		"editor" + File.separator + "button_block_generator",
+		"editor" + File.separator + "button_block_door",
+		"editor" + File.separator + "button_block_led",
+		"editor" + File.separator + "button_block_lever",
 		"blocks" + File.separator + "block_spike",
 		"blocks" + File.separator + "block_spike_closed",
 		"blocks" + File.separator + "block_wall",
@@ -86,6 +87,7 @@ public class LoadingScreen {
 		"entities" + File.separator + "bat_front_1",
 		"entities" + File.separator + "bat_front_2",
 		"entities" + File.separator + "bat_front_3",
+		"entities" + File.separator + "poison_cloud",
 		"entities" + File.separator + "arrow",
 		"entities" + File.separator + "health",
 		"entities" + File.separator + "oxygen",
@@ -165,7 +167,7 @@ public class LoadingScreen {
 					updateProgress(progress, total);
 					downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "style.css");
 					progress++;
-                                        downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/play_style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "play_style.css");
+                    downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/play_style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "play_style.css");
 					progress++;
 					for (int x = 0; x<LEVELS; x++) {
 						updateMessage("Downloading " + "level " + (x + 1) + ".wld.sys");

@@ -15,6 +15,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 
@@ -44,7 +45,8 @@ public class NewWidget {
 	private Label pathL;
 	private Editor editor;
 	private Label sizeL;
-        private Stage editorStage;
+    private Stage editorStage;
+    private TextArea customInfo;
 
 	private int pWidth, pHeight = 0;
 	private int sX, sY, eX, eY;
@@ -148,7 +150,7 @@ public class NewWidget {
 		pen.fillRect(0, 0, 100, 100);
 		Label cPreview = new Label("preview (0x0)");
 		Label playerView = new Label("Player view disabled (?)");
-		playerView.setTooltip(new Tooltip("When this option is enabled, width or height is greater than "+MAX_PLAYER_VIEW_SIZE+",\nyou will se the player at the centre and the level \"moving\".\nOtherwise the player will move normally.\nThe orange square is your view when you play your level"));
+		playerView.setTooltip(new Tooltip("When this option is enabled, width or height is greater than "+MAX_PLAYER_VIEW_SIZE+",\nyou will se the player at the center and the level \"moving\".\nOtherwise the player will move normally.\nThe orange square is your view when you play your level"));
 		sl1.setOnMouseDragged(event -> {
 			this.pWidth = (int) sl1.getValue();
 			updateCanvas(pen, cPreview);
@@ -187,6 +189,9 @@ public class NewWidget {
 		Label lab2 = new Label("End X:");
 		Label lab3 = new Label("Y:");
 		Label lab4 = new Label("Y:");
+		Label infoLabel = new Label("Write a short description about your new level:");
+		this.customInfo = new TextArea();
+		customInfo.setPromptText("Your description goes here...");
 		this.spinner1 = new Spinner(0, MAX_WORLD_SIZE, 0);
 		this.spinner2 = new Spinner(0, MAX_WORLD_SIZE, 0);
 		this.spinner3 = new Spinner(0, MAX_WORLD_SIZE, 0);
@@ -227,6 +232,7 @@ public class NewWidget {
 		this.spinner3.setMaxWidth(90);
 		this.spinner4.setMaxWidth(90);
 		this.lights = new CheckBox("Turn on lights on all level\n(Engineering mode)");
+		
 		l3.add(allow, 0, 1, 3, 1);
 		l3.add(lab1, 0, 2);
 		l3.add(lab2, 0, 3);
@@ -237,7 +243,9 @@ public class NewWidget {
 		l3.add(this.spinner3, 1, 3);
 		l3.add(this.spinner4, 3, 3);
 		l3.add(this.lights, 0, 4, 4, 1);
-		l3.add(boxes[2], 0, 5, 2, 1);
+		l3.add(infoLabel, 0, 5, 4, 1);
+		l3.add(this.customInfo, 0, 6, 4, 1);
+		l3.add(boxes[2], 0, 7, 2, 1);
 
 		// Scene 4
 		GridPane l4 = new GridPane();
@@ -245,7 +253,7 @@ public class NewWidget {
 		l4.setHgap(10);
 		l4.setVgap(10);
 		Label success = new Label("Level will be created successfully");
-		Label toDo = new Label("To change your settings use the \"<--\"\nbutton");
+		Label toDo = new Label("To change your settings, use the \"<--\"\nbutton");
 		this.pathL = new Label("Selected file path: null");
 		ScrollPane pathP = new ScrollPane(this.pathL);
 		this.sizeL = new Label(String.format("Size: %sx%s", this.pWidth, this.pHeight));
@@ -289,6 +297,7 @@ public class NewWidget {
 
 	public void finishWidget() {
 		try {
+			Logger.info("Creating new world");
 			String path = this.file.getAbsolutePath();
 			this.sX = (int) this.spinner1.getValue();
 			this.sY = (int) this.spinner2.getValue();
@@ -301,7 +310,7 @@ public class NewWidget {
 				sY = 0;
 			}
 			if (this.pWidth == 0 || this.pHeight == 0) {
-				Logger.warning("No dimension defined for world");
+				Logger.error("No dimension defined for world");
 				Alert alert = new Alert(Alert.AlertType.ERROR);
 				alert.setHeaderText("No dimension defined for world");
 				alert.setTitle("Error");
@@ -310,7 +319,7 @@ public class NewWidget {
 				return;
 			}
 			if (sX > this.pWidth || sY > this.pHeight || eX > this.pWidth || eY > this.pHeight) {
-				Logger.warning("Start or end position is outside world");
+				Logger.error("Start or end position is outside world");
 				Alert alert = new Alert(Alert.AlertType.ERROR);
 				alert.setHeaderText("Start or end position is outside world");
 				alert.setTitle("Error");
@@ -319,10 +328,18 @@ public class NewWidget {
 				return;
 			}
 			if (sX == eX && sY == eY) {
-				Logger.warning("Start position is on same position of end");
+				Logger.error("Start position is on same position of end");
 				Alert alert = new Alert(Alert.AlertType.ERROR);
 				alert.setHeaderText("Start position is on same position of end");
 				alert.setTitle("SSE Error");
+				alert.setContentText(null);
+				alert.showAndWait();
+				return;
+			} if (this.customInfo.getText().equals("")){
+				Logger.error("Level description cannot be empty");
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setHeaderText("Level description cannot be empty");
+				alert.setTitle("World description error");
 				alert.setContentText(null);
 				alert.showAndWait();
 				return;
@@ -337,15 +354,16 @@ public class NewWidget {
 		}
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(this.file));
-			writeNewFile(writer, this.pWidth, this.pHeight, new int[]{sX, sY}, new int[]{eX, eY}, this.lights.isSelected());
+			writeNewFile(writer, this.pWidth, this.pHeight, new int[]{sX, sY}, new int[]{eX, eY}, this.lights.isSelected(), this.customInfo.getText().replace("\n", "\\n"));
 			writer.close();
 			if (this.editor == null){
 				Editor editor = new Editor(this.file.getAbsolutePath(), this.editorStage);
 			} else {
 				this.editor.open(this.file);
 			}
+			Logger.info("New world created");
 		} catch (IOException ex) {}
-                this.stage.close();
+        this.stage.close();
 	}
 
 	public void setEditor(Editor editor) {

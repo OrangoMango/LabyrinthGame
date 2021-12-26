@@ -12,6 +12,7 @@ public abstract class Entity{
 	protected World world;
 	public boolean engineering = false;
 	public boolean layer = false;
+	public boolean started = false;
 	
 	public static final String VERTICAL = "v";
 	public static final String HORIZONTAL = "h";
@@ -30,6 +31,10 @@ public abstract class Entity{
 	
 	public void setY(double v){
 		y = v;
+	}
+	
+	public boolean isStarted(){
+		return started;
 	}
 	
 	protected void setData(World w){
@@ -60,9 +65,15 @@ public abstract class Entity{
 	}
 	
 	public void start(){
+		if (!started){
+			this.started = true;
+		}
 	}
 	
 	public void stop(){
+		if (started){
+			this.started = false;
+		}
 	}
 	
 	@Override

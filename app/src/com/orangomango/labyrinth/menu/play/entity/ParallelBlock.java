@@ -98,16 +98,13 @@ public class ParallelBlock extends Entity{
 		t.setCycleCount(Animation.INDEFINITE);
 	}
 	
-	@Override
-	public void draw(GraphicsContext p){
-		draw(p, getX(), getY());
-	}
-	
 	public void stop() {
+		super.stop();
 		this.t.stop();
 	}
 
 	public void start() {
+		super.start();
 		this.t.play();
 	}
 

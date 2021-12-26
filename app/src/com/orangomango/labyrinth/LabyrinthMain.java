@@ -21,7 +21,6 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LabyrinthMain extends Application {
 
-    public static int currentWorldIndex = 0;
     public final static double VERSION = 3.5;
 
     private static String ARG = null;
@@ -47,7 +46,7 @@ public class LabyrinthMain extends Application {
         Logger.info("User home: "+System.getProperty("user.home")); // Know user's home
 
         Editor.setupDirectory();
-	Logger.info("Application started");
+	    Logger.info("Application started");
 
         // Start Menu
         Menu.OPEN = ARG;

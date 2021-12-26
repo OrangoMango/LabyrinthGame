@@ -76,18 +76,15 @@ public class Bat extends Entity {
 	}
 
 	public void stop() {
+		super.stop();
 		this.t.stop();
 		this.t2.stop();
 	}
 
 	public void start() {
+		super.start();
 		this.t.play();
 		this.t2.play();
-	}
-	
-	@Override
-	public void draw(GraphicsContext p){
-		draw(p, getX(), getY());
 	}
 
 	public void draw(GraphicsContext p, double px, double py) {
