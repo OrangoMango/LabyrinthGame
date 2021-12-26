@@ -184,7 +184,7 @@ public class Menu {
         		showMenu(gc);
                		gc.setFill(Color.BLACK);
 			gc.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/credits_font.ttf", 25));
-        		gc.fillText("CREDITS\n\nIMAGES: OrangoMango\nCODE: OrangoMango\nWEB PAGE: \norangomango.github.io\n\nMIT Licence, OrangoMango\n-- February 2020 --", 160, 90);
+        		gc.fillText("CREDITS\n\nIMAGES: OrangoMango\nCODE: OrangoMango\nWEB PAGE: \norangomango.github.io\n\nMIT Licence, OrangoMango\n-- February 2021 --", 160, 90);
         	} else if (what.equals("profile")){
         		showMenu(gc);
                		gc.setFill(Color.BLACK);
