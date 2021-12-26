@@ -1,0 +1,6 @@
+Level 3
+14x6
+0,0,0,0,0,1:conn#null,0,0,1:conn#null,0,0,0,1:conn#s,2,1:conn#s,0,0,1:conn#null,0,0,0,0,0,0,0,0,1:conn#ne,1:conn#w,1:conn#n,0,0,0,0,0,1:conn#es,1:conn#ew,1:conn#sw,0,0,0,0,0,0,0,0,0,0,1:conn#es,1:conn#nw,2,1:conn#ns,0,0,0,0,1:conn#null,0,0,0,0,0,1:conn#ns,2,2,1:conn#nes,1:conn#w,0,0,0,0,0,0,1:conn#null,0,0,1:conn#n,2,2,1:conn#n,0,0,0,1:conn#null,0
+0,5
+13,5
+1

@@ -1,0 +1,6 @@
+Level 7: Closed spike will open when you go on them. Use elevators to move around
+10x16
+0,0,0,8,1:conn#s,2,2,2,2,2,0,0,0,0,1:conn#ns,2,2,2,2,2,8,0,0,4:point#0 7,1:conn#ns,2,2,2,2,2,1:conn#e,1:conn#ew,1:conn#ew,1:conn#ew,1:conn#new,1:conn#ew,1:conn#ew,1:conn#ew,1:conn#ew,1:conn#w,3,0,0,0,7:data#5 h,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,0,0,4:point#3 2,0,0,0,8,1:conn#e,1:conn#ew,1:conn#ew,1:conn#w,0,1:conn#es,1:conn#w,0,0,1:conn#null,0,6:data#2 v 200 f 100,0,0,0,1:conn#ns,0,0,0,0,0,0,0,0,1:conn#null,1:conn#ns,0,0,0,0,0,0,0,0,5:direction#w;damage#100,1:conn#n,3,3,3,3,1:conn#s,0,3,3,1:conn#null,2,1:conn#e,1:conn#ew,1:conn#ew,1:conn#ew,1:conn#new,1:conn#ew,1:conn#ew,1:conn#w,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+0,0
+1,9
+1

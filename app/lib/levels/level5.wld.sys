@@ -1,0 +1,6 @@
+Level 5: Use portals to teleport player. Be careful! There are spikes
+8x8
+0,0,0,0,0,1:conn#s,0,4:point#4 4,0,0,0,0,3,1:conn#ns,0,0,0,0,0,0,0,1:conn#ns,0,0,1:conn#e,1:conn#ew,1:conn#sw,0,0,1:conn#ns,0,0,0,0,1:conn#ns,0,4:point#7 0,1:conn#ns,0,0,0,0,1:conn#ne,1:conn#ew,1:conn#ew,1:conn#nw,0,0,0,0,0,0,0,0,0,0,1:conn#null,0,1:conn#null,0,0,0,1:conn#null,3
+1,0
+1,7
+1
