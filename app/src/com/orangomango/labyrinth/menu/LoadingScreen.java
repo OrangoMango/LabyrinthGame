@@ -28,7 +28,8 @@ public class LoadingScreen {
 	private static final String[] FONTNAMES = new String[] {
 		"menu_font",
 		"play_font",
-		"credits_font"
+		"credits_font",
+		"news_font"
 	};
 	private static final String[] IMGNAMES = new String[] {
 		"editor" + File.separator + "ac",
@@ -44,7 +45,8 @@ public class LoadingScreen {
 		"editor" + File.separator + "button_play",
 		"editor" + File.separator + "button_levels",
 		"editor" + File.separator + "button_profile",
-		"editor" + File.separator + "button_credits",	
+		"editor" + File.separator + "button_credits",
+		"editor" + File.separator + "button_news",
 		"editor" + File.separator + "warning",
 		"editor" + File.separator + "arrow_sign_h",
 		"editor" + File.separator + "arrow_sign_v",

@@ -59,8 +59,8 @@ public class PlayScreen {
 					this.pen.strokeLine(180+240*(i-3)/4, 70, 300+240*(i-3)/4, 70);
 			}
 		}
-                this.pen.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/play_font.ttf", 24));
-                this.pen.setTextAlign(TextAlignment.CENTER);
+		this.pen.setFont(Font.loadFont("file://" + changeSlash(PATH) + ".labyrinthgame/Fonts/play_font.ttf", 24));
+		this.pen.setTextAlign(TextAlignment.CENTER);
 		for (int i = 0; i < num; i++){
 			switch (i % 4){
 				case 0:
@@ -165,7 +165,7 @@ public class PlayScreen {
 		});
 
 		TabPane tabpane = new TabPane();
-                tabpane.getStyleClass().add("floating");
+        tabpane.getStyleClass().add("floating");
 		VBox lvls = new VBox();
 		lvls.setPadding(new Insets(20, 20, 20, 20));
 		lvls.getChildren().add(tabpane);
