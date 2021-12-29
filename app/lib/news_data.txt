@@ -1,0 +1,9 @@
+8
+[v3.4 | Engineering Mode]NEW MODE: Engineering mode{https://user-images.githubusercontent.com/61402409/140701033-fb9a3111-433c-41e9-883d-cb5dea95fdb8.png;200}NEW BLOCKS\n* Cable\n* Level\n* Generator\n* Led\n* Door\nNEW FEATURES\n* Added water blocks\n* Added oxygen and health points\n* Bat and arrow damage is now changeable\n* Fixed bugs in older levels\n* Added button images in the menu\n* Added world preview{https://user-images.githubusercontent.com/61402409/140701165-33e45054-6fc1-4e30-be81-86d574e2815b.png;300}NEW BLOCKS\n* Oxygen point\n* Arrow Decoration\n* Changed elevator texture\n* Changed warning decoration texture\n* Changed portal texture\n* Changed player texture\nNEW LEVEL\n* Level 10{https://user-images.githubusercontent.com/61402409/140701098-4b36b09b-804e-4713-9522-e3a4b59df8b2.png;350}
+[v3.3 | New Features]NEW FEATURES\n* Bug fix\n* New style\n* New block layout\n* Player view\n* Added border on walls\n* Added editor menu with shortcuts\n* Fixed elevator bug (player was not centered)\nNEW BLOCKS\n* New decoration: warning sign\n* Closable spike\n* Elevator\nNEW LEVELS\n* Level 7, 8, 9{https://user-images.githubusercontent.com/61402409/133609868-f92db532-ac04-4317-a8bd-41371f69a173.png;350}
+[v3.2 | Texture Update]NEW BLOCKS\n* Wall block texture changed\n* Air block texture changed\n* New spike block\n* New portal block\n* New shooter block\n* Player texture changed\nNEW FEATURE: ENTITIES\n* Added bat\n* Added arrow{https://user-images.githubusercontent.com/61402409/125439049-fe843894-88ac-4af4-9157-fd54cf495c62.png;250}NEW LEVELS\n* Level 5\n* Level 6\nEDITOR\n* Multiple files can now be opened\n* Added log file{https://user-images.githubusercontent.com/61402409/125439197-c410b25d-3a07-4a24-9245-0cb1e15cb350.png;350}
+[v3.1 | New Features]Info
+[v3.0 | Editor Update]Info
+[v2.1 | Graphics Update 2]Info
+[v2.0 | Graphics Update]Info
+[v1.0 | LabyrinthGame, no graphics]Info
