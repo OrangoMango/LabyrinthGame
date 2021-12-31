@@ -1,6 +1,0 @@
-Level 1: Use arrows to move the player
-5x5
-1:conn#null,0,0,0,0,0,0,1:conn#null,0,1:conn#null,0,1:conn#null,0,0,0,0,0,0,0,0,0,0,1:conn#e,1:conn#w,0
-4,4
-4,0
-1
