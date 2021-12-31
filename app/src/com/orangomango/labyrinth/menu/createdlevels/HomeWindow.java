@@ -95,7 +95,7 @@ public class HomeWindow {
 				Label mod = new Label("Last modified: " + format.format(file.lastModified()));
 				Label size = new Label(String.format("Size: %d bytes (Dim.: %dx%d) %s", file.length(), temp.width, temp.height, getDim(temp.width, temp.height)));
 				Label author = new Label("Author: -");
-				Label information = new Label("Information:\n"+World.getWorldInformation(p).replace("\\n", "\n"));
+				Label information = new Label("Information:\n"+temp.getWorldInformation().replace("\\n", "\n"));
 				Button del = new Button();
 				del.setTooltip(new Tooltip("Delete level"));
 				del.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_delete.png")));

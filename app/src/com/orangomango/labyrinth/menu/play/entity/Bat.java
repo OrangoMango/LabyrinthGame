@@ -15,7 +15,7 @@ public class Bat extends Entity {
 	private double startX = 0;
 	private double startY = 0;
 	private int suff = 1;
-	private Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png");
+	private Image image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side.png");
 	private Timeline t;
 	private Timeline t2;
 	private String direction;
@@ -56,10 +56,10 @@ public class Bat extends Entity {
 
 		t2 = new Timeline(new KeyFrame(Duration.millis(this.speed / 2 * 3), event -> {
 			if (this.direction.equals(HORIZONTAL)) {
-				this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_" + this.suff + ".png");
+				this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side.png");
 				this.suff = (this.suff == 1) ? 2 : 1;
 			} else if (this.direction.equals(VERTICAL)) {
-				this.image = this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_front_" + this.suff + ".png");
+				this.image = this.image = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_front.png");
 				if (this.suff == 3) {
 					this.suff = 1;
 				} else {
@@ -88,10 +88,10 @@ public class Bat extends Entity {
 	}
 
 	public void draw(GraphicsContext p, double px, double py) {
-		if (M == 1) {
-			p.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), World.BLOCK_WIDTH + px * World.BLOCK_WIDTH, 0 + py * World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
-		} else if (M == -1) {
-			p.drawImage(this.image, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+		if (M == 1 && this.direction.equals(HORIZONTAL)) {
+			p.drawImage(this.image, 1+(World.DEFAULT_BLOCK_WIDTH+2)*(this.suff-1+2), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+		} else if (isStarted()) {
+			p.drawImage(this.image, 1+(World.DEFAULT_BLOCK_WIDTH+2)*(this.suff-1), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 		}
 	}
 }

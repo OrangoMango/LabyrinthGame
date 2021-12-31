@@ -104,7 +104,7 @@ public class NewsScreen{
 		this.info = INFOS[0];
 		this.isp = new ScrollPane();
 		this.isp.setPrefWidth(450);
-		this.isp.setPrefHeight(500);
+		this.isp.setPrefHeight(450);
 		this.isp.setContent(this.info);
 		
 		Button exit = new Button("Back");
@@ -115,7 +115,7 @@ public class NewsScreen{
 		layout.add(sp, 0, 0, 1, 2);
 		layout.add(this.isp, 1, 0);
 		layout.add(exit, 0, 2);
-		Scene scene = new Scene(layout, 950, 550);
+		Scene scene = new Scene(layout, 950, 500);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
 	}

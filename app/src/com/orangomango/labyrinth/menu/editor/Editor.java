@@ -20,6 +20,8 @@ import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.Random;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.orangomango.labyrinth.Player;
 import com.orangomango.labyrinth.Block;
@@ -43,7 +45,7 @@ public class Editor {
 	private Label pointingOn;
    	private boolean arcade = false;
    	private MenuItem mArcade;
-   	private Tab worldsTab;
+   	private Tab worldsTab, personalViewTab;
    	private RadioMenuItem mNormal, mEngineer;
    	private Button runArcBtn;
 	private MenuItem mRunPattern;
@@ -104,6 +106,7 @@ public class Editor {
 		} else {
 			editableworld = this.edworld;
 		}
+		editableworld.warningOnEnd = CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys");
 
 		Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
 		canvas.setFocusTraversable(true);
@@ -897,7 +900,9 @@ public class Editor {
 			}
 			unsaved();
 		});
-		prefMenu.getItems().add(mLights);
+		MenuItem changeDescription = new MenuItem("Change world description");
+		changeDescription.setOnAction(event -> {new ChangeDescription(this.edworld); unsaved();});
+		prefMenu.getItems().addAll(mLights, changeDescription);
                 
                 Menu exitMenu = new Menu("Exit");
                 MenuItem mExit = new MenuItem("Exit");
@@ -1080,9 +1085,14 @@ public class Editor {
 		worldsTab = new Tab("Arcade patterns");
 		worldsTab.setClosable(false);
 		worldsTab.setDisable(!this.arcade);
+		
+		personalViewTab = new Tab("Pseudo arcade view");
+		personalViewTab.setClosable(false);
+		personalViewTab.setDisable(!this.arcade);
+		
 		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys"));
 		
-		blocksTabPane.getTabs().addAll(blocksTab, worldsTab);
+		blocksTabPane.getTabs().addAll(blocksTab, worldsTab, personalViewTab);
 		
 		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
 			if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0) {
@@ -1184,7 +1194,7 @@ public class Editor {
 					shootB.setToggleGroup(tg);
 					shootB.setOnAction(event -> SELECTED_BLOCK = 5);
 					ToggleButton batB = new ToggleButton();
-					batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/entities/bat_side_1.png")));
+					batB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_entity_bat.png")));
 					batB.setTooltip(new Tooltip("Bat. ID:N6"));
 					batB.setToggleGroup(tg);
 					batB.setOnAction(event -> SELECTED_BLOCK = 6);
@@ -1281,8 +1291,8 @@ public class Editor {
 
 		splitpane.getItems().add(blocksTabPane);
 
-		// Set the divider on 75%
-		splitpane.setDividerPositions(0.75f);
+		// Set the divider on 65%
+		splitpane.setDividerPositions(0.65f);
 		layout.add(menuBar, 0, 0);
 		layout.add(toolbar, 0, 1);
 		layout.add(splitpane, 0, 2);
@@ -1641,6 +1651,92 @@ public class Editor {
 			sp.setFitToWidth(true);
 			this.worldsTab.setContent(sp);
 		}
+		if (this.personalViewTab != null){
+			this.personalViewTab.setDisable(!this.arcade);
+			GridPane personalLayout = new GridPane();
+			personalLayout.setHgap(10);
+			
+			ListView<String> selPatterns = new ListView<String>();
+			ScrollPane pane = new ScrollPane(); // scrollpane for generated world
+			
+			Button generate = new Button("Generate combined world");
+			generate.setOnAction(c -> {
+				World temp = new World(this.edworld.worldList.getWorldAt(Integer.parseInt(Character.toString(selPatterns.getItems().get(0).charAt(8)))-1).getFilePath());
+				for (int i = 1; i < selPatterns.getItems().size(); i++){
+					temp.changeToWorld(World.combineWorlds(temp, this.edworld.worldList.getWorldAt(Integer.parseInt(Character.toString(selPatterns.getItems().get(i).charAt(8)))-1)));
+				}
+				World.BLOCK_WIDTH = 20;
+				Canvas cv = new Canvas(temp.width*World.BLOCK_WIDTH, temp.height*World.BLOCK_WIDTH);
+				temp.setPen(cv.getGraphicsContext2D());
+				temp.previewMode = true;
+				temp.setPlayer(new Player(temp.start[0], temp.start[1], temp));
+				temp.draw();
+				pane.setContent(cv);
+				World.BLOCK_WIDTH = World.DEFAULT_BLOCK_WIDTH;
+			});
+			generate.setDisable(true);
+			
+			ContextMenu cm = new ContextMenu();
+			MenuItem deleteList = new MenuItem("Remove selected item");
+			deleteList.setOnAction(c -> {
+				int index = selPatterns.getSelectionModel().getSelectedIndex();
+				if (index >= 0){
+					selPatterns.getItems().remove(index);
+					if (selPatterns.getItems().size() == 0){
+						generate.setDisable(true);
+					}
+				}
+			});
+			MenuItem moveUp = new MenuItem("Move up selected item");
+			moveUp.setOnAction(c -> {
+				int index = selPatterns.getSelectionModel().getSelectedIndex();
+				if (index == 0) return;
+				selPatterns.getItems().add(index-1, selPatterns.getItems().get(index));
+				selPatterns.getItems().remove(index+1);
+				selPatterns.getSelectionModel().select(index-1);
+			});
+			MenuItem moveDown = new MenuItem("Move down selected item");
+			moveDown.setOnAction(c -> {
+				int index = selPatterns.getSelectionModel().getSelectedIndex();
+				if (index == selPatterns.getItems().size()-1) return;
+				selPatterns.getItems().add(index+2, selPatterns.getItems().get(index));
+				selPatterns.getItems().remove(index);
+				selPatterns.getSelectionModel().select(index+1);
+			});
+			cm.getItems().addAll(deleteList, new SeparatorMenuItem(), moveUp, moveDown);
+			selPatterns.setContextMenu(cm);
+			selPatterns.setMaxHeight(340);
+			selPatterns.setMaxWidth(120);
+			selPatterns.setPlaceholder(new Label("Empty list..."));
+			ChoiceBox<String> box = new ChoiceBox<String>();
+			box.setMaxWidth(130);
+			List<String> patternList = new ArrayList<String>();
+			for (int i = 1; i <= World.getArcadeLevels(CURRENT_FILE_PATH); i++){
+				patternList.add("Pattern "+i);
+			}
+			box.getItems().addAll(patternList);
+			Button select = new Button("Add to list");
+			select.setOnAction(event -> {
+				String value = box.getValue();
+				if (value != null){
+					selPatterns.getItems().add(value);
+					generate.setDisable(false);
+				}
+			});
+			
+			pane.setMaxWidth(250);
+			pane.setMaxHeight(250);
+			
+			VBox selection = new VBox();
+			selection.setSpacing(5);
+			selection.getChildren().addAll(box, select, new Separator(), generate, pane);
+			personalLayout.add(selPatterns, 0, 0);
+			personalLayout.add(selection, 1, 0);
+			ScrollPane sp = new ScrollPane(personalLayout);
+			sp.setFitToWidth(true);
+			sp.setFitToHeight(true);
+			this.personalViewTab.setContent(sp);
+		}
 		World.BLOCK_WIDTH = tBW;
 	}
 	
@@ -1649,13 +1745,13 @@ public class Editor {
 		if (this.mode.equals("engineering")){
 			if (this.edworld.getEngineeringWorld() == null){
 				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld, this.edworld.width, this.edworld.height));
-                                this.edworld.updateOnFile();
-                                if (this.arcade){
-                                    for (int i = 0; i < World.getArcadeLevels(CURRENT_FILE_PATH); i++){
-					this.edworld.worldList.getWorldAt(i).setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.worldList.getWorldAt(i), this.edworld.worldList.getWorldAt(i).width, this.edworld.worldList.getWorldAt(i).height));
-					this.edworld.worldList.getWorldAt(i).updateOnFile(false);
-                                    }
-                                }
+				this.edworld.updateOnFile();
+				if (this.arcade){
+					for (int i = 0; i < World.getArcadeLevels(CURRENT_FILE_PATH); i++){
+						this.edworld.worldList.getWorldAt(i).setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.worldList.getWorldAt(i), this.edworld.worldList.getWorldAt(i).width, this.edworld.worldList.getWorldAt(i).height));
+						this.edworld.worldList.getWorldAt(i).updateOnFile(false);
+                    }
+                }
 				unsaved();
 				Logger.info("Engineering mode created successfully");
 			}

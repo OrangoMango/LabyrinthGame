@@ -443,8 +443,8 @@ public class Block {
 					} else {
 						dir = Entity.HORIZONTAL;
 					}
-					Image batImg = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Entity.HORIZONTAL)) ? "bat_side_1.png" : "bat_front_3.png"));
-					pen.drawImage(batImg,  0, 0, batImg.getWidth(), batImg.getHeight(), World.BLOCK_WIDTH+px*World.BLOCK_WIDTH, 0+py*World.BLOCK_WIDTH, -World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+					Image batImg = new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/entities/"+((dir.equals(Entity.HORIZONTAL)) ? "bat_side.png" : "bat_front.png"));
+					pen.drawImage(batImg, 1+(World.DEFAULT_BLOCK_WIDTH+2)*(dir.equals(Entity.HORIZONTAL) ? 0 : 2), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px*World.BLOCK_WIDTH, py*World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 					if (this.info.split(";")[checkInfoKey("data")].split("#")[1].equals("NoDataSet")){
 						drawWarningSign(pen, px, py);
 					}

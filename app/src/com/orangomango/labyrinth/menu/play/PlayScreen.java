@@ -102,8 +102,6 @@ public class PlayScreen {
 			return;
 		}
 		LEVELS_OPEN[getLevelIndex(level) - 1] = 1;
-
-		Label information = new Label(World.getWorldInformation(lPath).replace("\\n", "\n"));
 		
 		World temp = new World(lPath);
 		temp.previewMode = true;
@@ -115,6 +113,8 @@ public class PlayScreen {
 		temp.setPlayer(new Player(temp.start[0], temp.start[1], temp));
 		temp.draw();
 		World.BLOCK_WIDTH = tempW;
+		
+		Label information = new Label(temp.getWorldInformation().replace("\\n", "\n"));
 
 		Button playBtn = new Button();
 		playBtn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/menu_run.png")));

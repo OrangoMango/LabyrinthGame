@@ -109,7 +109,9 @@ public class LevelExe {
 
 		final Player player = new Player(world.start[0], world.start[1], world);
 		player.draw(pen);
-		player.setPsFilePath(path);
+		if (this.arcade){
+			player.setPsFilePath(path);
+		}
 		world.setPlayer(player);
 		
 		LevelStats levelStats = new LevelStats(world, pen);

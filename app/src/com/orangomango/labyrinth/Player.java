@@ -229,7 +229,7 @@ public class Player {
 			}
 			if (this.repeat == rep2){
 				LevelExe.PLAYER_MOVEMENT = true;
-				if (this.isOnEnd()) {
+				if (this.isOnEnd() && this.world.getShowEnd()) {
 					LevelExe.OPEN = false;
 					stage.close();
 					if (LevelExe.exStage != null)
@@ -336,6 +336,9 @@ public class Player {
 						if (e instanceof PoisonCloud){
 							ph = ((PoisonCloud)e).getHeight();
 						}
+					}
+					for (Entity e : this.world.getEnts()){
+						e.stop();
 					}
 					this.world.changeToWorld(World.combineWorlds(this.world, (new World(getPsFilePath())).worldList.getWorldAt(rnd.nextInt(World.getArcadeLevels(getPsFilePath())))));
 					this.world.addEnt(new PoisonCloud(this.world, this.world.width, ph, -2));

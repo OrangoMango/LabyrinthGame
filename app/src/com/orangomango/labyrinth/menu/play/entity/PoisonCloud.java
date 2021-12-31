@@ -13,8 +13,8 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 public class PoisonCloud extends Entity{
 	private int width, height;
 	private Timeline t, t2;
-	// Max index: 3, from 0 to 3
-	private int index = 0;
+	private int index = 0; // Max index: 3, from 0 to 3
+	private static final int DELAY = 1600;
 	
 	public PoisonCloud(World w, int width, int height, int yH){
 		setData(w);
@@ -24,7 +24,7 @@ public class PoisonCloud extends Entity{
 		this.height = height;
 		this.layer = true;
 		
-		t = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+		t = new Timeline(new KeyFrame(Duration.millis(DELAY), e -> {
 			this.height++;
 			if ((int)Math.round(getY()+this.height*World.BLOCK_WIDTH) >= w.getPlayer().getY()*World.BLOCK_WIDTH || (w.getPlayer().psy != null && w.getPlayer().psy*World.BLOCK_WIDTH <= getY()+this.height*World.BLOCK_WIDTH)){
 				w.getPlayer().removeHealth(25);
@@ -37,7 +37,7 @@ public class PoisonCloud extends Entity{
 		}));
 		t.setCycleCount(Animation.INDEFINITE);
 		
-		t2 = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+		t2 = new Timeline(new KeyFrame(Duration.millis(DELAY/4), e -> {
 			if (index == 3){
 				index = 0;
 			} else {

@@ -239,7 +239,9 @@ public class Menu {
 			alert.showAndWait();
 			Platform.exit();
 		}
-		Logger.info("You are running the latest version");
+		if (versions != null){
+			Logger.info("You are running the latest version");
+		}
 		if (OPEN != null) {
 			System.out.println("Opening requested file: " + OPEN);
 			Editor editor = new Editor(OPEN, this.stage);

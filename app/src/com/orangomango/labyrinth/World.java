@@ -55,6 +55,8 @@ public class World {
 	public Timeline viewTime;
 	private static boolean VIEWING = false;
 	private Stage psStage;
+	public boolean warningOnEnd = false;
+	private String information = "";
 
 	public final static String NORTH = "n";
 	public final static String SOUTH = "s";
@@ -175,6 +177,7 @@ public class World {
         	this.engW = ew != null ? new EngWorld(this, ew, this.width, this.height) : null;
         	filePath = createTempCopyFilePath(delBefore);
         	this.combinedLines = new int[]{this.height-1};
+        	this.updateOnFile();
         }
         
         public void viewFrom(int x, int y, int x1, int y1){
@@ -225,7 +228,8 @@ public class World {
         	
 	public void writeToFile(BufferedWriter writer){
 		try {
-			writer.write("Level comment\n");
+			writer.write(this.information);
+			writer.newLine();
 			writer.write(this.width + "x" + this.height + "\n");
 			int counter = 0;
 			for (Block[] bArr: this.world) {
@@ -293,7 +297,7 @@ public class World {
 					f = true;
 				}
 			}
-                        reader.close();
+            reader.close();
 			return index == 0 ? -1 : index;
 		} catch (IOException ex){
                     return -1;
@@ -394,6 +398,7 @@ public class World {
 			cont++;
 		}
 		w.combinedLines = cl;
+		w.setShowEnd(false);
 		w.updateWalls();
 		return w;
 	}
@@ -570,7 +575,6 @@ public class World {
 			this.canvas.setHeight(this.height * BLOCK_WIDTH);
 			this.canvas.setWidth(this.width * BLOCK_WIDTH);
 		} catch (NullPointerException e) {
-			Logger.warning("World canvas is null");
 		}
 		/*try {
 			this.player.setX(start[0]);
@@ -659,8 +663,8 @@ public class World {
 				reader.readLine();
 			}
 			
-			// Skip world information
-			readData(reader);
+			// Get world information
+			this.information = readData(reader);
 
 			// Get world width and height from file
 			String data = readData(reader);
@@ -714,16 +718,13 @@ public class World {
 		return readWorld(path, 0);
 	}
 	
-	// Warning: This method does not work for arcade world files
-	public static String getWorldInformation(String path){
-		String information;
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(path));
-			information = readData(reader);
-			return information;
-		} catch (IOException ioe){
-			return null;
-		}
+	public String getWorldInformation(){
+		return this.information;
+	}
+	
+	public void setWorldInformation(String i){
+		this.information = i;
+		this.updateOnFile();
 	}
 
 	private int[] configureFromString(String data) {
@@ -961,6 +962,9 @@ public class World {
 	private void drawEnd(int x, int y) {
 		if (this.showEnd){
 			this.pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/end.png"), (end[0] - x) * BLOCK_WIDTH, (end[1] - y) * BLOCK_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH);
+			if (this.warningOnEnd){
+				this.pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/editor/warning.png"), (end[0] - x) * BLOCK_WIDTH, (end[1] - y) * BLOCK_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH);
+			}
 		}
 	}
 
