@@ -604,12 +604,36 @@ public class Editor {
 							break;
 						// 10: Parallel block
 						case 11:
-							edblock.setInfo("direction#"+EditableWorld.WEST);
+							edblock.setInfo("direction#"+EditableWorld.EAST);
 							edblock.toggleType(EditableWorld.D_ARROW);
 							break;
 						case 12:
 							edblock.setInfo(null);
 							edblock.toggleType(EditableWorld.OXYGEN_POINT);
+							break;
+						case 13:
+							if (edblock.getType().equals(EditableWorld.WALL)){
+								String plant = "n";
+								if (edblock.checkInfoKey("plant") >= 0){
+									plant = edblock.getInfo().split(";")[edblock.checkInfoKey("plant")].split("#")[1];
+								}
+								edblock.addInfoParam("plant#"+(plant.equals("y") ? "n" : "y"));
+							} else {
+								edblock.setInfo(null);
+								edblock.toggleType(EditableWorld.D_PLANT);
+							}
+							break;
+						case 14:
+							edblock.setInfo(null);
+							edblock.toggleType(EditableWorld.D_CONE);
+							break;
+						case 15:
+							edblock.setInfo(null);
+							edblock.toggleType(EditableWorld.D_STONES);
+							break;
+						case 16:
+							edblock.setInfo(null);
+							edblock.toggleType(EditableWorld.D_BUSH);
 							break;
 					}
 					
@@ -681,11 +705,14 @@ public class Editor {
 			} else {
 				Eblock = null;
 			}
-			Block.MAX_INFO_LENGTH = (int)Math.round(this.stage.getWidth()*0.032);
 			if (this.mode.equals("normal")){
-				this.pointingOn.setText("Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position"))+" ["+getFileName()+"]");
+				String inf = "Mouse on block: "+block+" | "+((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position"))+" ["+getFileName()+"]";
+				this.pointingOn.setText(inf);
+				this.pointingOn.setTooltip(new Tooltip(inf));
 			} else if (this.mode.equals("engineering")){
-				this.pointingOn.setText("Mouse on block: "+Eblock+" ["+getFileName()+"]");
+				String inf = "Mouse on block: "+Eblock+" ["+getFileName()+"]";
+				this.pointingOn.setText(inf);
+				this.pointingOn.setTooltip(new Tooltip(inf));
 			}
 					
 		});
@@ -761,11 +788,11 @@ public class Editor {
 		mSave.setOnAction(e -> {
 		    try {
 				// Clone of toolbar button
-                                if (this.arcade){
-                                	this.edworld.worldList.sync();
-                                    	this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
-                                }
-                                copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
+				if (this.arcade){
+					this.edworld.worldList.sync();
+					this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
+				}
+				copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
 				saved();
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
@@ -881,7 +908,18 @@ public class Editor {
 		this.mArcade = new MenuItem("Convert to arcade mode");
 		this.mArcade.setDisable(this.arcade);
 		this.mArcade.setAccelerator(new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN));
-		this.mArcade.setOnAction(e -> {setArcadeMode(); mArcade.setDisable(true);});
+		this.mArcade.setOnAction(e -> {
+			/*Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setHeaderText("Do you want to delete current world file after converting?");
+			alert.setTitle("Delete current world file");
+			alert.setContentText(null);
+			alert.showAndWait()
+				 .filter(response -> response == ButtonType.OK)
+				 .ifPresent(response -> System.out.println("OK"));
+			*/
+			setArcadeMode();
+			mArcade.setDisable(true);
+		});
 		modeMenu.getItems().addAll(mNormal, mEngineer, new SeparatorMenuItem(), mArcade);
 		
 		Menu prefMenu = new Menu("_Preferences");
@@ -1104,9 +1142,9 @@ public class Editor {
 				this.mLights.setSelected(edworld.getAllLights());
 				this.setMode("normal");
 				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys"));
-                                if (this.blocksTabPane != null){
-                                    this.blocksTabPane.getSelectionModel().selectFirst();
-                                }
+				if (this.blocksTabPane != null){
+					this.blocksTabPane.getSelectionModel().selectFirst();
+				}
 				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 			}
 		});
@@ -1158,8 +1196,9 @@ public class Editor {
 					deb.setPadding(new Insets(5, 5, 5, 5));
 					deb.setHgap(5);
 					deb.setVgap(5);
-					ToggleButton voidB = new ToggleButton("VOID");
-					voidB.setTooltip(new Tooltip("VOID block. ID:N2"));
+					ToggleButton voidB = new ToggleButton();
+					voidB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_void.png")));
+					voidB.setTooltip(new Tooltip("Void block. ID:N2"));
 					voidB.setToggleGroup(tg);
 					voidB.setOnAction(event -> SELECTED_BLOCK = 2);
 					ToggleButton warB = new ToggleButton();
@@ -1168,11 +1207,31 @@ public class Editor {
 					warB.setToggleGroup(tg);
 					warB.setOnAction(event -> SELECTED_BLOCK = 9);
 					ToggleButton arrB = new ToggleButton();
-					arrB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow.png")));
+					arrB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/button_decoration_arrow.png")));
 					arrB.setTooltip(new Tooltip("Arrow decoration. ID:N11"));
 					arrB.setToggleGroup(tg);
 					arrB.setOnAction(event -> SELECTED_BLOCK = 11);
-					deb.getChildren().addAll(voidB, warB, arrB);
+					ToggleButton plantB = new ToggleButton();
+					plantB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_plant.png")));
+					plantB.setTooltip(new Tooltip("Plant decoration. ID:N13"));
+					plantB.setToggleGroup(tg);
+					plantB.setOnAction(event -> SELECTED_BLOCK = 13);
+					ToggleButton coneB = new ToggleButton();
+					coneB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_cone.png")));
+					coneB.setTooltip(new Tooltip("Cone decoration. ID:N14"));
+					coneB.setToggleGroup(tg);
+					coneB.setOnAction(event -> SELECTED_BLOCK = 14);
+					ToggleButton stonesB = new ToggleButton();
+					stonesB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_stones.png")));
+					stonesB.setTooltip(new Tooltip("Stones decoration. ID:N15"));
+					stonesB.setToggleGroup(tg);
+					stonesB.setOnAction(event -> SELECTED_BLOCK = 15);
+					ToggleButton bushB = new ToggleButton();
+					bushB.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_bush.png")));
+					bushB.setTooltip(new Tooltip("Bush decoration. ID:N16"));
+					bushB.setToggleGroup(tg);
+					bushB.setOnAction(event -> SELECTED_BLOCK = 16);
+					deb.getChildren().addAll(voidB, warB, arrB, plantB, coneB, stonesB, bushB);
 					Label header1 = new Label(" Decoration Blocks");
 					header1.setStyle(style);
 					return new VBox(header1, deb);
@@ -1578,11 +1637,10 @@ public class Editor {
 		this.runArcBtn.setDisable(!this.arcade);
 		this.mRunPattern.setDisable(!this.arcade);
 		TilePane tilePane = new TilePane();
-                tilePane.setPadding(new Insets(5, 5, 5, 5));
+        tilePane.setPadding(new Insets(5, 5, 5, 5));
 		tilePane.setHgap(10);
 		tilePane.setVgap(10);
 		final int PREVIEW_BLOCK_WIDTH = 10;
-		final int tBW = World.BLOCK_WIDTH;
 		World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 		for (int i = 1; i <= getArcadeLevels(CURRENT_FILE_PATH); i++){
 			final int now = i;
@@ -1737,7 +1795,7 @@ public class Editor {
 			sp.setFitToHeight(true);
 			this.personalViewTab.setContent(sp);
 		}
-		World.BLOCK_WIDTH = tBW;
+		World.BLOCK_WIDTH = World.DEFAULT_BLOCK_WIDTH;
 	}
 	
 	private void setMode(String m){

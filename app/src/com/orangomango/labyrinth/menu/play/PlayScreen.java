@@ -105,14 +105,13 @@ public class PlayScreen {
 		
 		World temp = new World(lPath);
 		temp.previewMode = true;
-		int tempW = World.BLOCK_WIDTH;
 		World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 		Canvas Tcanvas = new Canvas(temp.width*World.BLOCK_WIDTH, temp.height*World.BLOCK_WIDTH);
 		GraphicsContext pen = Tcanvas.getGraphicsContext2D();
 		temp.setPen(pen);
 		temp.setPlayer(new Player(temp.start[0], temp.start[1], temp));
 		temp.draw();
-		World.BLOCK_WIDTH = tempW;
+		World.BLOCK_WIDTH = World.DEFAULT_BLOCK_WIDTH;
 		
 		Label information = new Label(temp.getWorldInformation().replace("\\n", "\n"));
 

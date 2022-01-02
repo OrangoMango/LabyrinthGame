@@ -74,6 +74,10 @@ public class World {
 	public final static String ELEVATOR = "elevator";
 	public final static String D_WARNING = "decoration_warning";
 	public final static String D_ARROW = "decoration_arrow";
+	public final static String D_PLANT = "decoration_plant";
+	public final static String D_CONE = "decoration_cone";
+	public final static String D_STONES = "decoration_stones";
+	public final static String D_BUSH = "decoration_bush";
 	public final static String PARALLEL_BLOCK = "parallel_block";
 	public final static String OXYGEN_POINT = "oxygen_point";
 
@@ -332,6 +336,12 @@ public class World {
 			for (Block block : blockRow){
 				output[y][x] = block;
 				output[y][x].setY(world1.height+output[y][x].getY());
+				if (block.getType().equals(World.PORTAL)){
+					String info = block.getInfo().split(";")[block.checkInfoKey("point")].split("#")[1];
+					int xC = Integer.parseInt(info.split(" ")[0]), yC = Integer.parseInt(info.split(" ")[1]);
+					yC += world1.height;
+					block.addInfoParam("point#"+xC+" "+yC);
+				}
 				x++;
 			}
 			x = 0;
@@ -816,6 +826,9 @@ public class World {
 	
 	public static void drawRotatedImage(GraphicsContext pen, String img, double x, double y, int w, String d, boolean isContained, boolean exRotation, boolean complete, String attach){
 		// NORTH: 0 - EAST: 90 - SOUTH: 180 - WEST: -90 (Square images only)
+		// isContained: in spriteSheet ?
+		// exRotation: true: give attach value and d for filename, false: no attach value needed
+		// complete: use n e s w or complete form (n e s w ne es sw ...) ?
 		Image imgFile = new Image(img+(exRotation ? "-"+d: "")+".png");
 		if (exRotation){
 			pen.drawImage(imgFile, isContained ? Block.getSpriteCoords(attach, complete, true) : 0,  isContained ? 1 : 0, isContained ? DEFAULT_BLOCK_WIDTH : imgFile.getWidth(), isContained ? DEFAULT_BLOCK_WIDTH : imgFile.getHeight(), x, y, w, w);

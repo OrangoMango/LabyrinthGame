@@ -23,7 +23,6 @@ public class Block {
 	public static final double DARK = -0.25;
 	public static final double LIGHT = 0;
 	public static final int LIGHT_AREA = 1;
-	public static int MAX_INFO_LENGTH = 25;
 
 	/**
 	  Block class constructor
@@ -49,6 +48,10 @@ public class Block {
 			case World.BAT_GEN:
 			case World.D_WARNING:
 			case World.D_ARROW:
+			case World.D_PLANT:
+			case World.D_BUSH:
+			case World.D_CONE:
+			case World.D_STONES:
 			case World.OXYGEN_POINT:
 				this.category = World.AIR;
 				break;
@@ -243,6 +246,14 @@ public class Block {
 				return new Block(World.D_ARROW, x1, y1, i);
 			case 12:
 				return new Block(World.OXYGEN_POINT, x1, y1, i);
+			case 13:
+				return new Block(World.D_PLANT, x1, y1, i);
+			case 14:
+				return new Block(World.D_CONE, x1, y1, i);
+			case 15:
+				return new Block(World.D_STONES, x1, y1, i);
+			case 16:
+				return new Block(World.D_BUSH, x1, y1, i);
 			default:
 				return null;
 		}
@@ -386,14 +397,13 @@ public class Block {
 		
 		switch (getType()){
 			case World.WALL:
-				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall.png"), getSpriteCoords(getInfo().split(";")[checkInfoKey("conn")].split("#")[1], true, false), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_wall"+(checkInfoKey("plant") >= 0 && this.info.split(";")[checkInfoKey("plant")].split("#")[1].equals("y") ? "_plant" : "")+".png"), getSpriteCoords(getInfo().split(";")[checkInfoKey("conn")].split("#")[1], true, false), 1, World.DEFAULT_BLOCK_WIDTH, World.DEFAULT_BLOCK_WIDTH, px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.AIR:
 				drawAirBlock(pen, px, py);
 				break;
 			case World.VOID:
-				pen.setFill(Color.GRAY);
-				pen.fillRect(px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/block_void.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			case World.SPIKE:
 				drawAirBlock(pen, px, py);
@@ -488,11 +498,27 @@ public class Block {
 			case World.D_ARROW:
 				drawAirBlock(pen, px, py);
 				String direct = Character.toString(this.getInfo().split(";")[checkInfoKey("direction")].split("#")[1].charAt(0));
-				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct, false, false, false, null);
+				World.drawRotatedImage(pen, "file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_arrow", px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, direct, true, false, false, null);
 				break;
 			case World.OXYGEN_POINT:
 				drawAirBlock(pen, px, py);
 				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/oxygen_point.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case World.D_PLANT:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_plant.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case World.D_CONE:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_cone.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case World.D_STONES:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_stones.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
+				break;
+			case World.D_BUSH:
+				drawAirBlock(pen, px, py);
+				pen.drawImage(new Image("file://" + Editor.changeSlash(PATH) + ".labyrinthgame/Images/blocks/decoration_bush.png"), px * World.BLOCK_WIDTH, py * World.BLOCK_WIDTH, World.BLOCK_WIDTH, World.BLOCK_WIDTH);
 				break;
 			default:
 				pen.setFill(Color.RED);
@@ -536,6 +562,14 @@ public class Block {
 					return 11;
 				case World.OXYGEN_POINT:
 					return 12;
+				case World.D_PLANT:
+					return 13;
+				case World.D_CONE:
+					return 14;
+				case World.D_STONES:
+					return 15;
+				case World.D_BUSH:
+					return 16;
 				default:
 					return null;
 		}
@@ -561,6 +595,6 @@ public class Block {
 	*/
 	@Override
 	public String toString() {
-		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : (this.info.substring(0, (this.info.length() > MAX_INFO_LENGTH ? MAX_INFO_LENGTH : this.info.length()))+(this.info.length() > MAX_INFO_LENGTH ? "..." : ""))) + " Water: " + this.water;
+		return "Block Type: " + this.type + " X:" + this.x + " Y:" + this.y + " Info: " + ((this.info == null) ? "No info" : this.info) + " Water: " + this.water;
 	}
 }

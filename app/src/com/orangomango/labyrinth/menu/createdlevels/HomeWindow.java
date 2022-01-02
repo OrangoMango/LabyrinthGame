@@ -118,14 +118,13 @@ public class HomeWindow {
 				hb.setSpacing(5);
 				hb.getChildren().addAll(nm, em);
 				
-				int tempW = World.BLOCK_WIDTH;
 				World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 				Canvas canvas = new Canvas(temp.width*World.BLOCK_WIDTH, temp.height*World.BLOCK_WIDTH);
 				GraphicsContext pen = canvas.getGraphicsContext2D();
 				temp.setPen(pen);
 				temp.setPlayer(new Player(temp.start[0], temp.start[1], temp));
 				temp.draw();
-				World.BLOCK_WIDTH = tempW;
+				World.BLOCK_WIDTH = World.DEFAULT_BLOCK_WIDTH;
 				
 				Pagination pages = new Pagination();
 				if (World.getArcadeLevels(temp.getFilePath()) > 0){
@@ -135,20 +134,18 @@ public class HomeWindow {
 					pages.setPageFactory(index -> {
 						temp.worldList.getWorldAt(index).previewMode = true;
 						temp.worldList.getWorldAt(index).setDrawingMode(nm.isSelected() ? "normal" : "engineering");
-						int tempWid = World.BLOCK_WIDTH;
 						World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 						Canvas PCanvas = new Canvas(temp.worldList.getWorldAt(index).width*World.BLOCK_WIDTH, temp.worldList.getWorldAt(index).height*World.BLOCK_WIDTH);
 						GraphicsContext PPen = PCanvas.getGraphicsContext2D();
 						temp.worldList.getWorldAt(index).setPen(PPen);
 						temp.worldList.getWorldAt(index).setPlayer(new Player(temp.worldList.getWorldAt(index).start[0], temp.worldList.getWorldAt(index).start[1], temp.worldList.getWorldAt(index)));
 						temp.worldList.getWorldAt(index).draw();
-						World.BLOCK_WIDTH = tempWid;
+						World.BLOCK_WIDTH = World.DEFAULT_BLOCK_WIDTH;
 						return PCanvas;
 					});
 				}
 				
 				nm.setOnAction(event -> {
-					int tempWid = World.BLOCK_WIDTH;
 					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 					if (World.getArcadeLevels(temp.getFilePath()) < 0){
 						temp.setDrawingMode("normal");
@@ -157,11 +154,10 @@ public class HomeWindow {
 						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).setDrawingMode("normal");
 						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).update(0, 0, 0, 0);
 					}
-					World.BLOCK_WIDTH = tempWid;
+					World.BLOCK_WIDTH = World.DEFAULT_BLOCK_WIDTH;
 				});
 				
 				em.setOnAction(event -> {
-					int tempWid = World.BLOCK_WIDTH;
 					World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
 					if (World.getArcadeLevels(temp.getFilePath()) < 0){
 						temp.setDrawingMode("engineering");
@@ -170,7 +166,7 @@ public class HomeWindow {
 						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).setDrawingMode("engineering");
 						temp.worldList.getWorldAt(pages.getCurrentPageIndex()).update(0, 0, 0, 0);
 					}
-					World.BLOCK_WIDTH = tempWid;
+					World.BLOCK_WIDTH = World.DEFAULT_BLOCK_WIDTH;
 				});
 				
 				innerpane.add(plabel, 0, 0);
