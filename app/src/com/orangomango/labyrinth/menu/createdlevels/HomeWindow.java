@@ -63,8 +63,8 @@ public class HomeWindow {
 		stage.setTitle("My levels");
 
 		GridPane layout = new GridPane();
-                layout.setVgap(5);
-                layout.setPadding(new Insets(5, 5, 5, 5));
+        layout.setVgap(5);
+        layout.setPadding(new Insets(5, 5, 5, 5));
 		CreatedWorldFiles cwf = new CreatedWorldFiles();
 
 		ScrollPane pane = new ScrollPane();

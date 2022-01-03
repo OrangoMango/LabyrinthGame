@@ -324,11 +324,14 @@ public class Player {
 				Random rnd = new Random();
 				
 				boolean foundEndLine = false;
+				int cc = 0;
 				for (int n : world.combinedLines){
 					if (n == getY()){
 						foundEndLine = true;
+						world.combinedLines[cc] = -1;
 						break;
 					}
+					cc++;
 				}
 				if (foundEndLine){
 					int ph = 2;

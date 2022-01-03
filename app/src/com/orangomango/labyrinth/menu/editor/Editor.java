@@ -946,10 +946,15 @@ public class Editor {
 			alert.setContentText(null);
 			alert.showAndWait()
 			.filter(response -> response == ButtonType.OK)
-			.ifPresent(response -> System.out.println("Deleting file"));
-
-			//setArcadeMode();
-			//mArcade.setDisable(true);
+			.ifPresent(response -> {
+				int index = this.tabs.getSelectionModel().getSelectedIndex();
+				this.tabs.getTabs().get(index).setDisable(true);
+				File f = new File(CURRENT_FILE_PATH);
+				f.delete();
+				this.worldList.removeFromList(CURRENT_FILE_PATH);
+			});
+			setArcadeMode();
+			mArcade.setDisable(true);
 		});
 		modeMenu.getItems().addAll(mNormal, mEngineer, new SeparatorMenuItem(), mArcade);
 
@@ -1824,7 +1829,7 @@ public class Editor {
 				}
 			});
 
-			pane.setFitToWidth(true);
+			pane.setPrefWidth(300);
 			pane.setMaxHeight(250);
 
 			VBox selection = new VBox();
