@@ -949,9 +949,9 @@ public class Editor {
 			.ifPresent(response -> {
 				int index = this.tabs.getSelectionModel().getSelectedIndex();
 				this.tabs.getTabs().get(index).setDisable(true);
+				this.worldList.removeFromList(CURRENT_FILE_PATH);
 				File f = new File(CURRENT_FILE_PATH);
 				f.delete();
-				this.worldList.removeFromList(CURRENT_FILE_PATH);
 			});
 			setArcadeMode();
 			mArcade.setDisable(true);
@@ -1669,9 +1669,6 @@ public class Editor {
 		WorldList wl = new WorldList(new World(this.edworld.getFilePath()));
 		String pt = CURRENT_FILE_PATH.substring(0, CURRENT_FILE_PATH.lastIndexOf(".")) + ".arc";
 		File f = new File(pt);
-		/*try {
-			f.createNewFile();
-		} catch (IOException ioe) {}*/
 		wl.updateOnFile(pt);
 		open(f);
 	}
