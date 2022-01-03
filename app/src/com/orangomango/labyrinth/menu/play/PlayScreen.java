@@ -31,6 +31,7 @@ import static com.orangomango.labyrinth.menu.createdlevels.HomeWindow.PREVIEW_BL
 import static com.orangomango.labyrinth.menu.editor.Editor.PATH;
 import static com.orangomango.labyrinth.menu.editor.Editor.changeSlash;
 import static com.orangomango.labyrinth.menu.LoadingScreen.LEVELS;
+import com.orangomango.labyrinth.menu.editor.LevelExe;
 
 public class PlayScreen {
 
@@ -148,10 +149,18 @@ public class PlayScreen {
 		playArcade.setStyle("-fx-background-color: transparent");
 		playArcade.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_arcade_off.png")));
 		playArcade.setClosable(false);
-                VBox arcadeContent = new VBox();
+        VBox arcadeContent = new VBox();
+        arcadeContent.setPadding(new Insets(20, 20, 20, 20));
+        Button playSysArcade = new Button("Play arcade");
+        playSysArcade.setOnAction(e -> {
+			new LevelExe(PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + "arcade.arc.sys", "arcade.arc.sys", true, "normal");
+			LevelExe.setOnFinish(stage);
+			stage.hide();
+		});
+        arcadeContent.getChildren().add(playSysArcade);
 		arcadeContent.setBackground(new Background(new BackgroundImage(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/background_arcade.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null)));
 		playArcade.setContent(arcadeContent);
-                selectionMode.getTabs().addAll(playLevels, playArcade);
+        selectionMode.getTabs().addAll(playLevels, playArcade);
 
 		playLevels.setOnSelectionChanged(e -> {
 			playLevels.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/tab_levels_on.png")));

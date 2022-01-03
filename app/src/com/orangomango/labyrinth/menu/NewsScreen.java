@@ -108,6 +108,7 @@ public class NewsScreen{
 		this.isp.setContent(this.info);
 		
 		Button exit = new Button("Back");
+		exit.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/back_arrow.png")));
 		exit.setOnAction(e -> {
 			Menu menu = new Menu(stage);
 		});

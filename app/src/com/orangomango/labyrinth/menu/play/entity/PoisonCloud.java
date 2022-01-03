@@ -14,7 +14,7 @@ public class PoisonCloud extends Entity{
 	private int width, height;
 	private Timeline t, t2;
 	private int index = 0; // Max index: 3, from 0 to 3
-	private static final int DELAY = 1600;
+	private static final int DELAY = 2100;
 	
 	public PoisonCloud(World w, int width, int height, int yH){
 		setData(w);

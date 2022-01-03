@@ -48,6 +48,7 @@ public class ChangeDescription {
 		Scene scene = new Scene(layout, 300, 200);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		stage.setScene(scene);
+		stage.setResizable(false);
 		stage.show();
 	}
 }

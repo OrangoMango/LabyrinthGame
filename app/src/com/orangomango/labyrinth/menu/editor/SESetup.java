@@ -67,6 +67,7 @@ public class SESetup {
     scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
     this.stage.setScene(scene);
     this.stage.setTitle("Change start and end position");
+    this.stage.setResizable(false);
     this.stage.show();
   }
 

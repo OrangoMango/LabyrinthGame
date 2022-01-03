@@ -166,13 +166,18 @@ public class LoadingScreen {
 			Task dwlworker = new Task() {
 				@Override
 				protected Object call() {
-					int total = LEVELS + IMAGES + FONTS + 1;
+					int total = LEVELS + IMAGES + FONTS + 3;
 					int progress = 0;
 					updateMessage("Downloading styles");
 					updateProgress(progress, total);
 					downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "style.css");
 					progress++;
+					updateProgress(progress, total);
                     downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/play_style.css", PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "play_style.css");
+					progress++;
+					updateMessage("Downloading arcade");
+					updateProgress(progress, total);
+					downloadFile("https://raw.githubusercontent.com/OrangoMango/LabyrinthGame/main/app/lib/levels/arcade.arc", PATH + ".labyrinthgame" + File.separator + "SystemLevels" + File.separator + "arcade.arc.sys");
 					progress++;
 					for (int x = 0; x<LEVELS; x++) {
 						updateMessage("Downloading " + "level " + (x + 1) + ".wld.sys");
