@@ -166,7 +166,7 @@ public class LoadingScreen {
 			Task dwlworker = new Task() {
 				@Override
 				protected Object call() {
-					int total = LEVELS + IMAGES + FONTS + 3;
+					int total = LEVELS + IMAGES + FONTS + 2;
 					int progress = 0;
 					updateMessage("Downloading styles");
 					updateProgress(progress, total);
