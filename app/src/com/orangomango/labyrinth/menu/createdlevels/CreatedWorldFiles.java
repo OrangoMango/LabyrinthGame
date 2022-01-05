@@ -17,6 +17,15 @@ public class CreatedWorldFiles {
 	public String[] getPaths() {
 		return this.paths;
 	}
+	
+	public String getPath(String fileName){
+		for (String p : this.paths){
+			if ((new File(p)).getName().equals(fileName) || p.equals(fileName)){
+				return p;
+			}
+		}
+		return "";
+	}
 
 	@Override
 	public String toString() {

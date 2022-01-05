@@ -1,7 +1,7 @@
 /**
    Labirinth game - world class
    @author OrangoMango
-   @version 3.5
+   @version 3.6
 */
 
 package com.orangomango.labyrinth;
@@ -134,7 +134,12 @@ public class World {
 		
 		public void updateOnFile(String filePath){
 			try {
-				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+				updateOnFile(new BufferedWriter(new FileWriter(filePath)));
+			} catch (IOException ioe){}
+		}
+			
+		public void updateOnFile(BufferedWriter writer){
+			try {
 				int cont = 1;
 				writer.write("#NumWorlds:"+worlds.length);
 				for (World world : worlds){
@@ -168,6 +173,7 @@ public class World {
         public World(String path, int index){
             filePath = path;
             world = readWorld(filePath, index);
+            // here, worldList = null
         	this.combinedLines = new int[]{this.height-1};
         }
         
@@ -180,6 +186,7 @@ public class World {
         	this.setAllLights(lights);
         	this.engW = ew != null ? new EngWorld(this, ew, this.width, this.height) : null;
         	filePath = createTempCopyFilePath(delBefore);
+			this.worldList = new WorldList(new World(filePath, 0));
         	this.combinedLines = new int[]{this.height-1};
         	this.updateOnFile();
         }

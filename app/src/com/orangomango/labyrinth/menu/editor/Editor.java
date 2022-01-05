@@ -5,13 +5,18 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.*;
 import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.scene.input.*;
 import javafx.scene.canvas.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import javafx.animation.*;
+import javafx.util.Duration;
 import javafx.stage.FileChooser;
 
 import java.io.*;
@@ -29,11 +34,12 @@ import com.orangomango.labyrinth.World;
 import static com.orangomango.labyrinth.World.WorldList;
 import static com.orangomango.labyrinth.World.getArcadeLevels;
 import com.orangomango.labyrinth.menu.createdlevels.CreatedWorldFiles;
+import com.orangomango.labyrinth.command.Command;
 import com.orangomango.labyrinth.Logger;
 import com.orangomango.labyrinth.engineering.*;
 
 public class Editor {
-	private Stage stage;
+	public Stage stage;
 	private EditableWorld edworld;
 	public final static String PATH = System.getProperty("user.home") + File.separator;
 	private static String WORKING_FILE_PATH = "";
@@ -51,6 +57,7 @@ public class Editor {
 	private MenuItem mRunPattern;
 	private CheckMenuItem mLights;
 	private TabPane blocksTabPane;
+	private Timeline workLoop;
 
 	// Temp variables used to store info
 	private String dirSelection;
@@ -783,7 +790,8 @@ public class Editor {
 		unsaved();
 	}
 
-	private void exit() {
+	public void exit() {
+		this.workLoop.stop();
 		WORKING_FILE_PATHS = new String[1];
 		CURRENT_FILE_PATHS = new String[1];
 		SAVES = new boolean[1];
@@ -805,6 +813,8 @@ public class Editor {
 		// Setup the menu
 		MenuBar menuBar = new MenuBar();
 
+		// IMPORTANT: If events are changed, please be sure to change also commands in the Command class
+
 		Menu fileMenu = new Menu("_File");
 		fileMenu.setMnemonicParsing(true);
 		MenuItem mNew = new MenuItem("New");
@@ -818,13 +828,7 @@ public class Editor {
 		mSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
 		mSave.setOnAction(e -> {
 			try {
-				// Clone of toolbar button
-				if (this.arcade) {
-					this.edworld.worldList.sync();
-					this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
-				}
-				copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
-				saved();
+				saved(true);
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
 				alert.setTitle("File saved");
@@ -1010,14 +1014,7 @@ public class Editor {
 		saveBtn.setTooltip(new Tooltip("Save file"));
 		saveBtn.setOnAction(event -> {
 			try {
-				// Clone of menu button
-				if (this.arcade) {
-					//System.out.println(">>\n"+this.edworld.worldList+"\n<<");
-					this.edworld.worldList.sync();
-					this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
-				}
-				copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
-				saved();
+				saved(true);
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				alert.setHeaderText("File saved successfully");
 				alert.setTitle("File saved");
@@ -1168,10 +1165,46 @@ public class Editor {
 		personalViewTab = new Tab("Pseudo arcade view");
 		personalViewTab.setClosable(false);
 		personalViewTab.setDisable(!this.arcade);
+		
+		Tab consoleTab = new Tab("Console");
+		consoleTab.setClosable(false);
+		BorderPane consoleContent = new BorderPane();
+		
+		TextField commandEntry = new TextField();
+		commandEntry.setPromptText("Enter command...");
+		Button exe = new Button("Enter");
+		HBox input = new HBox(5, commandEntry, exe);
+		VBox outputL = new VBox();
+		ScrollPane output = new ScrollPane();
+		output.setMinHeight(365);
+		output.setMaxHeight(365);
+		output.setContent(outputL);
+		EventHandler<ActionEvent> customEvent = e -> {
+			String in = commandEntry.getText();
+			if (in.equals("")) return;
+			Label inserted = new Label("> "+in.toLowerCase());
+			inserted.setStyle("-fx-font-weight: bold");
+			outputL.getChildren().add(inserted);
+			commandEntry.setText("");
+			Command cmd = new Command(in, outputL);
+			cmd.setEditor(this);
+			cmd.setEditableWorld(this.edworld);
+			cmd.execute(true);
+			// generate layout pass for the scrollpane
+			output.applyCss();
+			output.layout();
+			output.setVvalue(1.0);
+		};
+		commandEntry.setOnAction(customEvent);
+		exe.setOnAction(customEvent);
+		consoleContent.setTop(output);
+		consoleContent.setBottom(input);
+		consoleContent.setPadding(new Insets(5, 5, 5, 5));
+		consoleTab.setContent(consoleContent);
 
 		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys"));
 
-		blocksTabPane.getTabs().addAll(blocksTab, worldsTab, personalViewTab);
+		blocksTabPane.getTabs().addAll(blocksTab, worldsTab, personalViewTab, consoleTab);
 
 		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
 			if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0) {
@@ -1398,8 +1431,8 @@ public class Editor {
 
 		splitpane.getItems().add(blocksTabPane);
 
-		// Set the divider on 60%
-		splitpane.setDividerPositions(0.60f);
+		// Set the divider on 55%
+		splitpane.setDividerPositions(0.55f);
 		layout.add(menuBar, 0, 0);
 		layout.add(toolbar, 0, 1);
 		layout.add(splitpane, 0, 2);
@@ -1408,6 +1441,11 @@ public class Editor {
 		Scene scene = new Scene(layout, 1000, 550);
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		this.stage.setScene(scene);
+		this.workLoop = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+			System.out.println("uhuhuhf");
+		}));
+		this.workLoop.setCycleCount(Animation.INDEFINITE);
+		this.workLoop.play();
 	}
 
 	/**
@@ -1475,6 +1513,8 @@ public class Editor {
 			CURRENT_FILE_PATH = f.getAbsolutePath();
 			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
 
+			updateCurrentWorldFile(CURRENT_FILE_PATH);
+
 			CURRENT_FILE_PATHS = Arrays.copyOf(CURRENT_FILE_PATHS, OPENED_TABS + 1);
 			WORKING_FILE_PATHS = Arrays.copyOf(WORKING_FILE_PATHS, OPENED_TABS + 1);
 			SAVES = Arrays.copyOf(SAVES, OPENED_TABS + 1);
@@ -1497,6 +1537,7 @@ public class Editor {
 					newTab.setContent(getEditorTabContent());
 					this.tabs.getTabs().add(newTab);
 				}
+				newTab.setDisable(false);
 				this.tabs.getSelectionModel().select(newTab);
 			} else {
 				if (this.tabs != null) {
@@ -1505,12 +1546,11 @@ public class Editor {
 				edworld.changeToWorld(WORKING_FILE_PATH);
 			}
 			this.mLights.setSelected(edworld.getAllLights());
-			updateCurrentWorldFile(CURRENT_FILE_PATH);
 			worldList.addToList(CURRENT_FILE_PATH);
 			if (this.blocksTabPane != null) {
 				this.blocksTabPane.getSelectionModel().selectFirst();
 			}
-			saved();
+			saved(false);
 		} catch (Exception e) {
 			Logger.error("Could not load world file");
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -1520,6 +1560,12 @@ public class Editor {
 			alert.showAndWait();
 			//e.printStackTrace();
 		}
+	}
+	
+	public Tab getTab(String p){
+		int index = Arrays.asList(CURRENT_FILE_PATHS).indexOf(p);
+		if (index < 0) return null;
+		return this.tabs.getTabs().get(index);
 	}
 
 	/**
@@ -1541,7 +1587,7 @@ public class Editor {
 	 * Check if it's possible to add a row/column. A row or a column can only be added if the world size is not bigger than @link MAX_WORLD_SIZE .
 	 * @return true or false
 	 */
-	private boolean checkValidityMax(String s) {
+	public boolean checkValidityMax(String s) {
 		if (this.edworld.width + 1 > NewWidget.MAX_WORLD_SIZE && s == "w") {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setHeaderText("You reached world maximum size!");
@@ -1564,7 +1610,7 @@ public class Editor {
 	/**
 	 * When something is edited this method is called and the tab/window title is modified
 	 */
-	private void unsaved() {
+	public void unsaved() {
 		this.saved = false;
 		try {
 			SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
@@ -1578,8 +1624,15 @@ public class Editor {
 	/**
 	 * When the user clicks the<pre>Save</pre> button, this method updates the window and the tab title
 	 */
-	private void saved() {
+	public void saved(boolean save) {
 		this.saved = true;
+		if (save){
+			if (this.arcade) {
+				this.edworld.worldList.sync();
+				this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
+			}
+			copyWorld(WORKING_FILE_PATH, CURRENT_FILE_PATH);
+		}
 		try {
 			SAVES[this.tabs.getSelectionModel().getSelectedIndex()] = saved;
 			this.tabs.getSelectionModel().getSelectedItem().setText(getFileName() + ((saved) ? "" : "*"));
@@ -1588,6 +1641,13 @@ public class Editor {
 		}
 		prepareArcadeMode(this.arcade);
 		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
+	}
+	public boolean isSaved(){
+		return this.saved;
+	}
+	
+	public String getMode(){
+		return this.mode;
 	}
 
 	/**

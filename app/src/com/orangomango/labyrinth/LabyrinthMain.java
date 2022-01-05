@@ -21,7 +21,7 @@ import com.orangomango.labyrinth.menu.editor.Editor;
 
 public class LabyrinthMain extends Application {
 
-    public final static double VERSION = 3.5;
+    public final static double VERSION = 3.6;
 
     private static String ARG = null;
     private Stage stage;
