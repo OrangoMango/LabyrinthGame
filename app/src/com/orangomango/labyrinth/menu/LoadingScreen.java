@@ -76,6 +76,7 @@ public class LoadingScreen {
 		"blocks" + File.separator + "block_wall",
 		"blocks" + File.separator + "block_portal",
 		"blocks" + File.separator + "block_air",
+		"blocks" + File.separator + "block_void",
 		"blocks" + File.separator + "block_shooter-n",
 		"blocks" + File.separator + "block_shooter-e",
 		"blocks" + File.separator + "block_shooter-s",

@@ -1178,6 +1178,7 @@ public class Editor {
 				int index = this.tabs.getSelectionModel().getSelectedIndex();
 				CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
 				WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
+				updateCurrentWorldFile(CURRENT_FILE_PATH);
 				saved = SAVES[index];
 				edworld = WORLDS[index];
 				this.mLights.setSelected(edworld.getAllLights());
