@@ -24,6 +24,13 @@ public class Command {
 	public static final String MODIFY_WORLD = "modify";
 	public static final String CURRENT_PATH = "current_path";
 	public static final String WORKING_PATH = "working_path";
+	public static final String WORLD_PATH = "world_path";
+	
+	// Those commands may be implemented as argument: "working_path -a"
+	public static final String WORKING_PATH_LIST = "working_path_list";
+	public static final String CURRENT_PATH_LIST = "current_path_list";
+	public static final String WORLD_PATHS = "world_paths";
+	
 	public static final String EXIT = "exit";
 	public static final String RUN = "run";
 	public static final String HELP = "help";
@@ -99,7 +106,24 @@ public class Command {
 				outputText = "CURRENT_PATH: "+this.editor.getCurrentFilePath();
 				break;
 			case WORKING_PATH:
-				outputText = "WORKING_PATH: "+this.edworld.getFilePath();
+				outputText = "WORKING_PATH: "+Editor.getWorkingFilePath();
+				break;
+			case WORKING_PATH_LIST:
+				outputText = "WORKING_FILE_PATHS: "+Editor.getWorkingFilePaths().toString();
+				break;
+			case CURRENT_PATH_LIST:
+				outputText = "CURRENT_FILE_PATHS: "+Editor.getCurrentFilePaths().toString();
+				break;
+			case WORLD_PATHS:
+				StringBuilder sb = new StringBuilder();
+				sb.append("WORLD_PATHS: ");
+				for (EditableWorld ew : Editor.getEdWorldList()){
+					sb.append(ew.getFilePath()+" ");
+				}
+				outputText = sb.toString();
+				break;
+			case WORLD_PATH:
+				outputText = "WORLD_PATH: "+this.edworld.getFilePath();
 				break;
 			case MODIFY_WORLD:
 				if (args.length == 1){

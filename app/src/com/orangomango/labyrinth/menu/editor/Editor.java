@@ -47,6 +47,7 @@ public class Editor {
 	private boolean saved = true;
 	public static CreatedWorldFiles worldList;
 	private static int SELECTED_BLOCK = 1;
+	private static int SELECTED_PATTERN = 1;
 	private TabPane tabs;
 	private Label pointingOn;
 	private boolean arcade = false;
@@ -54,10 +55,12 @@ public class Editor {
 	private Tab worldsTab, personalViewTab;
 	private RadioMenuItem mNormal, mEngineer;
 	private Button runArcBtn;
-	private MenuItem mRunPattern;
+	private MenuItem mRunPattern, mUndo, mRedo;
 	private CheckMenuItem mLights;
 	private TabPane blocksTabPane;
 	private Timeline workLoop;
+	private static List<String> workingList = new ArrayList<>();
+	private int HISTORY_POINT = 0;
 
 	// Temp variables used to store info
 	private String dirSelection;
@@ -70,11 +73,13 @@ public class Editor {
 	private MenuItem engToDisable = new MenuItem();
 	private Button engToDisableB = new Button();
 
-	private static String[] WORKING_FILE_PATHS = new String[0];
-	private static String[] CURRENT_FILE_PATHS = new String[0];
+	private static List<String> WORKING_FILE_PATHS = new ArrayList<String>();
+	private static List<String> CURRENT_FILE_PATHS = new ArrayList<String>();
+	private static List<List<String>> WORKING_LISTS = new ArrayList<List<String>>();
+	
 	private static int OPENED_TABS = 0;
 	private static boolean[] SAVES = new boolean[0];
-	private static EditableWorld[] WORLDS = new EditableWorld[0];
+	private static List<EditableWorld> WORLDS = new ArrayList<EditableWorld>();
 
 	/**
 	 * Change the slash of the path from \ to / to make a valid URL under windows.
@@ -113,6 +118,7 @@ public class Editor {
 		} else {
 			editableworld = this.edworld;
 		}
+		System.out.println("Edoworld: "+(editableworld == null));
 		editableworld.warningOnEnd = CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys");
 
 		Canvas canvas = new Canvas(editableworld.width * EditableWorld.BLOCK_WIDTH, editableworld.height * EditableWorld.BLOCK_WIDTH);
@@ -736,19 +742,19 @@ public class Editor {
 		editableworld.draw();
 
 		canvas.setOnMouseMoved(event -> {
-			Block block = edworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
+			Block block = editableworld.getBlockAtCoord((int) event.getX(), (int) event.getY());
 			EngBlock Eblock;
-			if (edworld.getEngineeringWorld() != null) {
-				Eblock = edworld.getEngineeringWorld().getBlockAtCoord((int) event.getX(), (int) event.getY());
+			if (editableworld.getEngineeringWorld() != null) {
+				Eblock = editableworld.getEngineeringWorld().getBlockAtCoord((int) event.getX(), (int) event.getY());
 			} else {
 				Eblock = null;
 			}
 			if (this.mode.equals("normal")) {
-				String inf = "Mouse on block: " + block + " | " + ((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position")) + " [" + getFileName() + "]";
+				String inf = "Mouse on block: " + block + " | " + ((block.isOnStart(edworld)) ? "On start position" : ((block.isOnEnd(edworld)) ? "On end position" : "Not on start or end position")) + " [" + getFileName() + (this.arcade ? "/"+SELECTED_PATTERN : "") + "]";
 				this.pointingOn.setText(inf);
 				this.pointingOn.setTooltip(new Tooltip(inf));
 			} else if (this.mode.equals("engineering")) {
-				String inf = "Mouse on block: " + Eblock + " [" + getFileName() + "]";
+				String inf = "Mouse on block: " + Eblock + " [" + getFileName() + (this.arcade ? "/"+SELECTED_PATTERN : "") +"]";
 				this.pointingOn.setText(inf);
 				this.pointingOn.setTooltip(new Tooltip(inf));
 			}
@@ -763,8 +769,7 @@ public class Editor {
 		layout.add(scrollpane, 0, 0);
 		this.edworld = editableworld;
 		if (OPENED_TABS > 0) {
-			WORLDS = Arrays.copyOf(WORLDS, OPENED_TABS);
-			WORLDS[OPENED_TABS - 1] = editableworld;
+			WORLDS.add(editableworld);
 		}
 
 		return layout;
@@ -781,6 +786,18 @@ public class Editor {
 		}
 		w.setBlockOn(edblock);
 	}
+	
+	public static List<String> getWorkingFilePaths(){
+		return WORKING_FILE_PATHS;
+	}
+
+	public static List<String> getCurrentFilePaths(){
+		return CURRENT_FILE_PATHS;
+	}
+	
+	public static List<EditableWorld> getEdWorldList(){
+		return WORLDS;
+	}
 
 	private void updateEngBlockConn(String d) {
 		currentSelectedEngBlock.addInfoParam("attachments#" + d);
@@ -792,8 +809,9 @@ public class Editor {
 
 	public void exit() {
 		this.workLoop.stop();
-		WORKING_FILE_PATHS = new String[1];
-		CURRENT_FILE_PATHS = new String[1];
+		WORKING_FILE_PATHS = new ArrayList<String>();
+		CURRENT_FILE_PATHS = new ArrayList<String>();
+		WORKING_LISTS = new ArrayList<List<String>>();
 		SAVES = new boolean[1];
 		OPENED_TABS = 0;
 	}
@@ -805,7 +823,6 @@ public class Editor {
 	public Editor(String editorFilePath, Stage stage) {
 		worldList = new CreatedWorldFiles();
 		this.stage = stage;
-		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
 		this.stage.setOnCloseRequest(event -> exit());
 
 		GridPane layout = new GridPane();
@@ -922,10 +939,73 @@ public class Editor {
 			new LevelExe(this.edworld.getFilePath(), "Arcade pattern (" + getFileName() + ")", saved, this.mode);
 			LevelExe.setOnFinish(null);
 		});
-		MenuItem mUndo = new MenuItem("Undo");
-		mUndo.setDisable(true);
-		MenuItem mRedo = new MenuItem("Redo");
-		mRedo.setDisable(true);
+		this.mUndo = new MenuItem("Undo");
+		mUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
+		mUndo.setOnAction(e -> {
+			try {
+				File tempFile = File.createTempFile("temp-world-" + (new Random()).nextInt(), ".wld");
+				tempFile.deleteOnExit();
+				BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+				writer.write(workingList.get(HISTORY_POINT-2));      // (-1) - 1
+				writer.close();
+				HISTORY_POINT--;
+				if (HISTORY_POINT < 2){
+					this.mUndo.setDisable(true);
+				}
+				this.mRedo.setDisable(false);
+				//System.out.println("TEMP PATH: "+tempFile.getAbsolutePath());
+				if (this.arcade){
+					this.edworld.updateWorldList(tempFile.getAbsolutePath());
+					this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
+					this.edworld.changeToWorld(this.edworld.getFilePath());
+					//System.out.println("EDWORLD_WORLDLIST: "+this.edworld.worldList.getLength());
+				} else {
+					WORKING_FILE_PATH = tempFile.getAbsolutePath();
+					WORKING_FILE_PATHS.set(this.tabs.getSelectionModel().getSelectedIndex(), WORKING_FILE_PATH);
+					this.edworld.changeToWorld(tempFile.getAbsolutePath());
+				}
+			} catch (IOException ioe){
+				ioe.printStackTrace();
+			}
+			prepareArcadeMode(this.arcade);
+			unsaved();
+		});
+		mUndo.setDisable(false);
+		this.mRedo = new MenuItem("Redo");
+		mRedo.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+		mRedo.setOnAction(e -> {
+			try {
+				File tempFile = File.createTempFile("temp-world-" + (new Random()).nextInt(), ".wld");
+				tempFile.deleteOnExit();
+				BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+				writer.write(workingList.get(HISTORY_POINT));     // (+1) - 1
+				writer.close();
+				HISTORY_POINT++;
+				if (HISTORY_POINT == workingList.size()){
+					this.mRedo.setDisable(true);
+				}
+				this.mUndo.setDisable(false);
+				//System.out.println("TEMP PATH: "+tempFile.getAbsolutePath());
+				if (this.arcade){
+					this.edworld.updateWorldList(tempFile.getAbsolutePath());
+					//System.out.println("------------_ "+tempFile.getAbsolutePath());
+					//try {
+					//	Thread.sleep(60000);
+					//} catch (InterruptedException ex){}
+					this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
+					this.edworld.changeToWorld(this.edworld.getFilePath());
+					//System.out.println("EDWORLD_WORLDLIST: "+this.edworld.worldList.getLength());
+				} else {
+					WORKING_FILE_PATH = tempFile.getAbsolutePath();
+					WORKING_FILE_PATHS.set(this.tabs.getSelectionModel().getSelectedIndex(), WORKING_FILE_PATH);
+					this.edworld.changeToWorld(tempFile.getAbsolutePath());
+				}
+			} catch (IOException ioe){
+				ioe.printStackTrace();
+			}
+			prepareArcadeMode(this.arcade);
+			unsaved();
+		});
 		editMenu.getItems().addAll(mAR, mAC, mRR, mRC, new SeparatorMenuItem(), mSSE, new SeparatorMenuItem(), mRun, mRunPattern, new SeparatorMenuItem(), mUndo, mRedo);
 
 		Menu modeMenu = new Menu("_Mode");
@@ -1203,24 +1283,28 @@ public class Editor {
 		consoleTab.setContent(consoleContent);
 
 		prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys"));
+		
+		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + (this.arcade ? "/"+SELECTED_PATTERN : "") + ")");
 
 		blocksTabPane.getTabs().addAll(blocksTab, worldsTab, personalViewTab, consoleTab);
 
 		this.tabs.getSelectionModel().selectedItemProperty().addListener((ov, ot, nt) -> {
-			if (CURRENT_FILE_PATHS.length > 0 || WORKING_FILE_PATHS.length > 0) {
+			if (CURRENT_FILE_PATHS.size() > 0 || WORKING_FILE_PATHS.size() > 0) {
 				int index = this.tabs.getSelectionModel().getSelectedIndex();
-				CURRENT_FILE_PATH = CURRENT_FILE_PATHS[index];
-				WORKING_FILE_PATH = WORKING_FILE_PATHS[index];
+				CURRENT_FILE_PATH = CURRENT_FILE_PATHS.get(index);
+				WORKING_FILE_PATH = WORKING_FILE_PATHS.get(index);
+				workingList = WORKING_LISTS.get(index);
+				HISTORY_POINT = 0;
 				updateCurrentWorldFile(CURRENT_FILE_PATH);
 				saved = SAVES[index];
-				edworld = WORLDS[index];
+				edworld = WORLDS.get(index);
 				this.mLights.setSelected(edworld.getAllLights());
 				this.setMode("normal");
 				this.prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys"));
 				if (this.blocksTabPane != null) {
 					this.blocksTabPane.getSelectionModel().selectFirst();
 				}
-				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
+				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + (this.arcade ? "/"+SELECTED_PATTERN : "") + ")");
 			}
 		});
 
@@ -1442,7 +1526,37 @@ public class Editor {
 		scene.getStylesheets().add("file://" + changeSlash(PATH) + ".labyrinthgame/Editor/style.css");
 		this.stage.setScene(scene);
 		this.workLoop = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-			System.out.println("uhuhuhf");
+			try {
+				StringWriter sw = new StringWriter();
+				BufferedWriter writer = new BufferedWriter(sw);
+				if (this.arcade){
+					this.edworld.worldList.sync();
+					this.edworld.worldList.updateOnFile(writer);
+				} else {
+					this.edworld.writeToFile(writer);
+				}
+				writer.close();
+				String toAdd = sw.toString();
+				//System.out.println("toAdd: "+toAdd.substring(0, 12));
+				//System.out.println("1) HISTORY_POINT: "+HISTORY_POINT);
+				//if (HISTORY_POINT > 0) System.out.println("List[H_P-1]: "+workingList.get(HISTORY_POINT-1).equals(toAdd));
+				//System.out.println(workingList.contains(toAdd));
+				if (HISTORY_POINT == 0 || !workingList.get(HISTORY_POINT-1).equals(toAdd)){
+					workingList.add(toAdd);
+					HISTORY_POINT = workingList.size();
+					this.mRedo.setDisable(true);
+					if (HISTORY_POINT > 1){
+						this.mUndo.setDisable(false);
+					}
+				}
+			} catch (IOException ioe){
+				ioe.printStackTrace();
+			}
+			//System.out.println("Size: "+workingList.size()+" 2) HISTORY_POINT: "+HISTORY_POINT);
+			/*for (String i : workingList){
+				System.out.println(i.substring(0, 12));
+			}
+			System.out.println("\n");*/
 		}));
 		this.workLoop.setCycleCount(Animation.INDEFINITE);
 		this.workLoop.play();
@@ -1481,6 +1595,11 @@ public class Editor {
 		} catch (IOException e) {}
 		return null;
 	}
+	
+	// Working file path changes everytime that a world is opened or a tab is selected. When switching arcade pattern this will not change.
+	public static String getWorkingFilePath(){
+		return WORKING_FILE_PATH;
+	}
 
 	private void checkAndDeleteCache() {
 		File f = new File(PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache");
@@ -1508,29 +1627,31 @@ public class Editor {
 			}
 			Random r = new Random();
 			int number = r.nextInt();
-			boolean oldPathIn = Arrays.asList(CURRENT_FILE_PATHS).contains(f.getAbsolutePath());
+			boolean oldPathIn = CURRENT_FILE_PATHS.contains(f.getAbsolutePath());
 
 			CURRENT_FILE_PATH = f.getAbsolutePath();
-			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
-
 			updateCurrentWorldFile(CURRENT_FILE_PATH);
+			WORKING_FILE_PATH = PATH + ".labyrinthgame" + File.separator + "Editor" + File.separator + "Cache" + File.separator + "cache[" + getFileName() + "]" + number + ".wld.ns"; // ns = not saved
+			workingList = new ArrayList<String>();
+			HISTORY_POINT = 0;
+			SELECTED_PATTERN = 1;
 
-			CURRENT_FILE_PATHS = Arrays.copyOf(CURRENT_FILE_PATHS, OPENED_TABS + 1);
-			WORKING_FILE_PATHS = Arrays.copyOf(WORKING_FILE_PATHS, OPENED_TABS + 1);
 			SAVES = Arrays.copyOf(SAVES, OPENED_TABS + 1);
-			CURRENT_FILE_PATHS[OPENED_TABS] = CURRENT_FILE_PATH;
-			WORKING_FILE_PATHS[OPENED_TABS] = WORKING_FILE_PATH;
+
+			CURRENT_FILE_PATHS.add(CURRENT_FILE_PATH);
+			WORKING_FILE_PATHS.add(WORKING_FILE_PATH);
+			WORKING_LISTS.add(workingList);
 			SAVES[OPENED_TABS] = true;
 			OPENED_TABS++;
 
-			Logger.info(Arrays.toString(CURRENT_FILE_PATHS) + " " + Arrays.toString(WORKING_FILE_PATHS));
+			Logger.info(CURRENT_FILE_PATHS.toString() + " " + WORKING_FILE_PATHS.toString());
 
 			checkAndDeleteCache();
 			copyWorld(CURRENT_FILE_PATH, WORKING_FILE_PATH);
 			if (this.tabs != null && getCurrentFilePath() != null) {
 				Tab newTab;
 				if (oldPathIn) {
-					newTab = this.tabs.getTabs().get(Arrays.asList(CURRENT_FILE_PATHS).indexOf(f.getAbsolutePath()));
+					newTab = this.tabs.getTabs().get(CURRENT_FILE_PATHS.indexOf(f.getAbsolutePath()));
 				} else {
 					newTab = new Tab(f.getName());
 					newTab.setClosable(false);
@@ -1550,6 +1671,8 @@ public class Editor {
 			if (this.blocksTabPane != null) {
 				this.blocksTabPane.getSelectionModel().selectFirst();
 			}
+			//prepareArcadeMode(CURRENT_FILE_PATH.endsWith(".arc") || CURRENT_FILE_PATH.endsWith(".arc.sys")); // Currently not needed
+			System.out.println(">>>> "+this.edworld.worldList.getLength());
 			saved(false);
 		} catch (Exception e) {
 			Logger.error("Could not load world file");
@@ -1563,7 +1686,7 @@ public class Editor {
 	}
 	
 	public Tab getTab(String p){
-		int index = Arrays.asList(CURRENT_FILE_PATHS).indexOf(p);
+		int index = CURRENT_FILE_PATHS.indexOf(p);
 		if (index < 0) return null;
 		return this.tabs.getTabs().get(index);
 	}
@@ -1618,7 +1741,7 @@ public class Editor {
 		} catch (NullPointerException e) {
 			SAVES[0] = saved;
 		}
-		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
+		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + (this.arcade ? "/"+SELECTED_PATTERN : "") + ")");
 	}
 
 	/**
@@ -1640,8 +1763,9 @@ public class Editor {
 			SAVES[0] = saved;
 		}
 		prepareArcadeMode(this.arcade);
-		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + ")");
+		this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + (this.arcade ? "/"+SELECTED_PATTERN : "") + ")");
 	}
+	
 	public boolean isSaved(){
 		return this.saved;
 	}
@@ -1747,7 +1871,11 @@ public class Editor {
 		tilePane.setVgap(10);
 		final int PREVIEW_BLOCK_WIDTH = 10;
 		World.BLOCK_WIDTH = PREVIEW_BLOCK_WIDTH;
-		for (int i = 1; i<= getArcadeLevels(CURRENT_FILE_PATH); i++) {
+		//System.out.println("W_F_P: "+WORKING_FILE_PATH);
+		//System.out.println("C_F_P: "+CURRENT_FILE_PATH);
+		//System.out.println("gAL(W): "+getArcadeLevels(WORKING_FILE_PATH));
+		//System.out.println("gAL(C): "+getArcadeLevels(CURRENT_FILE_PATH));
+		for (int i = 1; i<= getArcadeLevels(WORKING_FILE_PATH); i++) {
 			final int now = i;
 			GridPane miniP = new GridPane();
 			miniP.setVgap(3);
@@ -1756,6 +1884,9 @@ public class Editor {
 			btn.setGraphic(new ImageView(new Image("file://" + changeSlash(PATH) + ".labyrinthgame/Images/editor/pattern_edit.png")));
 			btn.setTooltip(new Tooltip(this.edworld.worldList.getLength() > 1 ? this.edworld.worldList.getWorldAt(i - 1).getFilePath() : WORKING_FILE_PATH));
 			btn.setOnAction(e -> {
+				SELECTED_PATTERN = now;
+				System.out.println(World.getArcadeLevels(WORKING_FILE_PATH)+" "+WORKING_FILE_PATH+" "+this.edworld.worldList.getLength());
+				this.stage.setTitle("LabyrinthGame - Editor (" + getFileName() + ((saved) ? "" : "*") + (this.arcade ? "/"+SELECTED_PATTERN : "") + ")");
 				this.edworld.changeToWorld(this.edworld.worldList.getWorldAt(now - 1).getFilePath());
 				this.setMode("normal");
 			});
@@ -1765,8 +1896,9 @@ public class Editor {
 			dBtn.setDisable(i == 1);
 			dBtn.setOnAction(delEvent -> {
 				this.edworld.worldList.deleteWorld(now - 1);
-				this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+				this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
 				this.edworld.changeToWorld(WORKING_FILE_PATH);
+				unsaved();
 				prepareArcadeMode(this.arcade);
 			});
 			World tW;
@@ -1785,6 +1917,9 @@ public class Editor {
 			tW.setPen(pen);
 			tW.setPlayer(new Player(tW.start[0], tW.start[1], tW));
 			tW.draw();
+			if (i == SELECTED_PATTERN){
+				miniP.setStyle("-fx-border-color: black");
+			}
 			miniP.add(title, 0, 0);
 			miniP.add(prevCanvas, 0, 1, 2, 1);
 			miniP.add(btn, 0, 2);
@@ -1803,7 +1938,8 @@ public class Editor {
 				writer.close();
 				World newWorld = new World(file.getAbsolutePath());
 				this.edworld.worldList.addWorld(newWorld);
-				this.edworld.worldList.updateOnFile(CURRENT_FILE_PATH);
+				this.edworld.worldList.updateOnFile(WORKING_FILE_PATH);
+				unsaved();
 				prepareArcadeMode(this.arcade);
 			} catch (IOException ioe) {}
 		});
@@ -1874,7 +2010,7 @@ public class Editor {
 			ChoiceBox<String> box = new ChoiceBox<String> ();
 			box.setMaxWidth(130);
 			List<String> patternList = new ArrayList<String> ();
-			for (int i = 1; i<= World.getArcadeLevels(CURRENT_FILE_PATH); i++) {
+			for (int i = 1; i<= World.getArcadeLevels(WORKING_FILE_PATH); i++) {
 				patternList.add("Pattern " + i);
 			}
 			box.getItems().addAll(patternList);
@@ -1910,7 +2046,7 @@ public class Editor {
 				this.edworld.setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld, this.edworld.width, this.edworld.height));
 				this.edworld.updateOnFile();
 				if (this.arcade) {
-					for (int i = 0; i<World.getArcadeLevels(CURRENT_FILE_PATH); i++) {
+					for (int i = 0; i<World.getArcadeLevels(WORKING_FILE_PATH); i++) {
 						this.edworld.worldList.getWorldAt(i).setEngineeringWorld(EngWorld.createNewEngWorld(this.edworld.worldList.getWorldAt(i), this.edworld.worldList.getWorldAt(i).width, this.edworld.worldList.getWorldAt(i).height));
 						this.edworld.worldList.getWorldAt(i).updateOnFile(false);
 					}
@@ -1946,6 +2082,8 @@ public class Editor {
 			this.mode = "normal";
 		}
 		prepareArcadeMode(this.arcade);
-		this.edworld.updateWalls();
+		if (!this.arcade){
+			this.edworld.updateWalls();
+		}
 	}
 }

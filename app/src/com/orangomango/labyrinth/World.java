@@ -154,19 +154,25 @@ public class World {
 			}
 		}
 	}
+	
+	public void updateWorldList(String p){
+		this.worldList = new WorldList(new World(p, 0));
+		for (int x = 0; x < getArcadeLevels(p); x++){
+			if (x == 0){
+				continue;
+			}
+			//System.out.println("FP: "+p);
+			World tWorld = new World(p, getFilePathIndex("#World "+(x+1), p));
+			tWorld.setFilePath(tWorld.createTempCopyFilePath());
+			this.worldList.addWorld(tWorld);
+		}
+		//System.out.println(this.worldList);
+	}
 
 	public World(String path) {
 		filePath = path;
 		world = readWorld(filePath);
-		this.worldList = new WorldList(new World(filePath, 0));
-		for (int x = 0; x < getArcadeLevels(filePath); x++){
-			if (x == 0){
-				continue;
-			}
-			World tWorld = new World(filePath, getFilePathIndex("#World "+(x+1)));
-			tWorld.setFilePath(tWorld.createTempCopyFilePath());
-			this.worldList.addWorld(tWorld);
-		}
+		updateWorldList(filePath);
         this.combinedLines = new int[]{this.height-1};
 	}
         
@@ -186,7 +192,6 @@ public class World {
         	this.setAllLights(lights);
         	this.engW = ew != null ? new EngWorld(this, ew, this.width, this.height) : null;
         	filePath = createTempCopyFilePath(delBefore);
-			this.worldList = new WorldList(new World(filePath, 0));
         	this.combinedLines = new int[]{this.height-1};
         	this.updateOnFile();
         }
@@ -221,12 +226,12 @@ public class World {
         public String createTempCopyFilePath(){ return createTempCopyFilePath(false); }
         public String createTempCopyFilePath(boolean dbefore){
         	try {
-                        if (lastCreatedFile != null && dbefore){
-                            lastCreatedFile.delete();
-                        }
+				if (lastCreatedFile != null && dbefore){
+					lastCreatedFile.delete();
+				}
         		File file = File.createTempFile("temp-world-"+(new Random()).nextInt(), ".wld");
-                        lastCreatedFile = file;
-                        file.deleteOnExit();
+				lastCreatedFile = file;
+				file.deleteOnExit();
         		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         		writeToFile(writer);
         		writer.close();
@@ -293,9 +298,9 @@ public class World {
 		} catch (IOException ioe){}
 	}
 	
-	public int getFilePathIndex(String search){
+	public static int getFilePathIndex(String search, String path){
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			BufferedReader reader = new BufferedReader(new FileReader(path));
 			String found = "";
 			int counter = 0;
 			int index = 0;
@@ -311,8 +316,8 @@ public class World {
             reader.close();
 			return index == 0 ? -1 : index;
 		} catch (IOException ex){
-                    return -1;
-                }
+           return -1;
+        }
 	}
 	
 	public static int getArcadeLevels(String fileName){
@@ -323,7 +328,7 @@ public class World {
 				int num = Integer.parseInt(line1.split(":")[1]);
 				return num;
 			}
-                        reader.close();
+        	reader.close();
 		} catch (IOException ex){}
 		return -1;
 	}
@@ -604,13 +609,13 @@ public class World {
 		} else {
 			update(0, 0, 0, 0);
 		}
-        }
+    }
         
-        public void changeToWorld(World wld){
-        	changeToWorld(wld.getFilePath());
-        	this.combinedLines = wld.combinedLines;
-        	setShowEnd(wld.getShowEnd());
-        }
+	public void changeToWorld(World wld){
+		changeToWorld(wld.getFilePath());
+		this.combinedLines = wld.combinedLines;
+		setShowEnd(wld.getShowEnd());
+	}
         
 	public void updateParallelBlocks(){
 		for (Block[] blockRow : this.world){
